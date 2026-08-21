@@ -13,8 +13,9 @@ Plan baseline: Day 1 = Thu 20 Aug 2026. Deadline confirmed as 5 September
 ### Phase 1 — Landscape + problem hunt · Days 1–3 · target 15%
 - [x] Day 1 (Thu 20): Gate 0 resolved (done Day 2, see below) + landscape sheet ~50%
 - [x] Day 2 (Fri 21): Problem bank scored against the 5 real tracks (20 rows) — see `docs/decisions/0002-problem-bank-scored-against-real-tracks.md`. Landscape sheet still not finished.
-- [ ] Day 3 (Sat 22): Cut to 3; one-pagers written; 5 outreach messages sent
-- **Gate 1 (end Day 3):** three problems, each with a written one-pager in `submission/one-pagers/`.
+- [x] Day 3 work (done early, Fri 21): Cut to 3 (see `docs/decisions/0003-cut-to-three.md`); one-pagers written in `submission/one-pagers/`
+- [ ] 5 outreach messages sent — still open, Deepak's own outreach
+- **Gate 1 (end Day 3): written half done a day early.** Three problems, each with a written one-pager, in `submission/one-pagers/`. Outreach messages still needed before Day 4 conversations can start.
 
 ### Phase 2 — Validate + lock · Days 4–5 · target 25%
 - [ ] Day 4 (Sun 23): 3–5 real conversations logged in `outreach/`
@@ -44,4 +45,4 @@ Plan baseline: Day 1 = Thu 20 Aug 2026. Deadline confirmed as 5 September
 | Date | Day | % complete | Notes |
 |---|---|---|---|
 | 2026-08-20 | 1 | — | Research phase 1, battle plan, and problem-scoring spreadsheet produced. Gate 0 not yet resolved. |
-| 2026-08-21 | 2 | — | Repo restructured into `razorpay_buildathon` — docs, decisions log, gate/progress trackers, submission scaffold, Claude Code workflow commands set up. **Gate 0 resolved**: opened razorpay.com/buildathon/ live — World A confirmed, all 5 tracks now known (only 1 was known before), pre-built work confirmed required, solo application, Track 01 has confirmed Razorpay test-mode API access. See `docs/decisions/0001-gate-0-resolved.md`. **Problem bank (20 candidates) scored against the 5 real tracks** — Track 01 is the strongest fit for the existing top cluster (#1/#3/#2/#5), #9 is the biggest mover (VALIDATE → matches Track 04's own example direction). See `docs/decisions/0002-problem-bank-scored-against-real-tracks.md`. Landscape sheet still not finished — remains open for Day 2/3. |
+| 2026-08-21 | 2 | — | Repo restructured into `razorpay_buildathon` — docs, decisions log, gate/progress trackers, submission scaffold, Claude Code workflow commands set up. **Gate 0 resolved**: opened razorpay.com/buildathon/ live — World A confirmed, all 5 tracks now known (only 1 was known before), pre-built work confirmed required, solo application, Track 01 has confirmed Razorpay test-mode API access. See `docs/decisions/0001-gate-0-resolved.md`. **Problem bank (20 candidates) scored against the 5 real tracks** — Track 01 is the strongest fit for the existing top cluster (#1/#3/#2/#5), #9 is the biggest mover (VALIDATE → matches Track 04's own example direction). See `docs/decisions/0002-problem-bank-scored-against-real-tracks.md`. **Cut to 3 (Gate 1 written half, done a day early)**: #1/#3/#5/#2 merged into one Track 01 system (agent trust/safety/audit layer), plus #8 (Track 02, vendor-invoice fraud) and #9 (Track 04, settlement forensics) as genuinely different hedges. Three one-pagers written. See `docs/decisions/0003-cut-to-three.md`. Landscape sheet still not finished; 5 outreach messages still needed before Day 4. |
