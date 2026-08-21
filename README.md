@@ -5,17 +5,17 @@ payments — a submission for the Razorpay AI Buildathon, Track 01 (AI Growth
 & Agentic Commerce), and supporting evidence for a parallel Founder's Office
 conversation at Razorpay.
 
-**Status: vertical slice running (2026-08-21).** Problem locked at Gate 2
-after real-world validation across five conversations
-(`docs/decisions/0004-problem-locked-track-01.md`); the Day 6–7 vertical
-slice runs end to end (`docs/decisions/0005-vertical-slice-architecture.md`).
-No safety gate yet — that's Day 8. No new problem after the lock —
-`CLAUDE.md` rule 1.
+**Status: safety gate live, pipeline is preventive (2026-08-21).** Problem
+locked at Gate 2 after real-world validation across five conversations
+(`docs/decisions/0004-problem-locked-track-01.md`); vertical slice built
+Day 6–7 (`docs/decisions/0005-vertical-slice-architecture.md`), safety layer
+added Day 8 (`docs/decisions/0006-safety-layer.md`). No new problem after
+the lock — `CLAUDE.md` rule 1.
 
 ```bash
 pip install -r requirements.txt   # or: make setup
-make demo                         # attack scenario: payout executes, then gets caught
-make test                         # 6 passing tests
+make demo                         # attack scenario: now blocked before execution
+make test                         # 14 passing tests
 ```
 
 ## The thesis, in one paragraph
@@ -48,8 +48,8 @@ docs/
 submission/             — everything that ships to Razorpay (one-pagers, demo
                             script, final narrative, parked founder email)
 outreach/               — real validation conversations only, never synthetic
-src/                    — Warden itself. Vertical slice running; safety/ is
-                            the one layer still empty (Day 8)
+src/                    — Warden itself. Vertical slice + safety gate live;
+                            verification/audit still thin, deepen Days 9-10
 eval/                   — adversarial evaluation harness
 .claude/commands/       — Claude Code workflow commands (see below)
 ```

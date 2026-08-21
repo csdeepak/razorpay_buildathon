@@ -1,6 +1,6 @@
 # safety
 
-**Not built yet — Day 8.** This is the layer that turns the pipeline from
-detective (catches a bad payout after it executes) into preventive (blocks
-it before `tool/razorpay_mock.py` is ever called). See ../README.md for the
-known gap this closes, and `docs/progress-tracker.md` for the Day 8 plan.
+`policy_gateway.py` — `PolicyGateway`, four rules (category, payee_scope,
+spend_cap, velocity), runs before `act` so it's preventive, not detective.
+See ../README.md for depth allocation and status, and
+`docs/decisions/0006-safety-layer.md` for why it's built this way.

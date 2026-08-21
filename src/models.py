@@ -1,10 +1,12 @@
-"""Shared data models for the Warden pipeline (reason -> decide -> act(mocked) -> verify -> audit).
+"""Shared data models for the Warden pipeline: reason -> decide -> safety
+gate -> act(mocked) -> verify -> audit.
 
-Vertical-slice scope note: this stage order matches
-docs/context/Razorpay_16_Day_Battle_Plan.md's Day 6-7 line literally --
-verify runs AFTER act, not before it. There is no pre-execution safety gate
-yet; that's Day 8's job (docs/progress-tracker.md). Today's pipeline is a
-detective control, not a preventive one.
+As of the Day 8 safety layer (docs/decisions/0006-safety-layer.md), the
+gate sits BEFORE act -- this supersedes the Day 6-7 vertical slice's literal
+stage order (docs/decisions/0005-vertical-slice-architecture.md), which had
+verify running after act with no preventive check at all. That ADR is left
+as-is per this repo's own rule against editing old decisions; this docstring
+describes current behavior.
 """
 
 from __future__ import annotations
@@ -41,6 +43,28 @@ class ProposedAction(BaseModel):
     amount: float
     destination_account: str
     rationale: str = Field(description="The agent's own stated reasoning, kept verbatim for audit.")
+
+
+class MerchantPolicy(BaseModel):
+    """Static safety-layer configuration -- deliberately holds no
+    order-specific data (payee scope for refunds is derived dynamically
+    from the OrderRecord in the gateway itself, see src/safety/policy_gateway.py)."""
+
+    max_single_amount: float
+    max_daily_amount: float
+    max_daily_count: int
+    allowed_categories: list[str] = Field(default_factory=lambda: ["refund"])
+
+
+class PolicyVerdict(BaseModel):
+    """The safety gate's pre-execution decision. rule_fired names exactly
+    which rule blocked the action, or is None if it passed -- the demo
+    script requires showing which specific rule fired, not a generic
+    'blocked' toast."""
+
+    allowed: bool
+    rule_fired: str | None
+    reason: str
 
 
 class ExecutionResult(BaseModel):
