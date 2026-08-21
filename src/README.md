@@ -1,26 +1,48 @@
-# Source
+# Source — Warden
 
-**Stays empty until Day 6** (the vertical-slice build begins after the Day 5
-problem lock — see `docs/progress-tracker.md`). Do not pre-build here before
-the lock; that's exactly the "research is your comfort zone" trap
-`docs/context/Razorpay_16_Day_Battle_Plan.md` §1 warns against.
+The locked problem (`docs/decisions/0004-problem-locked-track-01.md`): an
+agent trust/safety/audit layer for agentic payments. Vertical slice built
+Day 6–7; architecture rationale in
+`docs/decisions/0005-vertical-slice-architecture.md`.
 
-Layer depth allocation, locked in the battle plan (§4) and applying to all
-three candidate problems, so it's safe to scaffold before the specific
-problem is:
+## Run it
 
-| Layer | Depth | Folder |
-|---|---|---|
-| Agent (reason/plan) | thin | `agent/` |
-| Tool (actions) | thin | `tool/` |
-| Safety (permissions/limits) | **deep** | `safety/` |
-| Verification (don't trust the model) | **deep** | `verification/` |
-| Memory (state) | thin | `memory/` |
-| Audit (action log) | **deep** | `audit/` |
+```bash
+pip install -r requirements.txt   # or: make setup
+make demo                         # the attack scenario -- money moves, then gets caught
+make demo-benign                  # the clean scenario, for contrast
+make test                         # pytest, 6 tests
+```
+
+No API key needed. `agent/reasoner.py`'s `LLMReasoner` activates
+automatically if `ANTHROPIC_API_KEY` is set; otherwise `NaiveReasoner` runs,
+and it's a real (if simple) vulnerability, not a stub — see its docstring.
+
+## Layer depth allocation
+
+Locked in `docs/context/Razorpay_16_Day_Battle_Plan.md` §4:
+
+| Layer | Depth | Folder | Status |
+|---|---|---|---|
+| Agent (reason/decide) | thin | `agent/` | Vertical slice done |
+| Tool (act, mocked) | thin | `tool/` | Vertical slice done |
+| Memory (order lookup) | thin | `memory/` | Vertical slice done |
+| Verification (don't trust the model) | **deep** | `verification/` | Thin first pass done, deepens Day 9 |
+| Audit (action log) | **deep** | `audit/` | Thin first pass done (hash chain), deepens Day 10 |
+| Safety (permissions/limits) | **deep** | `safety/` | **Not built yet — Day 8** |
 
 The four deep layers are one story: an agent can act on money, and you can
 prove what it was allowed to do, what it did, and that the guardrails hold
-under attack. Stack/framework choice is itself a decision — when made,
-record it as an ADR in `docs/decisions/` and update this file's setup
-instructions (this README should end up good enough that a stranger can run
-the system, per `submission/narrative.md`'s Day 15 rule).
+under attack.
+
+## The known gap, on purpose
+
+Today's pipeline order is `reason -> decide -> act(mocked) -> verify ->
+audit`, matching the battle plan's literal Day 6–7 line. There is no
+pre-execution gate yet — on the attack scenario, the mocked payout to the
+attacker's account executes, and `verify` only catches it afterward
+(`make demo` prints this explicitly). That gap is Day 8's job: add the
+safety gate in `safety/`, positioned before `act`, turning this from a
+detective control into a preventive one. See
+`docs/decisions/0005-vertical-slice-architecture.md` for why this wasn't
+built early.

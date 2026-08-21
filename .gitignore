@@ -31,4 +31,5 @@ Thumbs.db
 
 # Eval / logs — raw run output, not source
 eval/runs/
+var/
 *.log

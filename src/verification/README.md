@@ -1,3 +1,5 @@
 # verification
 
-Empty until Day 6+. See ../README.md for the depth allocation and rules.
+`verifier.py` — `Verifier`, a thin first pass (destination must match the
+order's original payment instrument). Deepens Day 9 — this is the moat, see
+../README.md for depth allocation and status.
