@@ -9,7 +9,8 @@ mindmap
   root((razorpay_buildathon))
     docs
       context["context/ — frozen research
-      (read-only, never edit)"]
+      (.md files read-only; .xlsx is a
+      living scoring tool, edit freely)"]
         transfer.md
         Research_Phase1.md
         16_Day_Battle_Plan.md
@@ -45,7 +46,9 @@ mindmap
 ## Routing logic — "where does X go?"
 
 - **"I just decided/invented/designed something"** → `docs/decisions/`, via
-  `/new-decision`. Never edit `docs/context/` to reflect a new choice.
+  `/new-decision`. Never edit the three frozen `.md` files in `docs/context/`
+  to reflect a new choice — the scoring `.xlsx` is the one exception, edit it
+  directly, and log anything thesis-changing as an ADR too.
 - **"I learned a new fact about Razorpay/the market"** → if it changes the
   problem thesis, that's a decision (`docs/decisions/`); if it's a passive
   fact worth keeping, it belongs in a future research-refresh doc under

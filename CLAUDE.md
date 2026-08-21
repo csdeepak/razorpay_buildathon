@@ -46,7 +46,7 @@ See `docs/REPO_MAP.md` for the full navigable mind map. Short version:
 
 | Path | What lives here | When it's touched |
 |---|---|---|
-| `docs/context/` | Frozen historical research (transfer note, Phase 1 research, battle plan, scoring spreadsheet) | Read-only. Never edit — supersede via a new ADR instead. |
+| `docs/context/` | Frozen historical research (transfer note, Phase 1 research, battle plan) **plus** the scoring spreadsheet, which is a living working tool | The three `.md` files are read-only — supersede via a new ADR instead. The `.xlsx` is meant to be edited directly (its own header says so); log anything that changes the problem thesis as an ADR too. |
 | `docs/decisions/` | ADRs — one file per invented thing | Every time something new is decided |
 | `docs/gate-0-tracker.md` | The 6 unresolved Buildathon-mechanics questions blocking everything | Update the moment Deepak opens the real buildathon page |
 | `docs/progress-tracker.md` | Day-by-day % completion against the 16-day plan | Daily |
