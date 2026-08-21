@@ -1,13 +1,15 @@
-# razorpay_buildathon
+# razorpay_buildathon — Warden
 
-Building an agent trust/permissioning/verification/audit layer for
-agentic payments — a submission for the Razorpay AI Buildathon
-("Build. Show. Get hired.") and supporting evidence for a parallel
-Founder's Office conversation at Razorpay.
+Warden (working name) is an agent trust/safety/audit layer for agentic
+payments — a submission for the Razorpay AI Buildathon, Track 01 (AI Growth
+& Agentic Commerce), and supporting evidence for a parallel Founder's Office
+conversation at Razorpay.
 
-**Status: pre-lock.** The problem is not yet chosen. Three candidates are
-scored and under validation (see below) — expect this README to be rewritten
-once `docs/decisions/` has a problem-lock ADR.
+**Status: LOCKED (2026-08-21).** Problem locked at Gate 2 after real-world
+validation across five conversations. See
+`docs/decisions/0004-problem-locked-track-01.md` for the full record and
+`submission/one-pagers/01-agent-trust-safety-audit-layer.md` for the spec.
+No new problem after this — `CLAUDE.md` rule 1.
 
 ## The thesis, in one paragraph
 
@@ -18,24 +20,29 @@ publicly staked out "the agent never sees" the payment credential as the
 trust boundary. India's regulators (CERT-In, NPCI) are simultaneously trying
 to specify mandatory human-in-the-loop controls and agent authorization for
 UPI, and neither Razorpay nor the regulators have published a working
-mechanism yet. This project builds the enforcement/verification/audit layer
-that boundary requires, protocol-agnostic, demoed by catching a real attack
-rather than showing a policy screen. Full sourcing in `docs/context/`.
+mechanism yet. Warden builds the enforcement/verification/audit layer that
+boundary requires: an agent's payment gets reasoned about, gated against
+policy, executed on Razorpay test-mode APIs, and written to a tamper-evident
+audit trail — demoed by catching a real prompt-injection attack rather than
+showing a policy screen. Full sourcing in `docs/context/`; validation
+evidence in `outreach/`.
 
 ## Repo structure
 
 ```
 CLAUDE.md              — operating manual for AI-assisted sessions in this repo
 docs/
-  context/              — frozen historical research (read-only)
+  context/              — frozen research (.md, read-only) + the scoring
+                            spreadsheet (.xlsx, a living tool, edit freely)
   decisions/             — ADRs: one file per invented/locked decision
-  gate-0-tracker.md       — the 6 buildathon-mechanics questions blocking everything
+  gate-0-tracker.md       — the 6 buildathon-mechanics questions (resolved)
   progress-tracker.md      — daily % complete vs. the 16-day plan
   REPO_MAP.md              — full navigable mind map
 submission/             — everything that ships to Razorpay (one-pagers, demo
                             script, final narrative, parked founder email)
 outreach/               — real validation conversations only, never synthetic
-src/                    — the system itself, empty until the problem locks
+src/                    — Warden itself. Problem is locked; empty until the
+                            Day 6-7 vertical slice
 eval/                   — adversarial evaluation harness
 .claude/commands/       — Claude Code workflow commands (see below)
 ```
