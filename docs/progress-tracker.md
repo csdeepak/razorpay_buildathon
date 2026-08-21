@@ -18,9 +18,9 @@ Plan baseline: Day 1 = Thu 20 Aug 2026. Deadline confirmed as 5 September
 - **Gate 1 (end Day 3): written half done a day early.** Three problems, each with a written one-pager, in `submission/one-pagers/`. Outreach messages still needed before Day 4 conversations can start.
 
 ### Phase 2 — Validate + lock · Days 4–5 · target 25%
-- [ ] Day 4 (Sun 23): 3–5 real conversations logged in `outreach/`
-- [ ] Day 5 (Mon 24): Problem locked (ADR in `docs/decisions/`); demo script written in `submission/demo-script.md` *before any code*
-- **Gate 2 (end Day 5):** hard lock. No reopening after this.
+- [x] Day 4 work (done early, Fri 21): 5 real conversations logged in `outreach/01-day4-round-five-conversations.md` — Track 01 strongest, especially among the two most judge-relevant respondents
+- [ ] Day 5: Problem locked (ADR in `docs/decisions/`); demo script written in `submission/demo-script.md` *before any code*
+- **Gate 2 (end Day 5):** hard lock. No reopening after this. **Not yet pulled — awaiting Deepak's go-ahead**, see the open question logged against this gate.
 
 ### Phase 3 — Build the spine · Days 6–10 · target 60%
 - [ ] Day 6–7: Vertical slice runs end-to-end (reason → decide → act(mocked) → verify → audit)
