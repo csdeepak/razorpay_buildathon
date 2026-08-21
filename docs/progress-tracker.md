@@ -5,14 +5,14 @@ Daily percentage-complete tracking against
 slipping gate means cut scope, not extend the phase. Update this every day
 worked, even if the update is "0% today, here's why."
 
-Plan baseline: Day 1 = Thu 20 Aug 2026. Real deadline unconfirmed — see
-`docs/gate-0-tracker.md`.
+Plan baseline: Day 1 = Thu 20 Aug 2026. Deadline confirmed as 5 September
+2026 (no time-of-day/timezone published) — see `docs/gate-0-tracker.md`.
 
 ## Phase checklist
 
 ### Phase 1 — Landscape + problem hunt · Days 1–3 · target 15%
-- [ ] Day 1 (Thu 20): Gate 0 resolved + landscape sheet ~50%
-- [ ] Day 2 (Fri 21): Landscape finished; problem bank scored (20 rows)
+- [x] Day 1 (Thu 20): Gate 0 resolved (done Day 2, see below) + landscape sheet ~50%
+- [ ] Day 2 (Fri 21): Landscape finished; problem bank scored (20 rows) — now against the 5 real named tracks, see `docs/decisions/0001-gate-0-resolved.md`
 - [ ] Day 3 (Sat 22): Cut to 3; one-pagers written; 5 outreach messages sent
 - **Gate 1 (end Day 3):** three problems, each with a written one-pager in `submission/one-pagers/`.
 
@@ -44,4 +44,4 @@ Plan baseline: Day 1 = Thu 20 Aug 2026. Real deadline unconfirmed — see
 | Date | Day | % complete | Notes |
 |---|---|---|---|
 | 2026-08-20 | 1 | — | Research phase 1, battle plan, and problem-scoring spreadsheet produced. Gate 0 not yet resolved. |
-| 2026-08-21 | 2 | — | Repo restructured into `razorpay_buildathon` — docs, decisions log, gate/progress trackers, submission scaffold, Claude Code workflow commands set up. No landscape/problem-bank work logged yet today. |
+| 2026-08-21 | 2 | — | Repo restructured into `razorpay_buildathon` — docs, decisions log, gate/progress trackers, submission scaffold, Claude Code workflow commands set up. **Gate 0 resolved**: opened razorpay.com/buildathon/ live — World A confirmed, all 5 tracks now known (only 1 was known before), pre-built work confirmed required, solo application, Track 01 has confirmed Razorpay test-mode API access. See `docs/decisions/0001-gate-0-resolved.md`. Landscape/problem-bank scoring against the real tracks not yet started. |
