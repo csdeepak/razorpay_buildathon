@@ -52,11 +52,14 @@ See `docs/REPO_MAP.md` for the full navigable mind map. Short version:
 | `docs/progress-tracker.md` | Day-by-day % completion against the 16-day plan | Daily |
 | `submission/` | Everything that ships to Razorpay: one-pagers, demo script, final narrative, parked founder email | Days 3, 5, 14–15 |
 | `outreach/` | Real validation conversation notes only — never synthetic | Day 4 |
-| `src/` | The actual system, once the problem is locked | From Day 6 |
-| `eval/` | Adversarial evaluation harness | Day 11+ |
+| `src/` | Warden itself — locked, built: agent/tool/memory/safety/verification/audit | Built Days 6–9 equivalent |
+| `eval/` | Adversarial evaluation harness + corpus, multi-model results in `docs/eval-findings.md` | Built; $10.27 of $74 spent |
 
 ## Current status
 
-Check `docs/gate-0-tracker.md` and `docs/progress-tracker.md` for the live
-state before assuming where things stand — do not infer status from memory of
-a past session.
+**Read `transfer.md` (repo root) first** — it's the running handoff note for
+this build session: every phase completed, exact file map, budget remaining,
+and the prioritized next actions. Check `docs/gate-0-tracker.md` and
+`docs/progress-tracker.md` for the live gate state, but do not infer overall
+status from memory of a past session — `transfer.md` is kept current for
+exactly that reason.
