@@ -5,7 +5,7 @@ and Claude implements approved asset IDs rather than inventing image URLs.
 
 ---
 
-## Status: five storyboard panels delivered ✅
+## Status: five panels generated, two used ✅
 
 Generated 2026-08-22 from the prompts in `IMAGE-PROMPTS.md`, all five accepted
 on the first or second attempt. Stored in `submission/demo/img/` as WebP and
@@ -13,21 +13,37 @@ inlined as data URIs at build time.
 
 | File | Panel | Slot | Size |
 |---|---|---|---:|
-| `p1-asks.webp` | 1 — looking at the screen | Act 0 | 49 KB |
-| `p2-note.webp` | 2 — the forged record | WIDEN 1 + Act IV strip | 22 KB |
-| `p3-block.webp` | 3 — diverted and stopped | WIDEN 1 strip | 4 KB |
-| — | 4 — **empty frame** | Act IV strip | 0 (CSS) |
-| `p5-waits.webp` | 5 — closed laptop, waiting | Act IV strip | 48 KB |
-| `p6-audit.webp` | 6 — the sweep | **generated, not used** | 7 KB |
+| `p1-asks.webp` | 1 — looking at the screen | **Act 0** | 49 KB |
+| `p2-note.webp` | 2 — the forged record | generated, not used | 22 KB |
+| `p3-block.webp` | 3 — diverted and stopped | generated, not used | 4 KB |
+| — | 4 — **empty frame** | **Act IV strip** | 0 (CSS) |
+| `p5-waits.webp` | 5 — closed laptop, waiting | **Act IV strip** | 48 KB |
+| `p6-audit.webp` | 6 — the sweep | generated, not used | 7 KB |
 
-**Panel 6 is generated but deliberately unused.** Act IV's audit keeps the
-live CSS sweep instead. Two reasons: the sweep is a control *doing* something
-and a static picture of one is weaker, and in practice the image also broke
-the beat — `has-fig` hides the spine rail, so the illustrated version left the
-sweep rising over nothing. The file is kept in case a still is ever wanted for
-the deck or the pitch video.
+### Three of six were cut, and the page is better for it
 
-**The bookend worked.** Panels 1 and 5 are the same shot twice — same bench,
+Panels 2, 3 and 6 were generated, wired in, seen in place, and removed on
+Deepak's call. The pattern behind all three cuts is the same and worth
+stating, because it generalises: **each illustrated a beat the page was
+already animating live.** Panel 3 drew a token diverting and being stopped
+next to a spine that does exactly that in motion; Panel 6 drew a sweep beside
+a live sweep; Panel 2 drew a record next to the poisoned note rendered as
+real text. A still picture of a thing happening argues less well than the
+thing happening.
+
+Panel 6 also exposed a bug: `has-fig` hides the spine rail, so the
+illustrated version left the CSS sweep rising over nothing.
+
+**What survived is what the animation genuinely could not do** — the two
+bench panels. A person is not a state machine and the spine cannot draw her.
+That is the honest test for any future panel: if the page can animate it, it
+should, and the illustration should be cut.
+
+All six files stay in `submission/demo/img/` in case stills are wanted for
+the deck or the pitch video. Only `p1` and `p5` are inlined at build time;
+the page dropped 269 KB → 193 KB.
+
+**The bookend is now the whole storyboard.** Panels 1 and 5 are the same shot twice — same bench,
 tree, paving, camera and figure — differing only in that her laptop is open
 and she's looking down at it in Panel 1, and closed with her hands resting on
 it in Panel 5. The closed laptop was the stronger of the two options

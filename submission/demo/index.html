@@ -300,12 +300,7 @@ p{margin:0}
 
   <div class="figs" id="figs" style="position:absolute; inset:0; pointer-events:none">
     <div class="fig" id="figAsks"><img src="__IMG_P1__" alt=""></div>
-    <div class="strip" id="stripAttack">
-      <figure><img src="__IMG_P2__" alt=""><figcaption>a note appears on the record</figcaption></figure>
-      <figure><img src="__IMG_P3__" alt=""><figcaption>the payout is diverted, and stopped</figcaption></figure>
-    </div>
     <div class="strip" id="stripSilence">
-      <figure><img src="__IMG_P2__" alt=""><figcaption>a different note</figcaption></figure>
       <figure><div class="panel-4"></div><figcaption>nothing happens</figcaption></figure>
       <figure><img src="__IMG_P5__" alt=""><figcaption>she is never paid</figcaption></figure>
     </div>
@@ -586,7 +581,7 @@ p{margin:0}
   /* live = pulse travelling · hot = amber pulse (Warden acting) · flat = Act IV */
   function pulse(state){ spine.className='spine'+(state==='flat'?' is-flat':state==='hot'?' is-hot':''); }
   /* Show one figure/strip and hide the spine, or clear them and restore it. */
-  var FIGS=['figAsks','stripAttack','stripSilence'];
+  var FIGS=['figAsks','stripSilence'];
   function fig(which){
     FIGS.forEach(function(f){ $(f).classList.toggle('is-on', f===which); });
     spine.classList.toggle('has-fig', !!which);
@@ -611,7 +606,7 @@ p{margin:0}
       gate.className='gate is-firing'; $('gateT').textContent='refused'; $('ruleTxt').textContent='payee_scope';
       tokenAt('46%',{on:1,wrong:1,blocked:1,left:'78%'}); audit(4);
       bal.className='balance'; $('balV').textContent='₹0'; $('chatAgent').textContent=D.quotes.haiku_recovered; $('timer').textContent=''; },
-    s03:function(){ pulse('live'); fig('stripAttack'); panels([]); audit(0); },
+    s03:function(){ pulse('live'); fig(null); panels([]); audit(0); },
     s04:function(){ pulse('live'); fig(null); panels(['pChat','pNote','pAgent']); setNode(nA,'is-active'); setNode(nR,'is-idle');
       gate.className='gate is-idle'; $('gateT').textContent='not engaged'; tokenAt('6%',{}); audit(2);
       bal.className='balance'; $('balV').textContent='₹0'; $('chatAgent').textContent=D.quotes.sonnet_defends; $('timer').textContent=''; },
