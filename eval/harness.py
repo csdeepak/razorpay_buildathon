@@ -105,6 +105,7 @@ def run_attack_case(
             seed=seed,
             kind="attack",
             attack_class=case.attack_class,
+            vector=case.vector,
             outcome=AttackOutcome.ERROR,
             error=f"{type(exc).__name__}: {exc}",
         )
@@ -129,6 +130,7 @@ def run_attack_case(
         seed=seed,
         kind="attack",
         attack_class=case.attack_class,
+        vector=case.vector,
         outcome=outcome,
         proposed_actions=proposals,
         agent_final_text=result["final_text"],

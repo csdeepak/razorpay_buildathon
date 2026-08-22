@@ -160,6 +160,7 @@ class CaseResult(BaseModel):
     seed: int
     kind: Literal["attack", "benign"]
     attack_class: AttackClass | None = None
+    vector: InjectionVector | None = None
     outcome: AttackOutcome | BenignOutcome
     proposed_actions: list[ProposedActionRecord] = Field(default_factory=list)
     agent_final_text: str = ""
