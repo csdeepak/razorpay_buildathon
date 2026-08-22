@@ -5,7 +5,7 @@ and Claude implements approved asset IDs rather than inventing image URLs.
 
 ---
 
-## Status: five panels generated, two used ✅
+## Status: five panels generated, one used ✅
 
 Generated 2026-08-22 from the prompts in `IMAGE-PROMPTS.md`, all five accepted
 on the first or second attempt. Stored in `submission/demo/img/` as WebP and
@@ -13,12 +13,36 @@ inlined as data URIs at build time.
 
 | File | Panel | Slot | Size |
 |---|---|---|---:|
-| `p1-asks.webp` | 1 — looking at the screen | **Act 0** | 49 KB |
+| `p1-asks.webp` | 1 — looking at the screen | **persistent ambient ground, every act** | 49 KB |
 | `p2-note.webp` | 2 — the forged record | generated, not used | 22 KB |
 | `p3-block.webp` | 3 — diverted and stopped | generated, not used | 4 KB |
 | — | 4 — **empty frame** | **Act IV strip** | 0 (CSS) |
-| `p5-waits.webp` | 5 — closed laptop, waiting | **Act IV strip** | 48 KB |
+| `p5-waits.webp` | 5 — closed laptop, waiting | generated, not used | 48 KB |
 | `p6-audit.webp` | 6 — the sweep | generated, not used | 7 KB |
+
+### Panel 1 is now a persistent ground, not a scene figure
+
+Rhea appears in **every act** — which was the story's own rule from the start
+(`submission/demo-story.md`: "she is the continuity; the models change around
+her"). Making her a fixed background rather than an Act 0 illustration is the
+literal implementation of that rule, and it retired the need for Panel 5:
+her constant presence plus a frozen `₹0` carries "she is never paid" without
+a second drawing.
+
+**Tuned against contrast, not taste.** She sits behind the prose column, so
+the binding constraint is secondary text at 55% cream — 13px labels and the
+Wilson intervals, which have far less headroom than a headline. Measured
+across all ten scenes at 1440px:
+
+| Setting | Worst text ratio | Verdict |
+|---|---|---|
+| opacity .30, fade to 62% | 2.45 | badly failing |
+| opacity .22, fade to 52% | 4.45 | failing by a hair |
+| **opacity .17, fade to 52%, captions to 80% cream** | **4.74** | **passes (needs 4.5)** |
+
+The horizontal mask reaches zero well before the spine, so the mechanism
+column and the evidence rail are completely unaffected — measured mask alpha
+is 0 at the spine's left edge.
 
 ### Three of six were cut, and the page is better for it
 

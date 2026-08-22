@@ -263,10 +263,10 @@ def main() -> None:
         # palette quantisation took these from 5.1 MB to ~130 KB.
         img_dir = Path("submission/demo/img")
         missing = []
-        # Only p1 and p5 are used -- the bookend pair. p2, p3 and p6 are
+        # Only p1 is used, as a persistent ambient ground. p2, p3, p5 and p6 are
         # generated but intentionally unused; the live spine and CSS sweep
         # carry those beats better than a static picture of them does.
-        for slot in ("p1-asks", "p5-waits"):
+        for slot in ("p1-asks",):
             token = "__IMG_" + slot.split("-")[0].upper() + "__"
             f = img_dir / (slot + ".webp")
             if f.exists():

@@ -160,9 +160,28 @@ p{margin:0}
 /* Timer — the metronome that makes the silence worse */
 .timer{font-family:var(--mono); font-size:12px; color:var(--cream-55); letter-spacing:.14em}
 
-/* Storyboard panels. mix-blend-mode:screen drops the generator's black
-   background entirely, so the linework floats on the page's own ground and we
-   never have to match a background hex. */
+/* Rhea is present in EVERY act -- the story's own rule -- so Panel 1 is a
+   persistent ambient ground rather than a scene figure. mix-blend-mode:screen
+   drops the generator's black background entirely, so the linework floats on
+   the page's own ground and no background hex ever has to match.
+   The horizontal mask fades her out well before the prose column starts, so
+   she reads as atmosphere and never as clutter behind text. */
+.bg-figure{
+  position:fixed; left:0; bottom:0; z-index:0; pointer-events:none;
+  width:min(44vw,620px); aspect-ratio:16/9;
+  background-image:url("__IMG_P1__");
+  background-size:contain; background-repeat:no-repeat; background-position:left bottom;
+  mix-blend-mode:screen; opacity:.17;
+  /* Fades to nothing well before the spine, and the figure is sized so her
+     linework sits low -- beneath the prose block rather than behind it.
+     Secondary text at 55% cream is the binding constraint here, not the
+     headline: it needs 4.5:1 and has far less to give. */
+  -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,.7) 18%, rgba(0,0,0,0) 52%);
+  mask-image:linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,.7) 18%, rgba(0,0,0,0) 52%);
+}
+@media (max-width:760px){ .bg-figure{opacity:.12; width:78vw} }
+
+/* Storyboard panels. */
 .fig{position:absolute; inset:0; display:none; align-items:center; justify-content:center}
 .fig.is-on{display:flex}
 .fig img{width:100%; height:auto; mix-blend-mode:screen; opacity:0;
@@ -173,8 +192,8 @@ p{margin:0}
 .strip.is-on{display:flex}
 .strip figure{margin:0; position:relative}
 .strip img{width:100%; height:auto; display:block; mix-blend-mode:screen}
-.strip figcaption{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--cream-55); margin-top:5px}
+.strip figcaption{font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--cream-80); margin-top:6px}
 /* Panel 4. Deliberately empty: in a strip where every frame has carried an
    event, an empty frame says something is wrong before any word does. */
 .panel-4{aspect-ratio:16/9; border:1px solid var(--cream-30); position:relative;
@@ -282,6 +301,8 @@ p{margin:0}
 }
 </style>
 
+<div class="bg-figure" aria-hidden="true"></div>
+
 <div class="acts" id="acts" aria-hidden="true"></div>
 
 <!-- Fixed visual stage: progressive enhancement over the prose below. -->
@@ -299,10 +320,8 @@ p{margin:0}
   </div>
 
   <div class="figs" id="figs" style="position:absolute; inset:0; pointer-events:none">
-    <div class="fig" id="figAsks"><img src="__IMG_P1__" alt=""></div>
-    <div class="strip" id="stripSilence">
-      <figure><div class="panel-4"></div><figcaption>nothing happens</figcaption></figure>
-      <figure><img src="__IMG_P5__" alt=""><figcaption>she is never paid</figcaption></figure>
+    <div class="strip" id="figEmpty">
+      <figure><div class="panel-4"></div><figcaption>nothing happens · she is never paid</figcaption></figure>
     </div>
   </div>
 
@@ -581,7 +600,7 @@ p{margin:0}
   /* live = pulse travelling · hot = amber pulse (Warden acting) · flat = Act IV */
   function pulse(state){ spine.className='spine'+(state==='flat'?' is-flat':state==='hot'?' is-hot':''); }
   /* Show one figure/strip and hide the spine, or clear them and restore it. */
-  var FIGS=['figAsks','stripSilence'];
+  var FIGS=['figEmpty'];
   function fig(which){
     FIGS.forEach(function(f){ $(f).classList.toggle('is-on', f===which); });
     spine.classList.toggle('has-fig', !!which);
@@ -597,7 +616,7 @@ p{margin:0}
     tok.style.top=top; tok.style.left=opts.left||'50%';
   }
   var SC={
-    s00:function(){ pulse('live'); fig('figAsks'); panels(['pChat']); setNode(nA,'is-idle'); setNode(nR,'is-idle');
+    s00:function(){ pulse('live'); fig(null); panels(['pChat']); setNode(nA,'is-idle'); setNode(nR,'is-idle');
       gate.className='gate is-idle'; tokenAt('6%',{}); audit(0); bal.className='balance'; $('balV').textContent='₹0'; $('timer').textContent=''; },
     s01:function(){ pulse('live'); fig(null); panels(['pChat']); setNode(nA,'is-active'); setNode(nR,'is-active');
       gate.className='gate is-open'; $('gateT').textContent='allowed'; tokenAt('90%',{on:1}); audit(3);
@@ -613,7 +632,7 @@ p{margin:0}
     s05:function(){ pulse('live'); fig(null); panels([]); audit(0); },
     /* ABSENCE. Nothing moves. No spinner, no shimmer. The dead spine is the content. */
     /* FLATLINE. The pulse the reader has watched for four acts simply stops. */
-    s06:function(){ pulse('flat'); fig('stripSilence'); panels(['pChat','pNote','pAgent','pMerch']); setNode(nA,'is-active'); setNode(nR,'is-idle');
+    s06:function(){ pulse('flat'); fig('figEmpty'); panels(['pChat','pNote','pAgent','pMerch']); setNode(nA,'is-active'); setNode(nR,'is-idle');
       gate.className='gate is-idle'; $('gateT').textContent='nothing proposed'; tokenAt('6%',{}); audit(0);
       $('noteTxt').textContent=D.poisoned_notes.denial; $('chatAgent').textContent=D.quotes.sonnet_denial;
       bal.className='balance is-frozen'; $('balV').textContent='₹0'; },
