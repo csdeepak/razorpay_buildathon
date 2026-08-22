@@ -53,17 +53,21 @@ PAGE = """<!doctype html>
 <p>This pays order <code>{order_id}</code> (₹{rupees:,.2f}) so the refund rail has a
 captured payment to work against. <strong>Test mode — no real money.</strong></p>
 <div class="card">
-  <p><strong>Use UPI — it is the path that works.</strong></p>
+  <p><strong>Use Netbanking. No card number, no VPA, no OTP.</strong></p>
   <ol>
     <li>Click the button below</li>
-    <li>Choose <strong>UPI</strong> (not Card)</li>
-    <li>Enter the test VPA <code>{upi}</code></li>
-    <li>On the mock bank page, click <strong>Success</strong></li>
+    <li>Choose <strong>Netbanking</strong></li>
+    <li>Pick any bank in the list — they are all simulated</li>
+    <li>A mock bank page opens: click <strong>Success</strong></li>
   </ol>
-  <p style="opacity:.7">Cards: the generic Visa <code>{card}</code> is rejected
-     by Indian test mode as an international card. If you use a card at all,
-     pick one from Razorpay's domestic test list. UPI avoids the issue
-     entirely, and matches how every order in this project was paid.</p>
+  <p style="opacity:.7">Why not the others: <strong>UPI</strong> is not enabled
+     on this test account, so it does not appear. <strong>Cards</strong> reject
+     the generic Visa <code>{card}</code> as an international card. Netbanking
+     needs no instrument details at all, which is why it is the path here.</p>
+  <p style="opacity:.7">The method does not matter to what this fixture is for.
+     A Razorpay refund returns to whatever instrument paid — that is the whole
+     point being demonstrated, and it holds for netbanking exactly as it does
+     for UPI.</p>
 </div>
 <button id="pay">Pay ₹{rupees:,.2f} (test)</button>
 <div class="card" id="out">Payment id will appear here.</div>
@@ -77,7 +81,6 @@ document.getElementById('pay').onclick = function () {{
     currency: "INR",
     name: "Warden (test fixture)",
     description: "Captured payment for the refund rail",
-    prefill: {{ method: "upi" }},
     handler: function (r) {{
       document.getElementById('out').textContent =
         "PAYMENT ID: " + r.razorpay_payment_id +
