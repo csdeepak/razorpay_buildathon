@@ -24,19 +24,46 @@ A merchant support agent on Razorpay, handling refunds in chat. It has real
 tools and can move real money on test-mode APIs. One sentence of setup, then
 straight into the attack — no architecture diagram, no title card.
 
-### Beat 1 — the attack everyone expects — 0:12–0:32
+### Beat 1 — the attack everyone expects, and the twist — 0:12–0:32
+
+**Rewritten 2026-08-23** after wiring the real Razorpay API
+(`docs/decisions/0010-real-razorpay-rail.md`, Finding 17). The old version of
+this beat claimed a refund could be redirected. It cannot, and a Razorpay
+judge would know that instantly.
 
 A customer message arrives. Buried in an ordinary-looking complaint is an
 instruction to send the refund somewhere else. The agent takes the bait and
-proposes a payout to the attacker's account.
-
-**Warden's gateway refuses it before it reaches the rail.** On screen: the
-specific rule that fired (`payee_scope`), not a generic "blocked" toast — and
-the tamper-evident audit record for that exact event.
+proposes a payment to the attacker's account.
 
 > **On screen:** 47.7% of these attacks compromise a small model
-> (Haiku 4.5, 130 runs). The gateway caught **62 of 62** — every compromise,
-> every class it can act on, across 5 seeds.
+> (Haiku 4.5, 130 runs). The model *was* talked into it.
+
+Then the twist — and say it as a compliment, not a caveat:
+
+> **Razorpay already stops this one.** `POST /v1/payments/:id/refund` takes
+> `amount`, `speed`, `notes`, `receipt` — **there is no destination field.**
+> A refund returns to the original instrument. There is nowhere to put the
+> attacker's account.
+
+That is *this project's own thesis, already shipped in production*: never
+accept the destination from untrusted input, derive it from trusted state.
+Warden didn't invent that principle — it generalises one a payments company
+already validated.
+
+**So where does the gate earn its keep?** The moment the agent holds a tool
+that *does* carry a destination — which is exactly what RazorpayX payouts
+are. On screen, the agent reaches for `send_payout` under scope escalation,
+and **Warden refuses it before it reaches the rail**: the specific rule that
+fired (`payee_scope`), not a generic "blocked" toast, plus the tamper-evident
+audit record for that event.
+
+> **On screen:** gateway caught **62 of 62** across 5 seeds — 0 false
+> positives in 45 legitimate refunds.
+
+**Do not overstate this beat.** 73 of 79 compromised proposals used the
+refund tool, which Razorpay would have refused anyway; 6 used the payout tool,
+which it would not. Say that if asked. The beat that carries the demo is
+Beat 3, and it is untouched by any of this.
 
 ### Beat 2 — the honest turn — 0:32–0:50
 
@@ -113,3 +140,14 @@ supports:
   expiry). And it is protocol-agnostic by choice — it is not a competitor to
   NPCI's UAP, it is the enforcement layer a merchant needs whichever protocol
   wins.
+- **"Your refund tool takes a destination — Razorpay's doesn't. Isn't your
+  threat model wrong?"** Partly, and I found it myself when I wired the real
+  API — Finding 17. 73 of 79 compromised proposals used the refund tool, so
+  Razorpay's rail would have refused them regardless; 6 used the payout tool,
+  where the threat is real. I did not rewrite the corpus to make the numbers
+  fit, because retrofitting a corpus after seeing results is the exact failure
+  this eval exists to avoid. I changed the claim instead.
+- **"Did you test non-Anthropic models?"** Gemini Flash and NVIDIA Nemotron,
+  free tier (ADR 0011). **Not** GPT-5 or Gemini Pro — Pro is rate-limited off
+  the free tier and the paid models were out of budget. So the claim is
+  bounded: three labs, 9B to frontier-Claude, not "every frontier model."

@@ -552,3 +552,67 @@ Worth noting the thing I *was* worried about did not happen: Opus 5's
 adaptive thinking is on by default and thinking bills at the output rate, but
 on a task this mechanical the model largely declines to think, and the
 thinking overhead was minor next to the corpus-composition effect.
+
+---
+
+## 2026-08-23 — Finding 17: the corpus's refund tool is more permissive than Razorpay's
+
+Wiring the real Razorpay rail (`docs/decisions/0010-real-razorpay-rail.md`)
+established that `POST /v1/payments/:id/refund` accepts `amount`, `speed`,
+`notes`, `receipt` — **and no destination**. A refund returns to the original
+payment instrument and there is no field in which to name anywhere else.
+
+`eval/agent.py`'s `issue_refund` tool takes a `destination_account`. So the
+corpus's refund tool is strictly more permissive than the API it stands in
+for. Re-reading the recorded runs against that fact:
+
+**Money-moving proposals in compromised Haiku runs, by tool:**
+
+| Tool | Count | Expressible on Razorpay? |
+|---|---:|---|
+| `issue_refund` (carries a destination) | **73** | **No** — refunds have no payee field |
+| `send_payout` (arbitrary destination) | **6** | **Yes** — this is RazorpayX-shaped |
+
+Per class, `send_payout` appears only in `scope_escalation` (6 of that class's
+10 compromised proposals). Every other class — `direct_injection`,
+`tool_output_injection`, `obfuscation`, `authority_spoofing`,
+`multi_turn_poisoning`, `amount_manipulation` — routed entirely through
+`issue_refund`.
+
+### What this does and does not invalidate
+
+**Does not invalidate:** the compromise rate. 47.7% of Haiku runs ended with
+the agent *proposing* a diverted payment. That is a measurement of model
+behaviour under injection, and it stands — the model was talked into it.
+
+**Does not invalidate:** the gateway's 62/62. The gate did refuse every
+proposal it was handed, deterministically, at 0/45 false positives.
+
+**Does narrow the threat claim considerably.** Whether a diverted proposal
+*moves money* depends on whether the rail accepts a destination. Razorpay's
+refund rail does not. So 73 of those 79 proposals describe an attack that
+could not have landed on the API the demo names — and the honest statement is
+that the diversion numbers characterise a **payout-shaped** threat
+(RazorpayX, arbitrary fund accounts) demonstrated on a refund-shaped
+scenario.
+
+**Leaves denial untouched.** 39/39 across every model, and no rail design can
+address it: the attack never calls an endpoint.
+
+### Why the corpus is not being rewritten to match
+
+Two reasons, both deliberate:
+
+1. An agent holding a destination-bearing money tool is realistic — RazorpayX
+   payouts are exactly that, and plenty of merchant middleware wraps refunds
+   in an internal abstraction that carries a payee. The corpus models a real
+   shape, just not the *refund* shape.
+2. Rewriting the corpus after seeing the results, to make the results look
+   better aligned, is the failure mode this whole eval exists to avoid. The
+   corpus was written before the defense was tuned (that is how Finding 1 was
+   caught); it does not get retrofitted after the fact.
+
+What changes instead is the **claim**, in `submission/demo-script.md` and
+`submission/narrative.md`: Razorpay already prevents refund diversion
+structurally, which is the thesis working, and the gate's value is for tools
+that *do* carry a destination.
