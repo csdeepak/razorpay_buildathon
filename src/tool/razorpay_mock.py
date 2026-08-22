@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import uuid
 
-from src.models import ExecutionResult, ProposedAction
+from src.models import ExecutionResult, OrderRecord, ProposedAction
 
 
 class MockRazorpayClient:
@@ -19,6 +19,13 @@ class MockRazorpayClient:
     src/models.py about the Day 6-7 stage order. This layer just executes
     whatever it's handed."""
 
-    def create_refund(self, action: ProposedAction) -> ExecutionResult:
+    def create_refund(
+        self, action: ProposedAction, order: OrderRecord | None = None
+    ) -> ExecutionResult:
+        """`order` is accepted and ignored, so this stays interface-compatible
+        with `src/tool/razorpay_api.RazorpayRefundRail`, which needs it -- a
+        real refund is against a captured *payment*, not an abstract order.
+        That asymmetry is the mock's one substantive lie, so it is named here
+        rather than left for a reader to infer."""
         tx_id = f"mock_rfnd_{uuid.uuid4().hex[:12]}"
         return ExecutionResult(tx_id=tx_id, status="executed", action=action)

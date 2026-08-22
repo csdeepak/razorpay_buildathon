@@ -17,7 +17,7 @@ from src.agent.reasoner import Reasoner
 from src.audit.ledger import AuditLedger
 from src.memory.state import OrderStore
 from src.safety.policy_gateway import PolicyGateway
-from src.tool.razorpay_mock import MockRazorpayClient
+from src.tool.razorpay_api import DestinationNotExpressible
 from src.verification.verifier import Verifier
 from src.scenarios import SCENARIOS
 
@@ -27,7 +27,7 @@ def run_scenario(
     *,
     reasoner: Reasoner,
     safety_gate: PolicyGateway,
-    tool_client: MockRazorpayClient,
+    tool_client: Any,
     verifier: Verifier,
     ledger: AuditLedger,
     order_store: OrderStore,
@@ -47,9 +47,21 @@ def run_scenario(
     ledger.append("SAFETY_CHECK", policy_verdict.model_dump())
 
     exec_result = None
+    inexpressible = None
     if policy_verdict.allowed:
-        exec_result = tool_client.create_refund(action)
-        ledger.append("ACTION_EXECUTED", exec_result.model_dump(mode="json"))
+        try:
+            exec_result = tool_client.create_refund(action, order)
+            ledger.append("ACTION_EXECUTED", exec_result.model_dump(mode="json"))
+        except DestinationNotExpressible as exc:
+            # The gate passed something the rail has no way to encode. On the
+            # real Razorpay API a refund carries no payee, so this is the
+            # structural backstop firing rather than a policy decision --
+            # worth its own audit event, not a generic block.
+            inexpressible = exc
+            ledger.append(
+                "ACTION_INEXPRESSIBLE",
+                {"proposed": exc.proposed, "original": exc.original, "reason": str(exc)},
+            )
     else:
         ledger.append(
             "ACTION_BLOCKED",
@@ -70,5 +82,6 @@ def run_scenario(
         "action": action,
         "policy_verdict": policy_verdict,
         "execution": exec_result,
+        "inexpressible": inexpressible,
         "verdict": verdict,
     }

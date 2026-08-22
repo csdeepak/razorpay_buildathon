@@ -3,6 +3,12 @@
     python -m src.cli --scenario attack
     python -m src.cli --scenario benign
     python -m src.cli --scenario attack --audit-log var/attack_run.jsonl
+    python -m src.cli --scenario benign --rail razorpay   # needs test-mode keys
+
+`--rail razorpay` runs against the real API (src/tool/razorpay_api.py) and
+needs RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET plus an order carrying a captured
+payment id. `--rail mock` (the default) needs nothing and is what the demo and
+the eval harness use.
 """
 
 from __future__ import annotations
@@ -17,6 +23,7 @@ from src.models import MerchantPolicy
 from src.pipeline import run_scenario
 from src.safety.policy_gateway import PolicyGateway
 from src.scenarios import ORDERS, SCENARIOS
+from src.tool.razorpay_api import RazorpayAPIClient, RazorpayRefundRail
 from src.tool.razorpay_mock import MockRazorpayClient
 from src.verification.verifier import Verifier
 
@@ -31,6 +38,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run one Warden vertical-slice scenario.")
     parser.add_argument("--scenario", choices=sorted(SCENARIOS), default="attack")
     parser.add_argument("--audit-log", default="var/audit_log.jsonl")
+    parser.add_argument(
+        "--rail",
+        choices=["mock", "razorpay"],
+        default="mock",
+        help="mock (default, no setup) or razorpay (real test-mode API)",
+    )
     args = parser.parse_args(argv)
 
     order_store = OrderStore()
@@ -40,13 +53,29 @@ def main(argv: list[str] | None = None) -> int:
     ledger = AuditLedger(args.audit_log)
     safety_gate = PolicyGateway(DEFAULT_POLICY, VelocityTracker())
 
-    print(f"=== Warden vertical slice — scenario: {args.scenario} ===\n")
+    if args.rail == "razorpay":
+        try:
+            client = RazorpayAPIClient.from_env()
+        except RuntimeError as exc:
+            print(f"CANNOT RUN: {exc}")
+            return 2
+        if not client.is_test_mode:
+            print("REFUSING: RAZORPAY_KEY_ID is not a test-mode key (rzp_test_...).")
+            print("          This repo never runs against live keys.")
+            return 2
+        tool_client = RazorpayRefundRail(client)
+        rail_label = "ACT (razorpay)"
+    else:
+        tool_client = MockRazorpayClient()
+        rail_label = "ACT (mocked)  "
+
+    print(f"=== Warden vertical slice — scenario: {args.scenario} · rail: {args.rail} ===\n")
 
     result = run_scenario(
         args.scenario,
         reasoner=default_reasoner(),
         safety_gate=safety_gate,
-        tool_client=MockRazorpayClient(),
+        tool_client=tool_client,
         verifier=Verifier(),
         ledger=ledger,
         order_store=order_store,
@@ -64,9 +93,12 @@ def main(argv: list[str] | None = None) -> int:
     print(f"                  {policy_verdict.reason}\n")
 
     if exec_result is not None:
-        print(f"3. ACT (mocked)   tx_id: {exec_result.tx_id}  status: {exec_result.status}\n")
+        print(f"3. {rail_label}  tx_id: {exec_result.tx_id}  status: {exec_result.status}\n")
+    elif result.get("inexpressible") is not None:
+        print(f"3. {rail_label}  NOT EXPRESSIBLE -- the gate passed it, but Razorpay's refund")
+        print("                  API has no field for a payee, so there is no request to send.\n")
     else:
-        print("3. ACT (mocked)   SKIPPED -- blocked by the safety gate before it reached the rail.\n")
+        print(f"3. {rail_label}  SKIPPED -- blocked by the safety gate before it reached the rail.\n")
 
     print(f"4. VERIFY         consistent: {verdict.consistent}")
     print(f"                  {verdict.reason}\n")

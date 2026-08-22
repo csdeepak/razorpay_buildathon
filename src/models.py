@@ -24,6 +24,11 @@ class OrderRecord(BaseModel):
     order_id: str
     original_payment_instrument: str
     refund_amount: float
+    razorpay_payment_id: str | None = None
+    """The captured payment this order was paid with, when running against the
+    real API (`src/tool/razorpay_api.py`). Optional because the mock rail and
+    the eval harness refund against an abstract order; the real API refunds
+    against a *payment*, which is a distinction the mock quietly hid."""
 
 
 class Scenario(BaseModel):
