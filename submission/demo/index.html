@@ -14,8 +14,10 @@
   --ground:#0E0B08; --surface:#17130E; --surface-2:#211A13; --line:#2E2419;
   --cream:#F0E7D6; --cream-80:rgba(240,231,214,.80); --cream-55:rgba(240,231,214,.55);
   --cream-30:rgba(240,231,214,.30); --cream-12:rgba(240,231,214,.12);
+  --cream-90:rgba(240,231,214,.90);  /* lede, over the figure */
+  --cream-78:rgba(240,231,214,.78);  /* secondary text, over the figure */
   --amber:#D9A353; --amber-dim:rgba(217,163,83,.16); --amber-line:rgba(217,163,83,.42);
-  --danger:#D9584A; --danger-dim:rgba(217,88,74,.14);
+  --danger:#EE7A6B; --danger-dim:rgba(238,122,107,.13);
   --settled:#7FA37A;
   --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,"SF Mono",Consolas,monospace;
@@ -48,7 +50,7 @@ body::after{
 h1,h2,h3{text-wrap:balance; margin:0; font-weight:800; letter-spacing:-.035em; line-height:1.05}
 p{margin:0}
 .mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
-.micro{font-size:13px; font-weight:700; letter-spacing:.30em; text-transform:uppercase; color:var(--cream-55)}
+.micro{font-size:13px; font-weight:700; letter-spacing:.30em; text-transform:uppercase; color:var(--cream-78)}
 .amber{color:var(--amber)} .danger{color:var(--danger)} .settled{color:var(--settled)}
 :focus-visible{outline:2px solid var(--amber); outline-offset:3px; border-radius:2px}
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -107,7 +109,7 @@ p{margin:0}
   transition:top var(--t-travel) var(--e-travel), left var(--t-travel) var(--e-travel),
              opacity var(--t-enter), transform var(--t-enter), background var(--t-flip), color var(--t-flip)}
 .token.is-on{opacity:1; transform:translate(-50%,-50%) scale(1)}
-.token.is-wrong{background:var(--danger); color:var(--cream);
+.token.is-wrong{background:var(--danger); color:var(--ground);
   transition:top var(--t-travel) var(--e-wrong), left var(--t-travel) var(--e-wrong), background var(--t-flip)}
 /* THE HARD STOP. Deterministic controls should not feel soft. */
 .token.is-blocked{transition:none !important}
@@ -120,7 +122,7 @@ p{margin:0}
 .bubble{font-size:14px; line-height:1.45; color:var(--cream-80)}
 .bubble--cust{color:var(--cream); border-left:2px solid var(--cream-30); padding-left:12px}
 .note{font-family:var(--mono); font-size:11.5px; line-height:1.55; color:var(--danger);
-  background:var(--danger-dim); border:1px solid rgba(217,88,74,.3); padding:10px 12px}
+  background:var(--danger-dim); border:1px solid rgba(238,122,107,.32); padding:10px 12px}
 .rule{display:inline-block; font-family:var(--mono); font-size:12px; color:var(--amber);
   border:1px solid var(--amber-line); background:var(--amber-dim); padding:4px 9px; letter-spacing:.04em}
 
@@ -135,7 +137,7 @@ p{margin:0}
 
 /* Balance — Rhea is present in every act through this */
 .balance{position:fixed; left:28px; bottom:24px; z-index:3; pointer-events:none}
-.balance__l{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--cream-55)}
+.balance__l{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--cream-90)}
 .balance__v{font-family:var(--mono); font-size:34px; font-weight:700; font-variant-numeric:tabular-nums;
   letter-spacing:-.02em; transition:color var(--t-enter)}
 .balance.is-paid .balance__v{color:var(--settled)}
@@ -168,18 +170,21 @@ p{margin:0}
    she reads as atmosphere and never as clutter behind text. */
 .bg-figure{
   position:fixed; left:0; bottom:0; z-index:0; pointer-events:none;
-  width:min(44vw,620px); aspect-ratio:16/9;
+  width:min(80vw,1220px); aspect-ratio:16/9;
   background-image:url("__IMG_P1__");
   background-size:contain; background-repeat:no-repeat; background-position:left bottom;
-  mix-blend-mode:screen; opacity:.17;
+  mix-blend-mode:screen; opacity:.25;
   /* Fades to nothing well before the spine, and the figure is sized so her
      linework sits low -- beneath the prose block rather than behind it.
      Secondary text at 55% cream is the binding constraint here, not the
      headline: it needs 4.5:1 and has far less to give. */
-  -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,.7) 18%, rgba(0,0,0,0) 52%);
-  mask-image:linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,.7) 18%, rgba(0,0,0,0) 52%);
+  /* Radial from the bottom-left corner rather than a plain horizontal wipe:
+     it falls away upward too, which is what keeps the vertically-centred prose
+     block clear while letting her sit large and solid along the bottom. */
+  -webkit-mask-image:radial-gradient(56% 96% at 3% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,.94) 34%, rgba(0,0,0,.42) 62%, rgba(0,0,0,0) 84%);
+  mask-image:radial-gradient(56% 96% at 3% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,.94) 34%, rgba(0,0,0,.42) 62%, rgba(0,0,0,0) 84%);
 }
-@media (max-width:760px){ .bg-figure{opacity:.12; width:78vw} }
+@media (max-width:760px){ .bg-figure{opacity:.16; width:100vw} }
 
 /* Storyboard panels. */
 .fig{position:absolute; inset:0; display:none; align-items:center; justify-content:center}
@@ -217,16 +222,16 @@ p{margin:0}
 .eyebrow{margin-bottom:14px}
 .beat h2{font-size:clamp(30px,3.6vw,46px); margin-bottom:14px}
 .beat h2 em{font-style:normal; color:var(--amber)}
-.lede{font-size:18px; color:var(--cream-80); margin-top:12px}
+.lede{font-size:18px; color:var(--cream-90); margin-top:12px}
 .lede + .lede{margin-top:10px}
-.small{font-size:14.5px; color:var(--cream-55); margin-top:12px}
+.small{font-size:14.5px; color:var(--cream-78); margin-top:12px}
 
 /* Counters */
 .stat{margin-top:22px}
 .stat__v{font-family:var(--mono); font-size:clamp(34px,4.4vw,56px); font-weight:700;
   font-variant-numeric:tabular-nums; letter-spacing:-.03em; line-height:1}
-.stat__l{font-size:13.5px; color:var(--cream-55); margin-top:7px}
-.stat__ci{font-family:var(--mono); font-size:12px; color:var(--cream-55); margin-top:3px}
+.stat__l{font-size:13.5px; color:var(--cream-78); margin-top:7px}
+.stat__ci{font-family:var(--mono); font-size:12px; color:var(--cream-78); margin-top:3px}
 .stats{display:flex; flex-wrap:wrap; gap:34px}
 
 /* Grid — 8 classes x 3 vectors */
@@ -251,7 +256,7 @@ p{margin:0}
 .split{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-top:22px; max-width:760px}
 .split__c{border:1px solid var(--line); background:var(--surface); padding:15px}
 .split__c h3{font-family:var(--mono); font-size:12px; letter-spacing:.1em; font-weight:700; margin-bottom:8px}
-.split__c p{font-size:14px; color:var(--cream-55); line-height:1.5}
+.split__c p{font-size:14px; color:var(--cream-78); line-height:1.5}
 .split__c--r h3{color:var(--cream-55)} .split__c--b h3{color:var(--amber)} .split__c--l h3{color:var(--danger)}
 .split__c--b{border-color:var(--amber-line)}
 
@@ -270,7 +275,7 @@ p{margin:0}
 .find summary::-webkit-details-marker{display:none}
 .find summary::before{content:"+"; color:var(--amber); font-family:var(--mono)}
 .find[open] summary::before{content:"−"}
-.find p{padding:0 16px 14px 40px; font-size:14.5px; color:var(--cream-55); line-height:1.6}
+.find p{padding:0 16px 14px 40px; font-size:14.5px; color:var(--cream-78); line-height:1.6}
 
 .foot{border-top:1px solid var(--line); margin-top:60px; padding:26px 0 60px; font-size:13.5px; color:var(--cream-55)}
 .foot a{color:var(--cream-80)}

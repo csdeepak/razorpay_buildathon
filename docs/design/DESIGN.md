@@ -69,8 +69,8 @@ ours, and the key decision is what amber means.**
 --cream-30      rgba(240,231,214,.30)   disabled, idle nodes
 --amber         #D9A353   WARDEN ACTING — see below
 --amber-dim     rgba(217,163,83,.18)    amber wash, gate glow
---danger        #D9584A   the attack: DIVERT, poisoned notes
---danger-dim    rgba(217,88,74,.15)
+--danger        #EE7A6B   the attack: DIVERT, poisoned notes
+--danger-dim    rgba(238,122,107,.13)
 --settled       #7FA37A   money that safely ARRIVED (used sparingly, once per act at most)
 ```
 
@@ -92,6 +92,19 @@ Consequences that must hold:
   the merchant's deceptive "case resolved" checkmark in Act IV — which is the
   only place on the page where green lies. That collision is intentional and
   is the strongest single colour moment in the piece.
+
+### On the alarm red being brighter than it started
+
+`--danger` was `#D9584A` (5.09:1 on the ground). Once Panel 1 became a large
+ambient figure, the big red counters sitting over her fell to 2.4:1 against a
+3:1 large-text floor. Brightening to `#EE7A6B` (7.13:1) bought the headroom
+without shrinking the figure, and it improved every other use of the colour
+too — poisoned-note text on `--surface` went 4.79 → 6.72.
+
+It also surfaced a failure that predated the figure entirely: the diverted
+token was cream text on a `--danger` fill at **3.14:1**, under the 4.5 it
+needed. It is now `--ground` on `--danger` at 7.13:1, which also matches the
+normal token's dark-on-light treatment.
 
 ### Contrast
 

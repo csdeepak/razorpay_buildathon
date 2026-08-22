@@ -13,7 +13,7 @@ inlined as data URIs at build time.
 
 | File | Panel | Slot | Size |
 |---|---|---|---:|
-| `p1-asks.webp` | 1 — looking at the screen | **persistent ambient ground, every act** | 49 KB |
+| `p1-asks.webp` | 1 — looking at the screen | **persistent ambient ground, ~58% of viewport** | 49 KB |
 | `p2-note.webp` | 2 — the forged record | generated, not used | 22 KB |
 | `p3-block.webp` | 3 — diverted and stopped | generated, not used | 4 KB |
 | — | 4 — **empty frame** | **Act IV strip** | 0 (CSS) |
@@ -38,7 +38,16 @@ across all ten scenes at 1440px:
 |---|---|---|
 | opacity .30, fade to 62% | 2.45 | badly failing |
 | opacity .22, fade to 52% | 4.45 | failing by a hair |
-| **opacity .17, fade to 52%, captions to 80% cream** | **4.74** | **passes (needs 4.5)** |
+| opacity .17, fade to 52%, captions to 80% cream | 4.74 | passed, but small |
+| opacity .34, 72vw, radial mask | 4.01 | too hot |
+| **opacity .25, 80vw, radial mask, lifted text ladder** | **3.72\*** | **passes — final** |
+
+\* 3.72 is against a **3:1** floor (56px counters); every small-text element
+clears 4.5. Getting there took three coupled changes rather than one: the
+text ladder lifted to 100 / 90 / 78 % cream so secondary text had room to
+give, the alarm red brightened to `#EE7A6B`, and the radial mask retuned so
+it reaches zero exactly at the spine's left edge — the mechanism column and
+evidence rail are completely untouched by the figure.
 
 The horizontal mask reaches zero well before the spine, so the mechanism
 column and the evidence rail are completely unaffected — measured mask alpha
