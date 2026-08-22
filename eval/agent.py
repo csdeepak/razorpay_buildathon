@@ -28,8 +28,7 @@ import os
 import time
 from typing import Any, Callable, Protocol
 
-import anthropic
-
+from eval.backends import ModelBackend, backend_for
 from eval.models import ProposedActionRecord
 
 DEFAULT_MODEL = os.environ.get("WARDEN_AGENT_MODEL", "claude-opus-5")
@@ -135,13 +134,20 @@ class AgentRunner:
         enforcement: EnforcementHook = allow_everything,
         model: str = DEFAULT_MODEL,
         max_turns: int = 8,
-        client: anthropic.Anthropic | None = None,
+        client: Any | None = None,
+        backend: ModelBackend | None = None,
+        session: Any | None = None,
     ) -> None:
         self._order_lookup = order_lookup
         self._enforcement = enforcement
         self._model = model
         self._max_turns = max_turns
-        self._client = client or anthropic.Anthropic()
+        # `backend_for` routes on the model id: claude-* keeps the original
+        # Anthropic path, gemini-* and vendor/model go through the
+        # OpenAI-compatible adapter. See eval/backends.py.
+        self._backend = backend or backend_for(
+            model, SYSTEM_PROMPT, TOOLS, client=client, session=session
+        )
 
     def run(
         self,
@@ -168,38 +174,33 @@ class AgentRunner:
         because nobody answers -- measuring the harness, not the system.
         """
         proposals: list[ProposedActionRecord] = []
-        messages: list[dict[str, Any]] = []
         pending = list(customer_messages)
         pending_follow_ups = list(follow_ups or [])
         final_text = ""
         input_tokens = 0
         output_tokens = 0
+        malformed_tool_calls = 0
+        providers: set[str] = set()
         started = time.monotonic()
 
-        messages.append({"role": "user", "content": pending.pop(0)})
+        self._backend.reset()
+        self._backend.add_user_text(pending.pop(0))
 
         for _ in range(self._max_turns):
-            response = self._client.messages.create(
-                model=self._model,
-                max_tokens=4096,
-                system=SYSTEM_PROMPT,
-                tools=TOOLS,
-                messages=messages,
-            )
-            input_tokens += response.usage.input_tokens
-            output_tokens += response.usage.output_tokens
+            # complete() appends the assistant turn to the backend's own
+            # history, so this loop never touches wire format.
+            turn = self._backend.complete()
+            input_tokens += turn.input_tokens
+            output_tokens += turn.output_tokens
+            if turn.provider:
+                providers.add(turn.provider)
+            if turn.text:
+                final_text = turn.text
 
-            text_now = "".join(b.text for b in response.content if b.type == "text")
-            if text_now:
-                final_text = text_now
-
-            tool_uses = [b for b in response.content if b.type == "tool_use"]
-
-            if not tool_uses:
+            if not turn.tool_calls:
                 # Agent finished this turn.
-                messages.append({"role": "assistant", "content": response.content})
                 if pending:
-                    messages.append({"role": "user", "content": pending.pop(0)})
+                    self._backend.add_user_text(pending.pop(0))
                     continue
                 # Scripted turns exhausted. Send a contingent follow-up only
                 # if the agent stalled or its proposal was refused -- if it
@@ -208,21 +209,25 @@ class AgentRunner:
                 stalled = not proposals
                 refused = bool(proposals) and all(p.blocked for p in proposals)
                 if pending_follow_ups and (stalled or refused):
-                    messages.append({"role": "user", "content": pending_follow_ups.pop(0)})
+                    self._backend.add_user_text(pending_follow_ups.pop(0))
                     continue
                 break
 
-            messages.append({"role": "assistant", "content": response.content})
-            results = []
-            for block in tool_uses:
-                # Tool inputs are parsed JSON already, but never string-match
-                # on them -- escaping varies by model.
-                args = dict(block.input)
-                result_text = self._dispatch(block.name, args, proposals)
-                results.append(
-                    {"type": "tool_result", "tool_use_id": block.id, "content": result_text}
-                )
-            messages.append({"role": "user", "content": results})
+            results: list[tuple[str, str]] = []
+            for call in turn.tool_calls:
+                if call.malformed:
+                    # Not a compromise and not resistance -- the model failed
+                    # to emit valid arguments. Counted separately so it cannot
+                    # contaminate either side of the headline number.
+                    malformed_tool_calls += 1
+                    results.append(
+                        (call.id, "ERROR: arguments were not valid JSON. Retry the call.")
+                    )
+                    continue
+                # Never string-match on tool inputs -- escaping varies by model.
+                result_text = self._dispatch(call.name, dict(call.arguments), proposals)
+                results.append((call.id, result_text))
+            self._backend.add_tool_results(results)
 
         return {
             "proposals": proposals,
@@ -230,6 +235,8 @@ class AgentRunner:
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
             "latency_seconds": time.monotonic() - started,
+            "malformed_tool_calls": malformed_tool_calls,
+            "providers": sorted(providers),
         }
 
     def _dispatch(self, tool_name: str, args: dict, proposals: list[ProposedActionRecord]) -> str:
