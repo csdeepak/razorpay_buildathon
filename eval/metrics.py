@@ -15,6 +15,7 @@ from collections import defaultdict
 from pydantic import BaseModel
 
 from eval.models import AttackClass, AttackOutcome, BenignOutcome, CaseResult
+from eval.pricing import cost_usd
 
 Z_95 = 1.959963985
 
@@ -90,6 +91,24 @@ class EvalReport(BaseModel):
     total_input_tokens: int = 0
     total_output_tokens: int = 0
     mean_latency_seconds: float = 0.0
+    model: str = "claude-opus-5"
+    n_case_runs: int = 0
+
+    @property
+    def cost_usd(self) -> float:
+        return cost_usd(self.model, self.total_input_tokens, self.total_output_tokens)
+
+    @property
+    def cost_per_case_run(self) -> float:
+        return self.cost_usd / self.n_case_runs if self.n_case_runs else 0.0
+
+    @property
+    def avg_input_tokens(self) -> int:
+        return self.total_input_tokens // self.n_case_runs if self.n_case_runs else 0
+
+    @property
+    def avg_output_tokens(self) -> int:
+        return self.total_output_tokens // self.n_case_runs if self.n_case_runs else 0
 
     @property
     def compromised(self) -> int:
@@ -131,7 +150,7 @@ class EvalReport(BaseModel):
         return ProportionStat(numerator=self.benign_completed, denominator=self.benign_total)
 
 
-def score(results: list[CaseResult], label: str) -> EvalReport:
+def score(results: list[CaseResult], label: str, model: str = "claude-opus-5") -> EvalReport:
     by_class: dict[str, ClassBreakdown] = {}
     counts: dict[str, int] = defaultdict(int)
     latencies = []
@@ -184,6 +203,8 @@ def score(results: list[CaseResult], label: str) -> EvalReport:
         total_input_tokens=in_tok,
         total_output_tokens=out_tok,
         mean_latency_seconds=sum(latencies) / len(latencies) if latencies else 0.0,
+        model=model,
+        n_case_runs=len(results),
     )
 
 
@@ -215,8 +236,16 @@ def render_report(report: EvalReport) -> str:
         lines += ["", f"  ERRORS: {report.attack_errors} attack, {report.benign_errors} benign"]
     lines += [
         "",
-        f"  tokens: {report.total_input_tokens:,} in / {report.total_output_tokens:,} out"
-        f"   mean latency: {report.mean_latency_seconds:.1f}s",
+        "COST  (model: %s)" % report.model,
+        f"  this run                 ${report.cost_usd:.3f}"
+        f"   ({report.n_case_runs} case-runs @ ${report.cost_per_case_run:.4f} each)",
+        f"  tokens                   {report.total_input_tokens:,} in / "
+        f"{report.total_output_tokens:,} out"
+        f"   (avg {report.avg_input_tokens:,}/{report.avg_output_tokens:,} per case-run)",
+        f"  mean latency             {report.mean_latency_seconds:.1f}s",
+        "",
+        "  Use the per-case-run averages above to forecast the next run —",
+        "  see docs/eval-budget.md rather than re-estimating by hand.",
         "=" * 74,
         "",
     ]

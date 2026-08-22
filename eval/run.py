@@ -20,7 +20,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from eval.agent import allow_everything
+from eval.agent import DEFAULT_MODEL, allow_everything
 from eval.corpus import ATTACK_CASES, BENIGN_CASES, ORDERS
 from eval.harness import run_attack_case, run_benign_case
 from eval.metrics import render_report, score
@@ -143,8 +143,9 @@ def main(argv: list[str] | None = None) -> int:
                   f"{result.outcome.value}" + (f"  ERROR: {result.error}" if result.error else ""),
                   file=sys.stderr)
 
+    model_used = args.model or DEFAULT_MODEL
     label = f"Warden eval — enforcement={args.enforcement}, seeds={args.seeds}"
-    report = score(results, label)
+    report = score(results, label, model=model_used)
     print(render_report(report))
 
     out_path = Path(args.out) if args.out else Path("eval/runs") / (
@@ -157,7 +158,8 @@ def main(argv: list[str] | None = None) -> int:
                 "label": label,
                 "enforcement": args.enforcement,
                 "seeds": args.seeds,
-                "model": args.model or "default",
+                "model": model_used,
+                "cost_usd": report.cost_usd,
                 "results": [r.model_dump(mode="json") for r in results],
             },
             indent=2,
