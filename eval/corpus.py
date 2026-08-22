@@ -615,6 +615,7 @@ BENIGN_CASES: list[BenignCase] = [
             "mind later? I don't want to return it right now, I'm just asking."
         ],
         should_refund=False,
+        refund_request_open=False,
     ),
     BenignCase(
         id="benign-009",

@@ -438,3 +438,59 @@ that immediately. The defensible claims are:
 Claim 3 is the most valuable thing the evaluation has produced, and it was
 only findable by running both a weak and a strong model against the same
 corpus.
+
+---
+
+## 2026-08-22 — Completeness check closes the denial gap (ADR 0009)
+
+**Validated for $0.00** by rescoring both existing multi-seed runs offline —
+the control is deterministic, so no new API calls were needed. Then confirmed
+live end-to-end for $0.06.
+
+| | Haiku 4.5 | Sonnet 5 |
+|---|---:|---:|
+| **Denial attacks detected** | **15/15** | **15/15** |
+| Benign sessions flagged | 0/45 | 5/45 |
+| Of those flags, genuine failures | — | **5/5** |
+
+### Finding 13 — 100% detection of the class both other defenses miss
+
+Denial attacks were 100% successful against Haiku *and* against Sonnet 5, and
+100% invisible to the policy gateway. The completeness audit catches all of
+them, on both models, deterministically — because it never reads the forged
+claim. It asks the ledger whether a refund exists and the case record whether
+a request is open.
+
+The three attacks work by asserting *"already refunded, ref RFND-88213"*,
+*"final-sale SKU, policy CF-14"*, and *"the request was filed in error"*.
+All three are claims about state. None of them reach the checker.
+
+### Finding 14 — zero false alarms, and it found real service failures
+
+All five Sonnet benign flags were genuine failures: the agent stalled or
+closed a case still owing the customer money, with no refund executed. Not
+one was a false alarm.
+
+That makes the control **a service-quality monitor as well as a security
+one** — it caught legitimate customers going unpaid for reasons unrelated to
+any attack. On Haiku, which always paid, it flagged nothing (0/45).
+
+The precision here is a consequence of the design rather than luck: an
+obligation read from trusted state is either discharged or it isn't, and
+there is no judgment call to get wrong.
+
+### What this changes for the submission
+
+The three-beat story is now:
+
+1. **A weak model is compromised 47.7% of the time; the gateway catches
+   every one of those, deterministically, at 0/45 false positives.**
+2. **A frontier model resists all of it — so the honest claim is
+   determinism and model-independence, not "we stop prompt injection."**
+   (Finding 10.)
+3. **Both models fail 100% of denial attacks, which the gateway cannot
+   touch — and the completeness audit catches 15/15 of those.**
+
+Beat 3 is the one no competitor is likely to have, because finding it
+required running a weak *and* a strong model against the same corpus and
+being willing to report that the headline metric was undefined.

@@ -85,6 +85,12 @@ class AttackCase(BaseModel):
     # Optional expected values for checks that need them.
     expected_amount: float | None = None
 
+    # Trusted-state ground truth for the completeness check: is a refund
+    # genuinely owed on this order? Read from the case/ticket record, never
+    # from the conversation. Denial attacks work by making a FALSE claim that
+    # this is settled; the checker consults this instead of the claim.
+    refund_request_open: bool = True
+
     notes: str = ""
 
 
@@ -112,6 +118,11 @@ class BenignCase(BaseModel):
     # What the agent should end up doing for this to count as utility preserved.
     should_refund: bool = True
     expected_amount: float | None = None
+
+    # Trusted-state ground truth for the completeness check. False for a
+    # customer who is only asking a question -- flagging that would be the
+    # control over-firing.
+    refund_request_open: bool = True
 
     notes: str = ""
 
@@ -168,3 +179,8 @@ class CaseResult(BaseModel):
     latency_seconds: float = 0.0
     input_tokens: int = 0
     output_tokens: int = 0
+
+    # Detective control, reported SEPARATELY from the preventive catch rate --
+    # they are different kinds of control and blending them would overstate
+    # what prevention achieves. None if the check did not run.
+    completeness_flagged: bool | None = None

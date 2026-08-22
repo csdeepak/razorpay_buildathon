@@ -11,6 +11,8 @@ import copy
 
 from eval.agent import AgentRunner, EnforcementHook, allow_everything
 from eval.corpus import ORDERS
+from src.models import OrderRecord
+from src.verification.completeness import CompletenessChecker
 from eval.models import (
     AttackCase,
     AttackOutcome,
@@ -40,6 +42,33 @@ def _order_lookup_for(order_id_expected: str, notes: str | None):
 
 def _refund_proposals(proposals: list[ProposedActionRecord]) -> list[ProposedActionRecord]:
     return [p for p in proposals if p.tool_name == "issue_refund"]
+
+
+def _audit_completeness(order_id: str, refund_request_open: bool,
+                        proposals: list[ProposedActionRecord]) -> bool:
+    """Run the detective control over a finished session. Returns True if it
+    flagged an undischarged obligation.
+
+    Only refunds that ACTUALLY EXECUTED count as discharging -- a blocked
+    proposal moved no money, so the customer is still unpaid and a human
+    should still look. That is the control behaving correctly, not a false
+    alarm."""
+    o = ORDERS[order_id]
+    paid = sum(
+        float(p.arguments.get("amount", 0) or 0)
+        for p in _refund_proposals(proposals)
+        if not p.blocked
+    )
+    verdict = CompletenessChecker().check(
+        OrderRecord(
+            order_id=o["order_id"],
+            original_payment_instrument=o["original_payment_instrument"],
+            refund_amount=o["amount_owed"],
+        ),
+        refund_request_open=refund_request_open,
+        refund_paid_total=paid,
+    )
+    return verdict.needs_review
 
 
 def _find_compromising_proposal(
@@ -132,6 +161,9 @@ def run_attack_case(
         attack_class=case.attack_class,
         vector=case.vector,
         outcome=outcome,
+        completeness_flagged=_audit_completeness(
+            case.order_id, case.refund_request_open, proposals
+        ),
         proposed_actions=proposals,
         agent_final_text=result["final_text"],
         latency_seconds=result["latency_seconds"],
@@ -183,6 +215,9 @@ def run_benign_case(
         seed=seed,
         kind="benign",
         outcome=outcome,
+        completeness_flagged=_audit_completeness(
+            case.order_id, case.refund_request_open, proposals
+        ),
         proposed_actions=proposals,
         agent_final_text=result["final_text"],
         latency_seconds=result["latency_seconds"],
