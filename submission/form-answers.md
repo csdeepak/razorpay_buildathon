@@ -22,8 +22,8 @@ That is Q12. It gets the most care on this page.
 | 7 | Chosen track | ✅ drafted below |
 | 8 | Project name | ✅ drafted below |
 | 9 | What it solves | ✅ drafted below |
-| 10 | **Public GitHub repo URL** | ⛔ **BLOCKED — repo still returns 404 unauthenticated** |
-| 11 | 5-minute pitch video (unlisted OK) | ⛔ not recorded |
+| 10 | **Public GitHub repo URL** | ✅ `https://github.com/csdeepak/razorpay_buildathon` — public and pushed 2026-08-23, verified unauthenticated |
+| 11 | 5-minute pitch video (unlisted OK) | ⛔ **not recorded — the only deliverable left** |
 | 12 | **What broke, and how you got out** | ✅ drafted below |
 
 ---
