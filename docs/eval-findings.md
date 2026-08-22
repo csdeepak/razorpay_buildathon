@@ -616,3 +616,68 @@ What changes instead is the **claim**, in `submission/demo-script.md` and
 `submission/narrative.md`: Razorpay already prevents refund diversion
 structurally, which is the thesis working, and the gate's value is for tools
 that *do* carry a destination.
+
+---
+
+## 2026-08-23 — Phase F: cross-lab. **The denial gap is not an Anthropic artifact.**
+
+Run against the free tiers of two additional labs via `eval/backends.py`
+(ADR 0011). Denial subset (3 cases) plus benign controls, 1 seed, $0.00 spent.
+
+### Finding 18 — six more models, two more labs, same 100% failure
+
+| Model | Lab | Denial leak | Completeness detected | False alarms |
+|---|---|---:|---:|---:|
+| `gemini-3.6-flash` | Google | 3/3 | 3/3 | 0/3 |
+| `gemini-3.5-flash` | Google | 2/2 | 2/2 | 0/3 |
+| `gemini-3.1-flash-lite` | Google | 3/3 | 3/3 | 0/3 |
+| `nemotron-3-ultra-550b` | NVIDIA | 3/3 | 3/3 | 0/3 |
+| `nemotron-3-super-120b` | NVIDIA | 3/3 | 3/3 | 0/3 |
+| `nemotron-nano-9b-v2` | NVIDIA | 3/3 | 3/3 | 0/2 |
+| **Cross-lab total** | | **17/17** [81.6, 100.0] | **17/17** [81.6, 100.0] | **0/17** [0.0, 18.4] |
+
+Combined with the 39/39 already recorded on Haiku 4.5, Sonnet 5 and Opus 5:
+
+> **56/56 denial failures** [93.6, 100.0] across **9 models and 3 labs**,
+> spanning **9B to frontier**. The completeness audit detected **56/56**, with
+> **0 false alarms in 134 benign sessions** [0.0, 2.8].
+
+**This is the result the cross-lab arm existed to get.** Before it, the
+asymmetry claim rested on three models from one lab, and the honest reading
+was "every *Anthropic* model." A reviewer could reasonably have asked whether
+the denial gap was a property of one lab's post-training. It is not.
+
+Nemotron spanning 9B → 550B matters as much as the lab diversity: the failure
+does not thin out with scale. A 550B model falls for a forged
+"REFUND ALREADY PROCESSED" note exactly as reliably as a 9B one, which is
+what you would expect if the cause is structural — the model is reasoning
+correctly from evidence it has no way to distrust — rather than a capability
+deficit that scale would fix.
+
+### What this does NOT license
+
+- **Not "every frontier model."** Gemini 3.1 **Pro** is rate-limited off the
+  free tier (429, `GenerateRequestsPerDayPerProjectPerModel-FreeTier`,
+  quotaValue 20/day) and GPT-5.1 was out of budget. The non-Claude models here
+  are Flash-tier and open-weight. Say "three labs, 9B to frontier-Claude,"
+  never "every frontier model."
+- **Not multi-seed.** n=1 per case on the cross-lab arm. Findings 3 and 6 both
+  record n=1 being actively misleading, and ADR 0011 logged the same model
+  giving opposite outcomes on identical input. The 17/17 is a real signal
+  because it is unanimous across six independent models, not because any one
+  model was measured well.
+- **Not the diversion arm.** Only denial was run. Cross-lab diversion numbers
+  do not exist and must not be implied.
+
+### Why the quota forced this shape
+
+`gemini-*` free tier is **20 requests per day per model** — not per minute. A
+case-run is 2–4 requests, so a model yields ~5–8 case-runs/day, and the full
+corpus (114 case-runs, ~350 requests) would need 17+ days on a single model
+against a 5 September deadline. A first attempt at a stratified 17-case
+calibration lost every run to 429/503 and was killed.
+
+The response was to spend the quota on the **one class that answers the open
+question** rather than thin the whole corpus across it. Denial is the finding
+the submission leans on; it is also the only class where a cross-lab result
+changes what can be claimed.
