@@ -101,9 +101,11 @@ early.
 | 2026-08-22 | B | verify amount-binding fix (ADR 0008) | haiku-4-5 | 33 | $0.158 | $73.52 |
 | 2026-08-22 | B | expanded corpus (8 classes), structural | haiku-4-5 | 38 | $0.228 | $73.29 |
 | 2026-08-22 | B | expanded corpus, matching baseline | haiku-4-5 | 38 | $0.195 | $73.10 |
-| 2026-08-22 | B | **5-seed** structural (settles Finding 6) | haiku-4-5 | 190 | $1.105 | **$71.99** |
+| 2026-08-22 | B | **5-seed** structural (settles Finding 6) | haiku-4-5 | 190 | $1.105 | $71.99 |
+| 2026-08-22 | C | Sonnet token calibration | sonnet-5 | 6 | $0.091 | $71.90 |
+| 2026-08-22 | C | **5-seed** structural (reportable) | sonnet-5 | 190 | $2.900 | **$69.00** |
 
-**Phase B spend so far: $2.01 of its $6 allocation.** Follow-up turns raised
+**Phase B: $2.01 of $6. Phase C so far: $2.99 of $16** — under budget because the Sonnet baseline arm was skipped as uninformative (zero compromises to protect against; see eval-findings Finding 10). Follow-up turns raised
 the per-case-run basis to **$0.0060 structural / $0.0051 baseline** on Haiku
 (from $0.0048) — longer conversations are the price of measuring utility
 honestly. Use $0.0060 as the Haiku basis for Phase C forecasting, scaled to
