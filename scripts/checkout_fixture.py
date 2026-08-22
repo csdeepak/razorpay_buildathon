@@ -30,6 +30,11 @@ from dotenv import load_dotenv
 API = "https://api.razorpay.com/v1"
 OUT = pathlib.Path("var/checkout.html")
 
+# Razorpay's domestic test instruments. The generic 4111-1111-1111-1111 Visa
+# is rejected by Indian test mode as an *international* card, so UPI is the
+# default path here -- and it matches the demo's domain, since every order in
+# this project was paid with a UPI handle.
+TEST_UPI = "success@razorpay"
 TEST_CARD = "4111 1111 1111 1111"
 
 PAGE = """<!doctype html>
@@ -48,9 +53,17 @@ PAGE = """<!doctype html>
 <p>This pays order <code>{order_id}</code> (₹{rupees:,.2f}) so the refund rail has a
 captured payment to work against. <strong>Test mode — no real money.</strong></p>
 <div class="card">
-  <p>Use Razorpay's test card:</p>
-  <p><code>{card}</code> · any future expiry · any CVV · any name<br>
-     If asked for OTP on the 3DS page, use <code>1234</code>.</p>
+  <p><strong>Use UPI — it is the path that works.</strong></p>
+  <ol>
+    <li>Click the button below</li>
+    <li>Choose <strong>UPI</strong> (not Card)</li>
+    <li>Enter the test VPA <code>{upi}</code></li>
+    <li>On the mock bank page, click <strong>Success</strong></li>
+  </ol>
+  <p style="opacity:.7">Cards: the generic Visa <code>{card}</code> is rejected
+     by Indian test mode as an international card. If you use a card at all,
+     pick one from Razorpay's domestic test list. UPI avoids the issue
+     entirely, and matches how every order in this project was paid.</p>
 </div>
 <button id="pay">Pay ₹{rupees:,.2f} (test)</button>
 <div class="card" id="out">Payment id will appear here.</div>
@@ -64,6 +77,7 @@ document.getElementById('pay').onclick = function () {{
     currency: "INR",
     name: "Warden (test fixture)",
     description: "Captured payment for the refund rail",
+    prefill: {{ method: "upi" }},
     handler: function (r) {{
       document.getElementById('out').textContent =
         "PAYMENT ID: " + r.razorpay_payment_id +
@@ -141,6 +155,7 @@ def main() -> int:
             rupees=args.amount,
             key_id=kid,
             card=TEST_CARD,
+            upi=TEST_UPI,
         ),
         encoding="utf-8",
     )
