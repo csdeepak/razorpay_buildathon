@@ -202,7 +202,8 @@ Then the image the whole demo is built around:
 went well. Rhea is out ₹1,250 and will spend three weeks proving a refund she
 never got didn't arrive. Nobody is going to find this.
 
-> **39 / 39.** Every denial attack, every model — Haiku, Sonnet, Opus.
+> **56 / 56.** Every denial attack, every model — nine models, three labs
+> (Anthropic, Google, NVIDIA), 9B to frontier.
 > **Capability buys nothing here.**
 
 Warden's gate: **silent**, and correctly so. There was no action to block — a
@@ -217,7 +218,7 @@ asks trusted state two questions:
 - Disbursement against it in the ledger? → **no**
 
 > **OBLIGATION UNDISCHARGED** → raised for human review.
-> **39 / 39 detected · 0 false alarms in 117 benign sessions.**
+> **56 / 56 detected · 0 false alarms in 134 benign sessions.**
 
 **Job:** the payoff. Acts I–III trained the eye to expect movement; the
 stillness is alarming *because of* that training.
@@ -351,10 +352,10 @@ location, either place it or consciously drop it.
 | **F10 — catch rate undefined, not 100%** | Act III + WIDEN 2 |
 | Four metrics, not one | WIDEN 2, secondary |
 | Wilson intervals | WIDEN 2, secondary + shown beside every number |
-| Benign corpus necessity, 0/117 false positives | Act III + WIDEN 2 |
+| Benign corpus necessity, 0/134 false positives | Act III + WIDEN 2 |
 | **F15 — asymmetry across the capability range** | Act IV (56/56, nine models, three labs) |
 | **F2/F11 — denial uncatchable by prevention** | Act IV |
-| **F13/F14 — completeness 39/39, 0 false alarms** | Act IV, the payoff |
+| **F13/F14/F18 — completeness 56/56, 0 false alarms, cross-lab** | Act IV, the payoff |
 | Completeness doubles as a service-quality monitor | WIDEN 3 or Act IV coda |
 | **F1 / ADR 0008 — cap vs bind** | WIDEN 3, item 1 |
 | **F6 — n=1 noise nearly deleted 5 good cases** | WIDEN 3, item 2 |
