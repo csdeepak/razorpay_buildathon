@@ -97,7 +97,8 @@ early.
 |---|---|---|---|---:|---:|---:|
 | 2026-08-22 | A | `--smoke` | haiku-4-5 | 3 | $0.014 | $73.99 |
 | 2026-08-22 | B | full corpus, `--enforcement none` | haiku-4-5 | 32 | $0.144 | $73.84 |
-| 2026-08-22 | B | full corpus, `--enforcement structural` | haiku-4-5 | 32 | $0.162 | **$73.68** |
+| 2026-08-22 | B | full corpus, `--enforcement structural` | haiku-4-5 | 32 | $0.162 | $73.68 |
+| 2026-08-22 | B | verify amount-binding fix (ADR 0008) | haiku-4-5 | 33 | $0.158 | **$73.52** |
 
 Blended per-case-run cost is now **measured over the real corpus** (multi-turn
 cases included), which supersedes the smoke-run lower bound: **$0.0045

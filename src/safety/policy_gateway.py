@@ -7,17 +7,33 @@ Checks run in a fixed order and stop at the first failure, so
 PolicyVerdict.rule_fired always names exactly one rule -- the demo script
 requires showing which specific rule fired, not a generic "blocked" toast.
 
-1. category    -- is this an action type the merchant allows at all
-2. payee_scope -- for a refund, the only legitimate destination is the
-                  order's own original payment instrument. This overlaps
-                  with what src/verification/verifier.py checks -- on
-                  purpose. Defense in depth: two independently-implemented
-                  layers agreeing is a stronger claim than one clever layer,
-                  and if this rule is ever weakened or misconfigured,
-                  verification (deepening Day 9) is still there as a
-                  detective backstop.
-3. spend_cap   -- single-transaction ceiling
-4. velocity    -- cumulative amount and count per UTC day (VelocityTracker)
+1. category       -- is this an action type the merchant allows at all
+2. payee_scope    -- for a refund, the only legitimate destination is the
+                     order's own original payment instrument. This overlaps
+                     with what src/verification/verifier.py checks -- on
+                     purpose. Defense in depth: two independently-implemented
+                     layers agreeing is a stronger claim than one clever
+                     layer, and if this rule is ever weakened or
+                     misconfigured, verification (deepening Day 9) is still
+                     there as a detective backstop.
+3. amount_binding -- the amount is BOUND to what the order actually records
+                     as paid, not merely capped. See below; this is the
+                     first increment of ADR 0007's intent-bound authority
+                     model, and it exists because the eval caught its
+                     absence (docs/eval-findings.md, Finding 1).
+4. spend_cap      -- single-transaction ceiling. Retained as a backstop and
+                     for future action types where binding doesn't apply.
+5. velocity       -- cumulative amount and count per UTC day (VelocityTracker)
+
+On amount_binding being `<=` and not `==`:
+
+    A refund may legitimately be PARTIAL -- only some items damaged, a
+    restocking deduction, a goodwill split. So the rule is "never more than
+    was actually paid", not "exactly what was paid". Refunding less is a
+    normal business decision; refunding more is impossible on a real rail
+    no matter what the conversation claims. `==` would be tighter against
+    the attack and would also block a large class of legitimate refunds,
+    which is the trade the false-positive metric exists to catch.
 
 Deliberately does NOT read the agent's rationale or re-parse the inbound
 message -- same reasoning as the verifier: a compromised reasoning trace
@@ -36,6 +52,10 @@ from __future__ import annotations
 
 from src.memory.state import VelocityTracker
 from src.models import MerchantPolicy, OrderRecord, PolicyVerdict, ProposedAction
+
+# Float tolerance for currency comparison. Amounts are rupees; anything
+# below a paisa is noise, not a policy decision.
+AMOUNT_TOLERANCE = 0.01
 
 
 class PolicyGateway:
@@ -63,6 +83,18 @@ class PolicyGateway:
                     f"the allowed payee scope for a refund on order "
                     f"{order.order_id} -- must be the original payment "
                     f"instrument {order.original_payment_instrument!r}."
+                ),
+            )
+
+        if action.amount > order.refund_amount + AMOUNT_TOLERANCE:
+            return PolicyVerdict(
+                allowed=False,
+                rule_fired="amount_binding",
+                reason=(
+                    f"amount {action.amount} exceeds the {order.refund_amount} "
+                    f"actually paid on order {order.order_id}. A refund can "
+                    f"never return more than was paid, regardless of what the "
+                    f"conversation or the order notes claim is owed."
                 ),
             )
 

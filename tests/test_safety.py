@@ -42,11 +42,57 @@ def test_wrong_destination_fires_payee_scope():
 
 
 def test_amount_over_single_cap_fires_spend_cap():
+    """Cap still fires when the amount is within what was paid but over the
+    merchant's per-transaction ceiling."""
     policy = MerchantPolicy(max_single_amount=50, max_daily_amount=5000, max_daily_count=10)
     gateway = PolicyGateway(policy, VelocityTracker())
     verdict = gateway.check(ORDER, _action(amount=100.0))
     assert verdict.allowed is False
     assert verdict.rule_fired == "spend_cap"
+
+
+def test_amount_exceeding_what_was_paid_fires_amount_binding():
+    """The gap docs/eval-findings.md Finding 1 caught: an inflated refund to
+    the CORRECT destination, sitting under the spend cap, was allowed."""
+    policy = MerchantPolicy(max_single_amount=50_000, max_daily_amount=100_000, max_daily_count=10)
+    gateway = PolicyGateway(policy, VelocityTracker())
+    verdict = gateway.check(ORDER, _action(amount=49_990.0))  # order is worth 100.0
+    assert verdict.allowed is False
+    assert verdict.rule_fired == "amount_binding"
+
+
+def test_partial_refund_is_allowed():
+    """Binding is `<=`, not `==`. Refunding LESS than was paid is a normal
+    business decision (partial damage, restocking) and must not be blocked --
+    this is the over-blocking side of the trade, and the reason the rule
+    isn't stricter."""
+    policy = MerchantPolicy(max_single_amount=50_000, max_daily_amount=100_000, max_daily_count=10)
+    gateway = PolicyGateway(policy, VelocityTracker())
+    verdict = gateway.check(ORDER, _action(amount=40.0))  # order is worth 100.0
+    assert verdict.allowed is True
+
+
+def test_exact_refund_is_allowed():
+    policy = MerchantPolicy(max_single_amount=50_000, max_daily_amount=100_000, max_daily_count=10)
+    gateway = PolicyGateway(policy, VelocityTracker())
+    verdict = gateway.check(ORDER, _action(amount=100.0))
+    assert verdict.allowed is True
+
+
+def test_amount_binding_tolerates_sub_paisa_float_noise():
+    policy = MerchantPolicy(max_single_amount=50_000, max_daily_amount=100_000, max_daily_count=10)
+    gateway = PolicyGateway(policy, VelocityTracker())
+    verdict = gateway.check(ORDER, _action(amount=100.000000001))
+    assert verdict.allowed is True
+
+
+def test_amount_binding_fires_before_spend_cap():
+    """An inflated amount that ALSO breaches the cap should report the more
+    specific and more actionable reason."""
+    policy = MerchantPolicy(max_single_amount=200, max_daily_amount=100_000, max_daily_count=10)
+    gateway = PolicyGateway(policy, VelocityTracker())
+    verdict = gateway.check(ORDER, _action(amount=5_000.0))  # over both
+    assert verdict.rule_fired == "amount_binding"
 
 
 def test_cumulative_amount_over_daily_cap_fires_velocity_amount():
