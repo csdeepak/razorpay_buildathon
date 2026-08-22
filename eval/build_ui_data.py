@@ -30,6 +30,39 @@ RUNS = [
     ("opus", "Claude Opus 5", "eval/runs/phaseE-opus-structural.json"),
 ]
 
+# The cross-lab arm (ADR 0011, Finding 18). These runs cover the DENIAL class
+# only -- Gemini's free tier is 20 requests/day/model, so the quota went to
+# the one class where a cross-lab result changes what can be claimed. They are
+# kept separate from RUNS on purpose: folding them into `models` would imply
+# diversion numbers that were never measured for them.
+CROSS_LAB_RUNS = [
+    ("Google", "Gemini 3.6 Flash", "eval/runs/gem36-denial.json"),
+    ("Google", "Gemini 3.5 Flash", "eval/runs/gemini-3-5-flash-denial.json"),
+    ("Google", "Gemini 3.1 Flash Lite", "eval/runs/gemini-3-1-flash-lite-denial.json"),
+    ("NVIDIA", "Nemotron 3 Ultra 550B",
+     "eval/runs/nvidia-nemotron-3-ultra-550b-a55b-free-denial.json"),
+    ("NVIDIA", "Nemotron 3 Super 120B", "eval/runs/nemo-denial.json"),
+    ("NVIDIA", "Nemotron Nano 9B", "eval/runs/nvidia-nemotron-nano-9b-v2-free-denial.json"),
+]
+
+
+def reduce_cross_lab(path: str) -> dict:
+    """Denial leak, completeness detection and false alarms for one
+    cross-lab run. Errored case-runs are excluded, not counted as passes --
+    a 429 is a missing measurement, never a success."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    rows = data["results"]
+    den = [r for r in rows if r.get("attack_class") == "denial" and not r.get("error")]
+    ben = [r for r in rows if r.get("kind") == "benign" and not r.get("error")]
+    return {
+        "model": data["model"],
+        "leak_n": sum(1 for r in den if r["outcome"] == "leaked"),
+        "leak_d": len(den),
+        "det_n": sum(1 for r in den if r.get("completeness_flagged")),
+        "fp_n": sum(1 for r in ben if r.get("completeness_flagged")),
+        "fp_d": len(ben),
+    }
+
 OUT = Path("submission/demo/ui-data.json")
 TEMPLATE = Path("submission/demo/index.html")
 BUILT = Path("submission/demo/warden-demo.html")        # standalone, has a doctype
@@ -184,6 +217,21 @@ def main() -> None:
     fp_n = sum(models[k]["false_positive"]["n"] for k in models)
     fp_d = sum(models[k]["false_positive"]["d"] for k in models)
 
+    # Fold the cross-lab denial arm into the denial/completeness/false-alarm
+    # totals only. Diversion totals stay Claude-only, because that is all that
+    # was measured.
+    cross = []
+    for lab, label, path in CROSS_LAB_RUNS:
+        if not Path(path).exists():
+            continue
+        r = reduce_cross_lab(path)
+        cross.append({"lab": lab, "label": label, **r,
+                      "leak": stat(r["leak_n"], r["leak_d"])})
+        den_n += r["leak_n"]; den_d += r["leak_d"]
+        det_n += r["det_n"]
+        fp_n += r["fp_n"];   fp_d += r["fp_d"]
+    labs = sorted({c["lab"] for c in cross} | {"Anthropic"})
+
     # All three quotes come from ORD-7813 -- Rhea's order -- so the narrative
     # follows one customer. toolout-002 and denial-002 are her cases;
     # toolout-001/denial-001 are a different order and were the mismatch in
@@ -205,6 +253,12 @@ def main() -> None:
             "denial_leak_all": stat(den_n, den_d),
             "completeness_all": stat(det_n, den_d),
             "false_positive_all": stat(fp_n, fp_d),
+        },
+        "cross_lab": {
+            "models": cross,
+            "n_models": len(cross) + len(models),
+            "n_labs": len(labs),
+            "labs": labs,
         },
         "quotes": {
             "haiku_recovered": (hijack.get("agent_final_text") or "").strip(),

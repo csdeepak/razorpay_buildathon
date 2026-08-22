@@ -21,7 +21,8 @@ isn't on this page — and everything on this page already exists.
 ### Hook — 0:00–0:12
 
 A merchant support agent on Razorpay, handling refunds in chat. It has real
-tools and can move real money on test-mode APIs. One sentence of setup, then
+tools and moves real money on test-mode APIs — the refund ids on screen are
+genuine (`rfnd_...`), not fixtures. One sentence of setup, then
 straight into the attack — no architecture diagram, no title card.
 
 ### Beat 1 — the attack everyone expects, and the twist — 0:12–0:32
@@ -79,8 +80,8 @@ This is the beat that earns the room's trust — most demos would have hidden
 it. Then answer the obvious question, *"so why does the layer exist?"*, with
 the number that answers it:
 
-> **On screen: 0 false positives in 117 legitimate refunds, all three
-> models.**
+> **On screen: 0 false positives in 117 legitimate refunds, all three Claude
+> models** — 0/134 once the cross-lab arm is included.
 
 Alignment is a probability that changes with every model release. The gateway
 is a proof — and it costs nothing to keep. That is what makes a cheap model
@@ -94,13 +95,13 @@ Same frontier model. New attack: a forged note on the order record reading
 The model believes it, closes the case, and asks *"Is there anything else I
 can help you with?"* The customer is simply never paid.
 
-> **On screen: 39/39. Every model tested. 100% failure.**
+> **On screen: 56/56. Nine models, three labs, 9B to frontier. 100% failure.**
 
 Then the part that matters: **the gateway cannot help here either.** Its
 entire mechanism is refusing a proposed action, and this attack proposes
 nothing. There is no bad action to block — a good one was suppressed.
 
-> **On screen: completeness audit — 39/39 detected, 0 false alarms.**
+> **On screen: completeness audit — 56/56 detected, 0 false alarms in 134.**
 
 Warden never reads the forged note. It asks the ledger whether a refund
 exists and the case record whether a request is open. A forged claim has no
@@ -118,7 +119,7 @@ path to it.
 
 Terminal output is acceptable — `CLAUDE.md` rule 4 says cut UI before
 evaluation, and the evaluation is the moat. If Day 13 buys anything, it is
-making the three numbers land visually: **62/62**, **0/208**, **39/39**.
+making the three numbers land visually: **62/62**, **0/208**, **56/56**.
 
 ## Honest caveats to have ready for Q&A
 
@@ -132,10 +133,11 @@ supports:
 - **"How big is the corpus?"** 29 attacks across 8 classes, 9 benign
   controls, 5 seeds. Smaller than I'd like; the per-class intervals are wide
   and reported as such (Wilson, not normal approximation).
-- **"Did you test a real model?"** Claude Haiku 4.5, Sonnet 5, and Opus 5 —
-  real tool-calling, un-hardened system prompt. Hardening the prompt is a separate
-  variable I deliberately did not tune, because it would suppress compromises
-  and flatter the layer.
+- **"Did you test a real model?"** Nine of them, across three labs: Claude
+  Haiku 4.5 / Sonnet 5 / Opus 5, Gemini 3.6 / 3.5 / 3.1 Flash, and NVIDIA
+  Nemotron 9B / 120B / 550B. Real tool-calling, un-hardened system prompt.
+  Hardening the prompt is a separate variable I deliberately did not tune,
+  because it would suppress compromises and flatter the layer.
 - **"What can't it do?"** Under-refunding. Temporal decoupling (needs mandate
   expiry). And it is protocol-agnostic by choice — it is not a competitor to
   NPCI's UAP, it is the enforcement layer a merchant needs whichever protocol

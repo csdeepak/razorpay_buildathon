@@ -17,14 +17,20 @@ built and where do things stand."
 
 The problem is locked (Track 01, working name **Warden** — an agent
 trust/safety/audit layer for agentic payments). The system is built, tested
-(24 passing tests), and evaluated against three real Claude models with real
-API spend ($10.27 of a $74 budget). The core finding — every model resists
-diversion attacks but **all three fail 100% of denial attacks**, which a
-completeness audit then catches 39/39 — is genuinely strong and demo-ready.
-A scroll-driven demo page exists, is built, and is published as a private
-Claude Artifact. **What's missing is not engineering — it's submission
-mechanics**: the GitHub repo may still be private, no pitch video exists, and
-`submission/narrative.md` is an unfilled template. See §6.
+(**83 passing tests**), runs against **Razorpay's real test-mode API**, and is
+evaluated against **nine models across three labs** (Anthropic, Google,
+NVIDIA) for **$10.27 of a $74 budget** — the six non-Anthropic models cost
+$0.00. The core finding — every model resists diversion but **all nine fail
+100% of denial attacks, 56/56**, which a completeness audit then catches 56/56
+with 0 false alarms in 134 benign sessions — is strong and demo-ready.
+`submission/narrative.md` and `submission/form-answers.md` are written. A
+scroll-driven demo page exists, is built, and is published as a private Claude
+Artifact.
+
+**Two things remain, both Deepak's and neither of them engineering: the
+GitHub repo is still private (form Q10, a hard blocker — verified 404
+unauthenticated on 2026-08-23), and the 5-minute pitch video is not
+recorded.** See §6.
 
 ---
 
@@ -133,7 +139,7 @@ model — see Finding 10, the catch rate there is *undefined*, not 100%)
 toward "deterministic guarantee + the gap neither alignment nor prevention
 covers."
 
-Full findings log: `docs/eval-findings.md` (16 numbered findings, several
+Full findings log: `docs/eval-findings.md` (19 numbered findings, several
 of which are "here's what we got wrong and how the eval caught it" —
 exactly the material the Buildathon form's *"what broke"* question wants).
 
@@ -150,7 +156,7 @@ belongs in the provable layer.
 ### Phase M — Demo story, design, and build
 - `submission/demo-story.md` — the fixed narrative ("The Refund That Never
   Came," customer Rhea Mehta, order ORD-7813), plus a coverage matrix
-  mapping all 16 findings to specific story beats so nothing silently drops.
+  mapping the findings to specific story beats so nothing silently drops.
 - `docs/design/{DESIGN,SCREEN_MAP,ASSETS,TOOLING}.md` — visual system
   measured off `razorpay.com/buildathon`'s actual computed styles (ground
   `#0E0B08`, amber `#D9A353` repurposed to mean "Warden acting"), scene/state
@@ -182,6 +188,36 @@ Full detail in §6 below — this is the actual next-session starting point.
 
 ---
 
+### Phase O — Submission mechanics, the real rail, and cross-lab (2026-08-23)
+
+Four things landed, in this order:
+
+1. **`narrative.md` + `form-answers.md` written.** Every number traced to a
+   recorded finding rather than restated from memory. Q12 ("what broke") leads
+   with the pitch dying on frontier models, not with a bug fix.
+2. **Real Razorpay rail → ADR 0010.** `--rail razorpay` runs the whole
+   pipeline against test-mode credentials; verified end to end with a real
+   captured payment and a real refund (`rfnd_TSyITyRbE6z72y`).
+   `scripts/checkout_fixture.py` mints the captured payment a refund needs
+   (netbanking — the generic Visa test card reads as international, and UPI is
+   not enabled on a fresh account).
+   - **Finding 17:** the refund API has **no destination field**, so 73 of 79
+     recorded diversion compromises could not have landed on Razorpay's rail.
+     Beat 1 reframed; the corpus deliberately *not* rewritten to match.
+   - **Finding 19:** refunds are funded from **merchant balance**, not the
+     payment, and fail with a bare `invalid request sent`. Independent
+     corroboration of ADR 0009.
+3. **Cross-lab evaluation → ADR 0011, Finding 18.** One adapter
+   (`eval/backends.py`) covering OpenRouter *and* Google AI Studio. Denial
+   subset run on six more models across two more labs for **$0.00**:
+   **56/56 across nine models, three labs, 9B to frontier.** The single-lab
+   confound under the sharpest claim is gone. Gemini free tier is **20
+   requests/day/model**, which is why the arm is denial-only and n=1.
+4. **Consistency pass** across every judge-facing file — narrative, demo
+   script, form answers, README, demo page, ui-data.
+
+Tests 24 → 83. ADRs 9 → 11. Findings 16 → 19. Spend unchanged at $10.27.
+
 ## 2. Repo map — where things actually live
 
 ```
@@ -189,24 +225,25 @@ CLAUDE.md                    — operating manual, read this first in any sessio
 transfer.md                  — THIS FILE (root, current build session)
 docs/
   context/                   — frozen Day 1-5 research + transfer.md (read-only .md; .xlsx is live)
-  decisions/0001-0009         — ADRs, one per phase above; read before touching that area
+  decisions/0001-0011         — ADRs, one per phase above; read before touching that area
   gate-0-tracker.md            — resolved, kept for the record
   progress-tracker.md           — daily log against the 16-day plan
   eval-budget.md                 — spend ledger, $10.27 of $74, phase-by-phase
-  eval-findings.md                 — 16 numbered findings, the evidence base for the narrative
+  eval-findings.md                 — 19 numbered findings, the evidence base for the narrative
   design/                            — DESIGN.md, SCREEN_MAP.md, ASSETS.md, TOOLING.md, IMAGE-PROMPTS.md
 outreach/                    — ONE real conversation round (Day 4, pre-build). Thin — see §6.
 submission/
   one-pagers/                — the 3 candidates that were scored, pre-lock
   demo-script.md               — the 90-second pitch script, 3-beat structure, real numbers
   demo-story.md                  — the full storyboard ("The Refund That Never Came")
-  narrative.md                     — ⚠️ STILL THE UNFILLED TEMPLATE — see §6, top priority
+  narrative.md                     — WRITTEN (2026-08-23), all seven sections, no PENDING markers left
+  form-answers.md                    — the form's 4 content fields; Q12 in three lengths
   founder-email.md                   — still correctly parked (unlock condition now arguably met)
   demo/                                — the built page: index.html (source), warden-demo.html /
                                           warden-artifact.html (built, gitignored), img/, ui-data.json
 src/                          — Warden itself: agent/ tool/ memory/ safety/ verification/ audit/
 eval/                         — corpus.py, agent.py, harness.py, metrics.py, run.py, build_ui_data.py
-tests/                        — 24 tests, all passing
+tests/                        — 83 tests, all passing
 ```
 
 ---

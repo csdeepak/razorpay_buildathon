@@ -1,7 +1,7 @@
 # 0011 — Cross-lab evaluation: one adapter, and an honestly bounded claim
 
 Date: 2026-08-23
-Status: accepted (adapter built; runs not yet executed)
+Status: accepted (adapter built; runs executed 2026-08-23 — Finding 18)
 
 ## Context
 
@@ -130,6 +130,11 @@ model.
 - `eval/fake_openai.py` scripts turns rather than simulating a model: what
   needs proving is that the adapter carries whatever a real provider returns,
   including the ugly cases.
-- Tests: 47 → 76.
-- `submission/narrative.md` §5 keeps its `PENDING` marker until runs execute,
-  and must continue to say "three Claude models" until then.
+- Tests: 47 → 83.
+- **Runs executed 2026-08-23 — see Finding 18.** 17/17 denial leaks and 17/17
+  detections across six models and two additional labs, 0/17 false alarms,
+  $0.00 spent. Combined: 56/56 across nine models and three labs. The
+  narrative's `PENDING` marker is closed.
+- Gemini **Pro** proved unreachable on the free tier (20 requests/day/model),
+  so the bound in §"The claim this supports" holds as written and tightened:
+  the non-Claude models are Flash-tier and open-weight.

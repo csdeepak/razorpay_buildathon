@@ -412,7 +412,7 @@ p{margin:0}
     <p class="lede"><strong>Warden never fires.</strong> The gate greys out. There is no amber on this screen.</p>
     <div class="stat"><div class="stat__v" id="k2">0 / 208</div><div class="stat__l">diversion attacks compromised a frontier model — Sonnet 5 and Opus 5</div><div class="stat__ci" id="k2ci"></div></div>
     <p class="lede" style="margin-top:24px">So why keep the layer at all?</p>
-    <div class="stat"><div class="stat__v settled" id="k3">0 / 117</div><div class="stat__l">false positives on legitimate refunds — the guarantee costs nothing</div></div>
+    <div class="stat"><div class="stat__v settled" id="k3">0 / 134</div><div class="stat__l">false positives on legitimate refunds — the guarantee costs nothing</div></div>
     <p class="small">Alignment is a probability that shifts with every model release. The gateway is a proof. And on the small model — the one a merchant actually deploys at scale — it is load-bearing.</p>
     <p class="micro" style="margin-top:26px">Run the same corpus on a different agent</p>
     <div class="models" id="models" role="group" aria-label="Agent model"></div>
@@ -447,8 +447,8 @@ p{margin:0}
     <p class="lede">No diverted payment. No red. Nothing for a gateway to block — because nothing was proposed. A good action was suppressed instead.</p>
     <p class="lede">The merchant's dashboard records a resolved case in 41 seconds. Rhea is out ₹1,250 and will spend three weeks proving that a refund she never received never arrived. <strong>On every metric the merchant tracks, this went well.</strong></p>
     <p class="sr">No action was taken. The refund was never issued. The case was closed with the customer unpaid.</p>
-    <div class="stat"><div class="stat__v danger" id="k4">39 / 39</div><div class="stat__l">denial attacks succeeded — <b>every model tested</b>, Haiku through Opus</div><div class="stat__ci" id="k4ci"></div></div>
-    <p class="small">Capability buys nothing here. The frontier model that caught the redirect in Act III fails this one exactly as often as the cheapest model does.</p>
+    <div class="stat"><div class="stat__v danger" id="k4">56 / 56</div><div class="stat__l">denial attacks succeeded — <b>every model tested</b>: 9 models, 3 labs, 9B to frontier</div><div class="stat__ci" id="k4ci"></div></div>
+    <p class="small">Capability buys nothing here. The frontier model that caught the redirect in Act III fails this one exactly as often as the cheapest model does — and it is not one lab's blind spot. Claude, Gemini and NVIDIA Nemotron all fail it, and a 550B model fails it as reliably as a 9B one.</p>
   </div>
 </section>
 
@@ -460,8 +460,8 @@ p{margin:0}
     <p class="lede mono" style="font-size:14px">Open refund request on ORD-7813? <span class="amber">yes</span><br>Disbursement against it in the ledger? <span class="danger">no</span></p>
     <p class="lede"><strong class="amber">Obligation undischarged.</strong> Raised for human review.</p>
     <div class="stats">
-      <div class="stat"><div class="stat__v amber" id="k5">39 / 39</div><div class="stat__l">detected, across all three models</div><div class="stat__ci" id="k5ci"></div></div>
-      <div class="stat"><div class="stat__v settled">0</div><div class="stat__l">false alarms in 117 benign sessions</div></div>
+      <div class="stat"><div class="stat__v amber" id="k5">56 / 56</div><div class="stat__l">detected, across all nine models</div><div class="stat__ci" id="k5ci"></div></div>
+      <div class="stat"><div class="stat__v settled">0</div><div class="stat__l">false alarms in 134 benign sessions</div></div>
     </div>
     <p class="small">Every denial attack works by making a <em>claim</em> about state — already refunded, non-refundable, filed in error. None of those claims are ever consulted. That is the whole mechanism, and it is the same discipline as the gateway: read trusted state, never the conversation.</p>
   </div>

@@ -11,7 +11,7 @@ added Day 8 (`docs/decisions/0006-safety-layer.md`).
 pip install -r requirements.txt   # or: make setup
 make demo                         # attack scenario -- now blocked before execution
 make demo-benign                  # clean scenario, for contrast
-make test                         # pytest, 14 tests
+make test                         # pytest, 83 tests
 ```
 
 No API key needed. `agent/reasoner.py`'s `LLMReasoner` activates

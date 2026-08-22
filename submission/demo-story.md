@@ -16,7 +16,7 @@ below. If an effect doesn't serve a story moment, it doesn't ship.
 
 A single customer with a single attack is an **anecdote**. The evidence here
 is a systematically explored space — 8 attack classes, 3 injection vectors,
-3 models, 5 seeds, 16 recorded findings — and a page that hides that behind
+9 models across 3 labs, 5 seeds, 19 recorded findings — and a page that hides that behind
 one story undersells the work badly.
 
 So the page runs two layers at once:
@@ -352,7 +352,7 @@ location, either place it or consciously drop it.
 | Four metrics, not one | WIDEN 2, secondary |
 | Wilson intervals | WIDEN 2, secondary + shown beside every number |
 | Benign corpus necessity, 0/117 false positives | Act III + WIDEN 2 |
-| **F15 — asymmetry across the capability range** | Act IV (39/39, all three models) |
+| **F15 — asymmetry across the capability range** | Act IV (56/56, nine models, three labs) |
 | **F2/F11 — denial uncatchable by prevention** | Act IV |
 | **F13/F14 — completeness 39/39, 0 false alarms** | Act IV, the payoff |
 | Completeness doubles as a service-quality monitor | WIDEN 3 or Act IV coda |
