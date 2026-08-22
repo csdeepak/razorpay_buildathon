@@ -23,12 +23,11 @@ Plan baseline: Day 1 = Thu 20 Aug 2026. Deadline confirmed as 5 September
 - **Gate 2 (end Day 5): CLEARED, three days early.** Hard lock in effect. No new problem after this — `CLAUDE.md` rule 1.
 
 ### Phase 3 — Build the spine · Days 6–10 · target 60%
-- [x] Day 9 work (done early, Fri 22): Verification deepened — completeness audit for denial attacks (`docs/decisions/0009-completeness-check.md`)
 - [x] Day 6–7 work (done early, Fri 21): **Vertical slice runs end-to-end** (reason → decide → act(mocked) → verify → audit). `python -m src.cli --scenario attack`: mocked payout executes to the attacker's account, verify catches it after the fact, audit chain intact. 6 passing tests. See `docs/decisions/0005-vertical-slice-architecture.md`, `src/README.md`.
 - [x] Day 8 work (done early, Fri 21): **Safety layer built** — `PolicyGateway` (category, payee_scope, spend_cap, velocity), runs before `act`, pipeline is now preventive. `make demo`: attack blocked before execution, rule fired shown, verify independently agrees. 14 passing tests (8 new). Caught and fixed a real bug while building it: velocity wasn't actually being recorded on allow. See `docs/decisions/0006-safety-layer.md`.
-- [ ] Day 9: Verification layer (the moat) — deepen past the thin destination-match rule
-- [ ] Day 10: Audit layer (deepen past the hash chain — replay, queryability)
-- **Gate 3 (end Day 10): loop runs end-to-end on one real scenario — CLEARED, three-plus days early.** Remaining Phase 3 work (Days 8–10) deepens the three DEEP layers on top of a working spine, doesn't build the spine itself.
+- [x] Day 9 work (done early, Fri 22): **Verification deepened** — completeness audit catching denial attacks, the class neither model alignment nor the preventive gate addresses. 39/39 detected across three models, 0 false alarms. See `docs/decisions/0009-completeness-check.md`.
+- [ ] Day 10: Audit layer (deepen past the hash chain — replay, queryability). **Lowest-priority remaining item**: the hash chain already demonstrates tamper-evidence, and replay/queryability appear nowhere in `submission/demo-script.md` (`CLAUDE.md` rule 2).
+- **Gate 3 (end Day 10): loop runs end-to-end on one real scenario — CLEARED, three-plus days early.**
 
 ### Phase 4 — Evidence · Days 11–13 · target 85%
 - [x] Day 11 work (done early, Fri 22): Evaluation harness + 29-attack adversarial corpus across 8 classes + 9 benign controls (`eval/`)
