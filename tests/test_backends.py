@@ -26,6 +26,7 @@ from eval.backends import (
     to_openai_tools,
 )
 from eval.fake_openai import (
+    FakeResponse,
     FakeOpenAISession,
     assistant_turn,
     error_response,
@@ -228,7 +229,7 @@ class TestErrorClassification:
 
     def test_rate_limit_is_distinguishable(self):
         session = FakeOpenAISession([error_response(429, "rate limited")])
-        backend = make_backend(session)
+        backend = make_backend(session, max_retries=0)
         backend.add_user_text("hi")
 
         with pytest.raises(ModelBackendError) as exc:
@@ -239,13 +240,42 @@ class TestErrorClassification:
 
     def test_out_of_credit_is_distinguishable(self):
         session = FakeOpenAISession([error_response(402, "insufficient credits")])
-        backend = make_backend(session)
+        backend = make_backend(session, max_retries=0)
         backend.add_user_text("hi")
 
         with pytest.raises(ModelBackendError) as exc:
             backend.complete()
 
         assert exc.value.is_out_of_credit is True
+
+    def test_google_list_shaped_error_body_is_still_classified(self):
+        """Google AI Studio returns errors as a JSON array, not an object.
+
+        Found live: a Gemini 429 raised AttributeError out of the error path
+        instead of a ModelBackendError, which would have turned a rate-limited
+        run into an unexplained crash mid-corpus.
+        """
+        session = FakeOpenAISession(
+            [FakeResponse(429, [{"error": {"message": "quota exceeded", "code": 429}}])]
+        )
+        backend = make_backend(session, max_retries=0)
+        backend.add_user_text("hi")
+
+        with pytest.raises(ModelBackendError) as exc:
+            backend.complete()
+
+        assert exc.value.is_rate_limit is True
+        assert "quota exceeded" in str(exc.value)
+
+    def test_empty_list_error_body_does_not_crash(self):
+        session = FakeOpenAISession([FakeResponse(500, [])])
+        backend = make_backend(session, max_retries=0)
+        backend.add_user_text("hi")
+
+        with pytest.raises(ModelBackendError) as exc:
+            backend.complete()
+
+        assert exc.value.status_code == 500
 
     def test_bad_request_is_neither(self):
         session = FakeOpenAISession([error_response(400, "not a valid model ID")])
@@ -338,6 +368,81 @@ class TestAnthropicPathUnchanged:
                 {"type": "tool_result", "tool_use_id": "tu_1", "content": '{"amount_owed": 1250}'}
             ],
         }
+
+
+class TestRetry:
+    """Free tiers return 429 and 503 routinely. Dropping those cases makes the
+    run a biased sample rather than a smaller one, so they are retried -- but
+    never swallowed once retries are exhausted."""
+
+    def test_transient_503_is_retried_then_succeeds(self):
+        slept: list[float] = []
+        session = FakeOpenAISession(
+            [
+                error_response(503, "high demand"),
+                error_response(503, "high demand"),
+                assistant_turn(text="finally"),
+            ]
+        )
+        backend = make_backend(session, sleep=slept.append, backoff_base=2.0)
+        backend.add_user_text("hi")
+
+        turn = backend.complete()
+
+        assert turn.text == "finally"
+        assert backend.retries_used == 2
+        assert len(slept) == 2
+        assert slept[1] > slept[0]  # exponential, not flat
+
+    def test_429_is_retried(self):
+        session = FakeOpenAISession(
+            [error_response(429, "quota"), assistant_turn(text="ok")]
+        )
+        backend = make_backend(session, sleep=lambda _: None)
+        backend.add_user_text("hi")
+
+        assert backend.complete().text == "ok"
+        assert backend.retries_used == 1
+
+    def test_retry_after_header_is_honoured_over_backoff(self):
+        slept: list[float] = []
+        session = FakeOpenAISession(
+            [
+                FakeResponse(429, {"error": {"message": "slow down"}},
+                             headers={"Retry-After": "7"}),
+                assistant_turn(text="ok"),
+            ]
+        )
+        backend = make_backend(session, sleep=slept.append)
+        backend.add_user_text("hi")
+
+        backend.complete()
+
+        assert slept == [7.0]
+
+    def test_exhausted_retries_still_raise(self):
+        """The failure must reach the harness so the report's error count
+        stays honest -- a silently-absorbed rate limit is how a partial run
+        gets mistaken for a complete one."""
+        session = FakeOpenAISession([error_response(429, "quota")] * 4)
+        backend = make_backend(session, max_retries=3, sleep=lambda _: None)
+        backend.add_user_text("hi")
+
+        with pytest.raises(ModelBackendError) as exc:
+            backend.complete()
+
+        assert exc.value.is_rate_limit is True
+
+    def test_non_retryable_status_is_not_retried(self):
+        session = FakeOpenAISession([error_response(400, "bad model id")])
+        backend = make_backend(session, sleep=lambda _: None)
+        backend.add_user_text("hi")
+
+        with pytest.raises(ModelBackendError):
+            backend.complete()
+
+        assert backend.retries_used == 0
+        assert len(session.requests) == 1
 
 
 class TestBackendRouting:

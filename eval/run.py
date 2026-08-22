@@ -87,11 +87,55 @@ def structural_enforcement_for(order_id: str):
     return hook
 
 
+def stratified_sample(cases: list, n: int, seed: int = 0) -> list:
+    """N cases spread evenly across attack classes, not the first N.
+
+    `--limit` takes a prefix, and the corpus is ordered by class, so a prefix
+    is a sample of one or two classes. Calibrating the Opus run that way
+    underestimated cost by 19% (Finding 16): the leading cases were simple
+    single-turn injections, while the real corpus has multi-turn cases and
+    denial cases where the agent reasons at length before closing.
+
+    Round-robins across classes so every class is represented before any class
+    is represented twice.
+    """
+    import random
+    from collections import defaultdict
+
+    by_class: dict[str, list] = defaultdict(list)
+    for case in cases:
+        by_class[case.attack_class.value].append(case)
+
+    rng = random.Random(seed)
+    for bucket in by_class.values():
+        rng.shuffle(bucket)
+
+    picked: list = []
+    for class_name in sorted(by_class):  # sorted: reproducible independent of dict order
+        by_class[class_name] = list(by_class[class_name])
+    while len(picked) < n and any(by_class.values()):
+        for class_name in sorted(by_class):
+            if not by_class[class_name]:
+                continue
+            picked.append(by_class[class_name].pop())
+            if len(picked) == n:
+                break
+    return picked
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Warden adversarial evaluation.")
     parser.add_argument("--enforcement", choices=["none", "structural"], default="structural")
     parser.add_argument("--seeds", type=int, default=1, help="Repetitions per case (see note below).")
-    parser.add_argument("--limit", type=int, default=None, help="Cap the number of cases.")
+    parser.add_argument("--limit", type=int, default=None,
+                        help="Cap cases by PREFIX. Fine for smoke-testing wiring; "
+                             "never use it to calibrate cost (see --sample).")
+    parser.add_argument("--sample", type=int, default=None,
+                        help="Take a STRATIFIED sample of N attack cases, spread across "
+                             "attack classes. Use this, not --limit, for cost and "
+                             "throughput calibration -- docs/eval-findings.md Finding 16.")
+    parser.add_argument("--sample-seed", type=int, default=0,
+                        help="Seed for --sample, so a calibration run is reproducible.")
     parser.add_argument("--classes", nargs="*", default=None, help="Filter to these attack classes.")
     parser.add_argument("--smoke", action="store_true", help="Tiny run to verify wiring.")
     parser.add_argument("--workers", type=int, default=4)
@@ -108,6 +152,8 @@ def main(argv: list[str] | None = None) -> int:
         attacks, benign, args.seeds = attacks[:2], benign[:1], 1
     if args.limit:
         attacks, benign = attacks[: args.limit], benign[: args.limit]
+    if args.sample:
+        attacks = stratified_sample(attacks, args.sample, args.sample_seed)
 
     jobs = []
     for seed in range(args.seeds):

@@ -46,6 +46,8 @@ the fact.
 from __future__ import annotations
 
 import json
+import random
+import time
 import os
 from dataclasses import dataclass, field
 from typing import Any, Protocol
@@ -186,6 +188,9 @@ class OpenAICompatBackend:
         timeout: float = 120.0,
         provider_order: list[str] | None = None,
         extra_headers: dict[str, str] | None = None,
+        max_retries: int = 6,
+        backoff_base: float = 2.0,
+        sleep: Any = None,
     ) -> None:
         if not api_key:
             raise ValueError(f"an API key is required for {model!r}")
@@ -203,6 +208,10 @@ class OpenAICompatBackend:
         self._timeout = timeout
         self._provider_order = provider_order
         self._extra_headers = extra_headers or {}
+        self._max_retries = max_retries
+        self._backoff_base = backoff_base
+        self._sleep = sleep or time.sleep
+        self.retries_used = 0
         self._messages: list[dict[str, Any]] = []
 
     def reset(self) -> None:
@@ -235,21 +244,60 @@ class OpenAICompatBackend:
             }
         return body
 
+    RETRYABLE = frozenset({429, 500, 502, 503, 504})
+
+    def _post_with_retry(self) -> Any:
+        """Retry transient provider failures with exponential backoff + jitter.
+
+        Free tiers return 429 (quota) and 503 (high demand) routinely, and a
+        run that drops those cases is a biased sample, not a smaller one. So
+        they are retried rather than absorbed -- and when retries are
+        exhausted the error is still raised, never swallowed, so the harness
+        records a real failure and the report's error count stays honest.
+
+        `Retry-After` is honoured when the provider sends it; providers know
+        their own quota windows better than a backoff curve does.
+        """
+        headers = {
+            "Authorization": f"Bearer {self._key}",
+            "Content-Type": "application/json",
+            **self._extra_headers,
+        }
+        last = None
+        for attempt in range(self._max_retries + 1):
+            last = self._session.post(
+                f"{self._base}/chat/completions",
+                json=self._body(),
+                headers=headers,
+                timeout=self._timeout,
+            )
+            if last.status_code not in self.RETRYABLE or attempt == self._max_retries:
+                return last
+
+            retry_after = getattr(last, "headers", {}) or {}
+            try:
+                delay = float(retry_after.get("Retry-After", ""))
+            except (TypeError, ValueError):
+                delay = self._backoff_base**attempt + random.uniform(0, 0.75)
+            self.retries_used += 1
+            self._sleep(min(delay, 60.0))
+        return last
+
     def complete(self) -> ModelTurn:
-        response = self._session.post(
-            f"{self._base}/chat/completions",
-            json=self._body(),
-            headers={
-                "Authorization": f"Bearer {self._key}",
-                "Content-Type": "application/json",
-                **self._extra_headers,
-            },
-            timeout=self._timeout,
-        )
+        response = self._post_with_retry()
         try:
             payload = response.json()
         except Exception:  # noqa: BLE001
             payload = {"error": {"message": "unparseable body"}}
+
+        # Google AI Studio returns errors as a JSON *array* -- [{"error": {...}}]
+        # -- rather than the object the OpenAI shape specifies. Without this,
+        # a Gemini 429 raises AttributeError from the error path instead of a
+        # classified ModelBackendError, which is precisely the failure this
+        # class exists to prevent: a rate-limited run has to be loudly
+        # distinguishable from a completed one.
+        if isinstance(payload, list):
+            payload = payload[0] if payload and isinstance(payload[0], dict) else {}
 
         if response.status_code >= 400:
             err = payload.get("error", {})
