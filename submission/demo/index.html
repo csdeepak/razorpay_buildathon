@@ -24,11 +24,26 @@
   --e-travel:cubic-bezier(.35,0,.25,1); --e-wrong:cubic-bezier(.5,-.3,.7,1.4);
 }
 *,*::before,*::after{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth; overflow-x:hidden}
 body{
   margin:0; background:var(--ground); color:var(--cream);
   font-family:var(--sans); font-size:16px; line-height:1.6;
-  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* Ledger rules + grain. A payments audit trail IS a ledger, so the ground
+   carries faint horizontal rules and a vertical column line rather than
+   arbitrary texture. Both sit far below the type in contrast. */
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(240,231,214,.028) 0 1px, transparent 1px 34px),
+    radial-gradient(120% 80% at 50% 0%, rgba(217,163,83,.045), transparent 62%),
+    radial-gradient(100% 70% at 50% 100%, rgba(217,88,74,.028), transparent 60%);
+}
+/* Fine grain so large dark areas don't band on projectors or in video. */
+body::after{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.035'/></svg>");
 }
 h1,h2,h3{text-wrap:balance; margin:0; font-weight:800; letter-spacing:-.035em; line-height:1.05}
 p{margin:0}
@@ -41,9 +56,11 @@ p{margin:0}
 /* ── Stage: fixed visual layer. Progressive enhancement over the prose. ── */
 /* Read on the left, watch on the right. The left third is deliberately empty
    in the stage -- that is where the prose column lives. */
-.stage{position:fixed; inset:0; pointer-events:none; z-index:1; display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(240px,340px) minmax(280px,340px);
-  align-items:center; gap:24px; padding:0 28px}
+.stage{position:fixed; inset:0; pointer-events:none; z-index:1;
+  display:flex; justify-content:center; align-items:center}
+.stage__in{width:100%; max-width:1280px; padding:0 28px; display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(240px,320px) minmax(260px,320px);
+  align-items:center; gap:28px}
 .stage__spacer{min-width:0}
 .stage__right{display:flex; flex-direction:column; gap:12px; min-width:0; align-items:stretch;
   max-height:88vh}
@@ -51,7 +68,14 @@ p{margin:0}
 /* Spine — the one continuous object. Money travels along it. */
 .spine{position:relative; height:min(62vh,520px); margin:0 auto; width:100%; max-width:420px}
 .spine__rail{position:absolute; left:50%; top:0; bottom:0; width:2px; margin-left:-1px;
-  background:var(--line); transition:background var(--t-enter)}
+  background:var(--line); transition:background var(--t-enter); overflow:hidden}
+/* The page has a pulse. In Act IV it flatlines — that is the whole point. */
+.spine__pulse{position:absolute; left:0; right:0; height:64px; top:-64px;
+  background:linear-gradient(to bottom, transparent, rgba(240,231,214,.55), transparent);
+  animation:travel 3.4s linear infinite}
+.spine.is-flat .spine__pulse{animation:none; opacity:0}
+.spine.is-hot .spine__pulse{background:linear-gradient(to bottom, transparent, var(--amber), transparent)}
+@keyframes travel{from{top:-64px} to{top:100%}}
 .node{position:absolute; left:50%; transform:translateX(-50%); display:flex; align-items:center;
   gap:10px; background:var(--ground); padding:6px 0}
 .node__dot{width:12px; height:12px; border:2px solid var(--cream-30); background:var(--ground);
@@ -212,11 +236,11 @@ p{margin:0}
 /* Three tiers. The stage IS the page, so it survives as long as it can:
    the right rail goes first, then the left panels, then the whole stage. */
 @media (max-width:1180px){
-  .stage{grid-template-columns:minmax(0,1fr) minmax(200px,280px) minmax(240px,280px); gap:14px}
+  .stage__in{grid-template-columns:minmax(0,1fr) minmax(200px,260px) minmax(220px,260px); gap:16px}
   .beat__in{max-width:30ch}
 }
 @media (max-width:940px){
-  .stage{grid-template-columns:minmax(0,1fr) 1fr 0; padding:0 14px}
+  .stage__in{grid-template-columns:minmax(0,1fr) 1fr 0; padding:0 14px}
   .stage__right{display:none}
   .beat__in{max-width:28ch}
 }
@@ -239,10 +263,11 @@ p{margin:0}
 
 <!-- Fixed visual stage: progressive enhancement over the prose below. -->
 <div class="stage" id="stage" aria-hidden="true">
+ <div class="stage__in">
   <div class="stage__spacer"></div>
 
   <div class="spine" id="spine">
-    <div class="spine__rail"></div>
+    <div class="spine__rail"><div class="spine__pulse"></div></div>
     <div class="node node--agent is-idle" id="nAgent"><span class="node__dot"></span><span class="node__label">agent</span></div>
     <div class="gate is-idle" id="gate"><span class="gate__t" id="gateT">warden</span></div>
     <div class="node node--rail is-idle" id="nRail"><span class="node__dot"></span><span class="node__label">payment rail</span></div>
@@ -266,6 +291,7 @@ p{margin:0}
     <div class="audit" id="audit"></div>
     <div class="timer" id="timer"></div>
   </div>
+ </div>
 </div>
 
 <div class="balance" id="balance" aria-hidden="true">
@@ -520,7 +546,9 @@ p{margin:0}
   });
 
   /* Scene machine — token position + node states per scene */
-  var tok=$('token'), gate=$('gate'), nA=$('nAgent'), nR=$('nRail'), bal=$('balance');
+  var tok=$('token'), gate=$('gate'), nA=$('nAgent'), nR=$('nRail'), bal=$('balance'), spine=$('spine');
+  /* live = pulse travelling · hot = amber pulse (Warden acting) · flat = Act IV */
+  function pulse(state){ spine.className='spine'+(state==='flat'?' is-flat':state==='hot'?' is-hot':''); }
   function setNode(n,s){ n.className=n.className.replace(/is-(idle|active|firing)/g,'').trim()+' '+s; }
   function audit(n){ [].forEach.call(au.children,function(c,i){ c.classList.toggle('is-on', i<n); }); }
   function panels(o){ ['pChat','pNote','pAgent','pRule','pMerch'].forEach(function(p){ $(p).classList.toggle('is-on', o.indexOf(p)>=0); }); }
@@ -532,29 +560,30 @@ p{margin:0}
     tok.style.top=top; tok.style.left=opts.left||'50%';
   }
   var SC={
-    s00:function(){ panels(['pChat']); setNode(nA,'is-idle'); setNode(nR,'is-idle');
+    s00:function(){ pulse('live'); panels(['pChat']); setNode(nA,'is-idle'); setNode(nR,'is-idle');
       gate.className='gate is-idle'; tokenAt('6%',{}); audit(0); bal.className='balance'; $('balV').textContent='₹0'; $('timer').textContent=''; },
-    s01:function(){ panels(['pChat']); setNode(nA,'is-active'); setNode(nR,'is-active');
+    s01:function(){ pulse('live'); panels(['pChat']); setNode(nA,'is-active'); setNode(nR,'is-active');
       gate.className='gate is-open'; $('gateT').textContent='allowed'; tokenAt('90%',{on:1}); audit(3);
       bal.className='balance is-paid'; $('balV').textContent='₹1,250'; $('timer').textContent=''; },
-    s02:function(){ panels(['pChat','pNote','pRule','pAgent']); setNode(nA,'is-active'); setNode(nR,'is-idle');
+    s02:function(){ pulse('hot'); panels(['pChat','pNote','pRule','pAgent']); setNode(nA,'is-active'); setNode(nR,'is-idle');
       gate.className='gate is-firing'; $('gateT').textContent='refused'; $('ruleTxt').textContent='payee_scope';
       tokenAt('46%',{on:1,wrong:1,blocked:1,left:'78%'}); audit(4);
       bal.className='balance'; $('balV').textContent='₹0'; $('chatAgent').textContent=D.quotes.haiku_recovered; $('timer').textContent=''; },
-    s03:function(){ panels([]); audit(0); },
-    s04:function(){ panels(['pChat','pNote','pAgent']); setNode(nA,'is-active'); setNode(nR,'is-idle');
+    s03:function(){ pulse('live'); panels([]); audit(0); },
+    s04:function(){ pulse('live'); panels(['pChat','pNote','pAgent']); setNode(nA,'is-active'); setNode(nR,'is-idle');
       gate.className='gate is-idle'; $('gateT').textContent='not engaged'; tokenAt('6%',{}); audit(2);
       bal.className='balance'; $('balV').textContent='₹0'; $('chatAgent').textContent=D.quotes.sonnet_defends; $('timer').textContent=''; },
-    s05:function(){ panels([]); audit(0); },
+    s05:function(){ pulse('live'); panels([]); audit(0); },
     /* ABSENCE. Nothing moves. No spinner, no shimmer. The dead spine is the content. */
-    s06:function(){ panels(['pChat','pNote','pAgent','pMerch']); setNode(nA,'is-active'); setNode(nR,'is-idle');
+    /* FLATLINE. The pulse the reader has watched for four acts simply stops. */
+    s06:function(){ pulse('flat'); panels(['pChat','pNote','pAgent','pMerch']); setNode(nA,'is-active'); setNode(nR,'is-idle');
       gate.className='gate is-idle'; $('gateT').textContent='nothing proposed'; tokenAt('6%',{}); audit(0);
       $('noteTxt').textContent=D.poisoned_notes.denial; $('chatAgent').textContent=D.quotes.sonnet_denial;
       bal.className='balance is-frozen'; $('balV').textContent='₹0'; },
-    s07:function(){ panels(['pChat','pMerch']); gate.className='gate is-idle'; tokenAt('6%',{});
+    s07:function(){ pulse('flat'); panels(['pChat','pMerch']); gate.className='gate is-idle'; tokenAt('6%',{});
       $('sweep').classList.add('is-on'); audit(2); bal.className='balance is-frozen'; $('timer').textContent=''; },
-    s08:function(){ panels([]); $('sweep').classList.remove('is-on'); audit(0); },
-    s09:function(){ panels([]); $('sweep').classList.remove('is-on'); audit(0); bal.className='balance'; }
+    s08:function(){ pulse('live'); panels([]); $('sweep').classList.remove('is-on'); audit(0); },
+    s09:function(){ pulse('live'); panels([]); $('sweep').classList.remove('is-on'); audit(0); bal.className='balance'; }
   };
   var active='';
   function go(s){ if(s===active) return; active=s; if(s!=='s07') $('sweep').classList.remove('is-on'); (SC[s]||function(){})(); }
@@ -589,6 +618,16 @@ p{margin:0}
   function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(sync); } }
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',onScroll,{passive:true});
+  /* Belt and braces: an observer only WAKES sync, it never decides which scene
+     is active -- that stays the deterministic nearest-centre calculation. Some
+     embedding contexts don't deliver scroll events reliably, and a page whose
+     whole argument is carried by scroll shouldn't go blank in one of them. */
+  if('IntersectionObserver' in window){
+    var wake=new IntersectionObserver(onScroll,{threshold:[0,.25,.5,.75,1]});
+    beats.forEach(function(b){ wake.observe(b); });
+  }
+  addEventListener('load',onScroll);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(onScroll);
   sync();
 
   paintModel('haiku');

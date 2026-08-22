@@ -30,7 +30,8 @@ RUNS = [
 
 OUT = Path("submission/demo/ui-data.json")
 TEMPLATE = Path("submission/demo/index.html")
-BUILT = Path("submission/demo/warden-demo.html")
+BUILT = Path("submission/demo/warden-demo.html")        # standalone, has a doctype
+ARTIFACT = Path("submission/demo/warden-artifact.html")  # for Artifact publish, no doctype
 
 CASES = {c.id: c for c in ATTACK_CASES}
 BENIGN = {c.id: c for c in BENIGN_CASES}
@@ -250,8 +251,23 @@ def main() -> None:
         if "__DATA__" not in html:
             raise SystemExit("template has no __DATA__ placeholder -- did you edit the built file by mistake?")
         # </script> inside JSON string data would close the tag early.
-        BUILT.write_text(html.replace("__DATA__", compact.replace("</", "<\/")), encoding="utf-8")
-        print(f"wrote {BUILT} ({BUILT.stat().st_size:,} bytes)")
+        body = html.replace("__DATA__", compact.replace("</", "<\\/"))
+
+        # Two outputs, and the difference matters. Without a doctype the browser
+        # falls into QUIRKS MODE, where document.scrollingElement becomes <body>
+        # and the page scrolls in a container instead of the document -- which
+        # breaks anchor jumps and scroll-behaviour. The Artifact host supplies
+        # its own doctype/head/body wrapper, so that build must NOT have one;
+        # the standalone file a judge opens from the repo must.
+        ARTIFACT.write_text(body, encoding="utf-8")
+        BUILT.write_text(
+            '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+            + body
+            + "\n</html>\n",
+            encoding="utf-8",
+        )
+        print(f"wrote {BUILT} ({BUILT.stat().st_size:,} bytes)  standalone, doctype")
+        print(f"wrote {ARTIFACT} ({ARTIFACT.stat().st_size:,} bytes)  artifact publish, no doctype")
     h = payload["headline"]
     print(f"  gateway catch      {h['gateway_catch']['n']}/{h['gateway_catch']['d']}"
           f"  (blended incl. denial: {h['gateway_catch_blended']['n']}/{h['gateway_catch_blended']['d']})")
