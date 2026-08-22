@@ -5,18 +5,25 @@ payments — a submission for the Razorpay AI Buildathon, Track 01 (AI Growth
 & Agentic Commerce), and supporting evidence for a parallel Founder's Office
 conversation at Razorpay.
 
-**Status: evaluated against two live models (2026-08-22).** Preventive
+**Status: evaluated against three live models (2026-08-22).** Preventive
 gateway plus a detective completeness audit, measured over an adversarial
-corpus of 29 attacks across 8 classes with 9 benign controls, 5 seeds.
+corpus of 29 attacks across 8 classes with 9 benign controls, multi-seed, on
+Claude Haiku 4.5, Sonnet 5, and Opus 5.
 
 | Result | Number |
 |---|---|
 | Small model (Haiku 4.5) compromise rate | **47.7%** (62/130) |
-| — of those, caught by the gateway | **62/62** |
-| Frontier model (Sonnet 5) compromise rate | **0/130** — catch rate is *undefined*, not 100% |
-| False positives, both models | **0/45** · 100% utility preserved |
-| Denial attacks — both models fail | **15/15**, and no preventive gate can stop them |
-| — caught by the completeness audit | **15/15**, 0 false alarms |
+| — of those, caught by the gateway | **62 / 62** |
+| Frontier models (Sonnet 5 + Opus 5) compromise rate | **0 / 208** — catch rate is *undefined*, not 100% |
+| False positives, all three models | **0 / 117** · utility preserved |
+| **Denial attacks — every model fails** | **39 / 39**, and no preventive gate can stop them |
+| — caught by the completeness audit | **39 / 39**, 0 false alarms |
+
+**The finding worth reading twice:** across the full capability range, zero
+diversion attacks compromised a frontier model — and *every single* denial
+attack succeeded against *every* model tested. Denial is the one class where
+capability buys nothing, and it is the class a preventive gate cannot address
+by construction. The completeness audit catches all of it, deterministically.
 
 Full evidence in [`docs/eval-findings.md`](docs/eval-findings.md); the
 90-second story in [`submission/demo-script.md`](submission/demo-script.md).
@@ -38,11 +45,20 @@ trust boundary. India's regulators (CERT-In, NPCI) are simultaneously trying
 to specify mandatory human-in-the-loop controls and agent authorization for
 UPI, and neither Razorpay nor the regulators have published a working
 mechanism yet. Warden builds the enforcement/verification/audit layer that
-boundary requires: an agent's payment gets reasoned about, gated against
-policy, executed on Razorpay test-mode APIs, and written to a tamper-evident
-audit trail — demoed by catching a real prompt-injection attack rather than
-showing a policy screen. Full sourcing in `docs/context/`; validation
-evidence in `outreach/`.
+boundary requires: an agent's payment is gated against policy derived from
+trusted state, executed on Razorpay test-mode APIs, written to a
+tamper-evident audit trail, and — after the session — audited for
+obligations it quietly failed to discharge.
+
+The evaluation reshaped the claim. Warden is **not** "we stop prompt
+injection" — a current frontier model stops it unaided, and the honest
+catch rate there is *undefined*, not 100%. What Warden provides is a
+**deterministic** guarantee where alignment offers only a probability that
+shifts with every model release, at a measured cost of zero false positives
+— and coverage of **denial attacks**, which every model tested fails 100% of
+the time and which no preventive gate can address. Full sourcing in
+`docs/context/`; validation evidence in `outreach/`; measurements in
+`docs/eval-findings.md`.
 
 ## Repo structure
 

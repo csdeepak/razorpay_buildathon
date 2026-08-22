@@ -104,18 +104,30 @@ early.
 | 2026-08-22 | B | **5-seed** structural (settles Finding 6) | haiku-4-5 | 190 | $1.105 | $71.99 |
 | 2026-08-22 | C | Sonnet token calibration | sonnet-5 | 6 | $0.091 | $71.90 |
 | 2026-08-22 | C | **5-seed** structural (reportable) | sonnet-5 | 190 | $2.900 | $69.00 |
-| 2026-08-22 | D | completeness-check wiring confirmation | haiku-4-5 | 12 | $0.060 | **$68.94** |
+| 2026-08-22 | D | completeness-check wiring confirmation | haiku-4-5 | 12 | $0.060 | $68.94 |
+| 2026-08-22 | E | Opus token calibration (underestimated, see below) | opus-5 | 4 | $0.150 | $68.79 |
+| 2026-08-22 | E | **3-seed** cross-model check | opus-5 | 114 | $5.063 | **$63.73** |
 
-**Phase B: $2.01 of $6. Phase C so far: $2.99 of $16** — under budget because the Sonnet baseline arm was skipped as uninformative (zero compromises to protect against; see eval-findings Finding 10). Follow-up turns raised
-the per-case-run basis to **$0.0060 structural / $0.0051 baseline** on Haiku
-(from $0.0048) — longer conversations are the price of measuring utility
-honestly. Use $0.0060 as the Haiku basis for Phase C forecasting, scaled to
-the target model.
+**Phase E: $5.21 of $6 — landed inside budget but the forecast was 19% low.**
+`--limit N` takes a *prefix*, not a representative sample; calibrating on two
+simple single-turn cases missed the multi-turn and denial cases that push
+output tokens from 714 to 950 per case-run. See eval-findings Finding 16.
+Opus basis for any future run: **$0.0444/case-run**.
 
-Blended per-case-run cost is now **measured over the real corpus** (multi-turn
-cases included), which supersedes the smoke-run lower bound: **$0.0045
-baseline / $0.0051 structural** on Haiku. The 1.4–1.8x uplift I warned about
-did **not** materialise for Haiku — multi-turn cases barely moved the average.
-Enforcement itself costs ~13% more (blocked agents write more; see
-`docs/eval-findings.md` Finding 4). The verbosity uplift for Opus/Sonnet
-remains untested and is still the main forecasting risk for Phase C.
+### Current measured cost basis (supersedes the estimates at the top)
+
+| Model | $/case-run | avg tokens | source |
+|---|---:|---|---|
+| `claude-haiku-4-5` | $0.0060 | 3,989 / 402 | Phase B, full corpus w/ follow-ups |
+| `claude-sonnet-5` | $0.0153 | 4,308 / 664 | Phase C, 190 case-runs |
+| `claude-opus-5` | $0.0444 | 4,130 / 950 | Phase E, 114 case-runs |
+
+Phase-by-phase: **A** $0.01 · **B** $2.01 of $6 · **C** $2.99 of $16 ·
+**D** $0.06 · **E** $5.21 of $6. Phase C came in far under budget because the
+Sonnet baseline arm was skipped as uninformative — with zero compromises
+there was nothing for a baseline to contrast against (eval-findings Finding
+10).
+
+Two cost effects worth carrying forward: enforcement itself adds ~13% tokens
+(blocked agents write more), and contingent follow-up turns added another
+~18% — that is what measuring utility honestly costs.

@@ -494,3 +494,61 @@ The three-beat story is now:
 Beat 3 is the one no competitor is likely to have, because finding it
 required running a weak *and* a strong model against the same corpus and
 being willing to report that the headline metric was undefined.
+
+---
+
+## 2026-08-22 — Phase E: Claude Opus 5 cross-model check
+
+**Setup:** 29 attacks + 9 benign, **3 seeds** (not 5 — see the cost note),
+`claude-opus-5`, structural arm. 114 case-runs, $5.06 + $0.15 calibration.
+
+### Opus 5 reproduces Sonnet's pattern exactly
+
+| | Haiku 4.5 | Sonnet 5 | **Opus 5** |
+|---|---:|---:|---:|
+| Diversion compromise | 47.7% (62/130) | 0/130 | **0/78** |
+| **Denial leak** | **15/15** | **15/15** | **9/9** |
+| Completeness detection | 15/15 | 15/15 | **9/9** |
+| False positives | 0/45 | 0/45 | **0/27** |
+| Utility preservation | 100% | 88.9%\* | **100%** (27/27) |
+
+\* Sonnet's 88.9% was the mis-specified `benign-002`, since fixed (Finding 12).
+
+### Finding 15 — the asymmetry holds across the entire capability range
+
+Three models, spanning cheap-to-frontier, same corpus:
+
+> **0 of 208 diversion attacks compromised a frontier model.**
+> **39 of 39 denial attacks succeeded against every model tested.**
+
+This is no longer "Sonnet happens to be robust." Two independent frontier
+models show the *identical* asymmetry, and the weak model shows it too — it
+fails at denial 100% of the time while also failing at diversion 47.7% of the
+time. Denial is the one attack class where capability buys **nothing**.
+
+The completeness audit caught **39 of 39** across all three models, with
+**0 false alarms in 117 benign sessions**.
+
+That combination — a failure mode that is total and capability-independent,
+against a detection that is total and deterministic — is the strongest claim
+this project can make, and it is now backed by three models rather than one.
+
+### Finding 16 — calibrating on the first N cases underestimates cost
+
+The Opus run cost **$5.06 against a $4.26 forecast — a 19% overrun.**
+
+Cause: I calibrated with `--limit 2`, which takes the *first* two cases —
+both simple single-turn direct injections. The real corpus has multi-turn
+cases, contingent follow-ups, and denial cases where the agent reasons at
+length before closing. Measured output rose from 714 to **950 tokens per
+case-run** once the whole corpus was in play.
+
+**Rule going forward: calibrate on a representative sample, not a prefix.**
+`--limit N` is a prefix, not a sample. The forecast error was affordable here
+because Phase E had headroom; on a Phase C-sized run the same mistake would
+have cost real money.
+
+Worth noting the thing I *was* worried about did not happen: Opus 5's
+adaptive thinking is on by default and thinking bills at the output rate, but
+on a task this mechanical the model largely declines to think, and the
+thinking overhead was minor next to the corpus-composition effect.

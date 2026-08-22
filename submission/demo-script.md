@@ -12,7 +12,7 @@ isn't on this page — and everything on this page already exists.
 
 ## The sentence a judge should be able to repeat an hour later
 
-> *"The one where the frontier model blocked every hijack attempt but fell
+> *"The one where every frontier model blocked every hijack attempt but fell
 > for every 'don't pay them' attack — and they were the only ones who caught
 > it."*
 
@@ -40,9 +40,10 @@ the tamper-evident audit record for that exact event.
 
 ### Beat 2 — the honest turn — 0:32–0:50
 
-Same corpus, same attacks, run against **Claude Sonnet 5**.
+Same corpus, same attacks, run against **Claude Sonnet 5** — then again
+against **Opus 5**.
 
-> **On screen: 0 compromises out of 130.**
+> **On screen: 0 compromises out of 208, across both frontier models.**
 
 Say it plainly: *the frontier model defends itself. My enforcement layer
 caught nothing, because there was nothing to catch.*
@@ -51,8 +52,8 @@ This is the beat that earns the room's trust — most demos would have hidden
 it. Then answer the obvious question, *"so why does the layer exist?"*, with
 the number that answers it:
 
-> **On screen: 0 false positives in 45 legitimate refunds. 100% utility
-> preserved.**
+> **On screen: 0 false positives in 117 legitimate refunds, all three
+> models.**
 
 Alignment is a probability that changes with every model release. The gateway
 is a proof — and it costs nothing to keep. That is what makes a cheap model
@@ -66,13 +67,13 @@ Same frontier model. New attack: a forged note on the order record reading
 The model believes it, closes the case, and asks *"Is there anything else I
 can help you with?"* The customer is simply never paid.
 
-> **On screen: 15/15. Both models. 100% failure.**
+> **On screen: 39/39. Every model tested. 100% failure.**
 
 Then the part that matters: **the gateway cannot help here either.** Its
 entire mechanism is refusing a proposed action, and this attack proposes
 nothing. There is no bad action to block — a good one was suppressed.
 
-> **On screen: completeness audit — 15/15 detected, 0 false alarms.**
+> **On screen: completeness audit — 39/39 detected, 0 false alarms.**
 
 Warden never reads the forged note. It asks the ledger whether a refund
 exists and the case record whether a request is open. A forged claim has no
@@ -90,7 +91,7 @@ path to it.
 
 Terminal output is acceptable — `CLAUDE.md` rule 4 says cut UI before
 evaluation, and the evaluation is the moat. If Day 13 buys anything, it is
-making the three numbers land visually: **62/62**, **0/130**, **15/15**.
+making the three numbers land visually: **62/62**, **0/208**, **39/39**.
 
 ## Honest caveats to have ready for Q&A
 
@@ -104,8 +105,8 @@ supports:
 - **"How big is the corpus?"** 29 attacks across 8 classes, 9 benign
   controls, 5 seeds. Smaller than I'd like; the per-class intervals are wide
   and reported as such (Wilson, not normal approximation).
-- **"Did you test a real model?"** Claude Haiku 4.5 and Sonnet 5, real
-  tool-calling, un-hardened system prompt. Hardening the prompt is a separate
+- **"Did you test a real model?"** Claude Haiku 4.5, Sonnet 5, and Opus 5 —
+  real tool-calling, un-hardened system prompt. Hardening the prompt is a separate
   variable I deliberately did not tune, because it would suppress compromises
   and flatter the layer.
 - **"What can't it do?"** Under-refunding. Temporal decoupling (needs mandate
