@@ -4,6 +4,11 @@ Design brief for the scroll-driven demo page. Deepak is designing; this
 consolidates his direction plus additions. Feeds Day 13
 (`docs/progress-tracker.md`) and the 5-minute pitch video.
 
+> **Read `submission/demo-story.md` first.** The story is fixed and this
+> brief is downstream of it — every animation here should trace to a story
+> beat, and the action vocabulary (REQUEST / PROPOSE / DIVERT / BLOCK /
+> DISSOLVE / ABSENCE / AUDIT-SWEEP …) is defined there, not here.
+
 **Governing constraint:** this page exists to make three numbers land —
 **62/62**, **0/208**, **39/39** — and to carry the three beats in
 `submission/demo-script.md`. Anything that doesn't serve those hasn't earned
