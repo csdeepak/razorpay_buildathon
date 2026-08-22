@@ -65,7 +65,7 @@ class NaiveReasoner:
 class LLMReasoner:
     """Real Anthropic-backed reasoner. Requires ANTHROPIC_API_KEY."""
 
-    def __init__(self, model: str = "claude-sonnet-4-5-20250929") -> None:
+    def __init__(self, model: str = "claude-opus-5") -> None:
         import anthropic  # deferred import: only required on this path
 
         self._client = anthropic.Anthropic()
