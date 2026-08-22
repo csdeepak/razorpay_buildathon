@@ -263,7 +263,9 @@ def main() -> None:
         # palette quantisation took these from 5.1 MB to ~130 KB.
         img_dir = Path("submission/demo/img")
         missing = []
-        for slot in ("p1-asks", "p2-note", "p3-block", "p5-waits", "p6-audit"):
+        # p6-audit is generated but intentionally unused: Act IV keeps the live
+        # CSS sweep, which reads better than a static picture of one.
+        for slot in ("p1-asks", "p2-note", "p3-block", "p5-waits"):
             token = "__IMG_" + slot.split("-")[0].upper() + "__"
             f = img_dir / (slot + ".webp")
             if f.exists():

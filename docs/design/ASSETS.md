@@ -18,7 +18,14 @@ inlined as data URIs at build time.
 | `p3-block.webp` | 3 — diverted and stopped | WIDEN 1 strip | 4 KB |
 | — | 4 — **empty frame** | Act IV strip | 0 (CSS) |
 | `p5-waits.webp` | 5 — closed laptop, waiting | Act IV strip | 48 KB |
-| `p6-audit.webp` | 6 — the sweep | Act IV audit | 7 KB |
+| `p6-audit.webp` | 6 — the sweep | **generated, not used** | 7 KB |
+
+**Panel 6 is generated but deliberately unused.** Act IV's audit keeps the
+live CSS sweep instead. Two reasons: the sweep is a control *doing* something
+and a static picture of one is weaker, and in practice the image also broke
+the beat — `has-fig` hides the spine rail, so the illustrated version left the
+sweep rising over nothing. The file is kept in case a still is ever wanted for
+the deck or the pitch video.
 
 **The bookend worked.** Panels 1 and 5 are the same shot twice — same bench,
 tree, paving, camera and figure — differing only in that her laptop is open

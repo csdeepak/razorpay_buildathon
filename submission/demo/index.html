@@ -300,7 +300,6 @@ p{margin:0}
 
   <div class="figs" id="figs" style="position:absolute; inset:0; pointer-events:none">
     <div class="fig" id="figAsks"><img src="__IMG_P1__" alt=""></div>
-    <div class="fig" id="figAudit"><img src="__IMG_P6__" alt=""></div>
     <div class="strip" id="stripAttack">
       <figure><img src="__IMG_P2__" alt=""><figcaption>a note appears on the record</figcaption></figure>
       <figure><img src="__IMG_P3__" alt=""><figcaption>the payout is diverted, and stopped</figcaption></figure>
@@ -587,7 +586,7 @@ p{margin:0}
   /* live = pulse travelling · hot = amber pulse (Warden acting) · flat = Act IV */
   function pulse(state){ spine.className='spine'+(state==='flat'?' is-flat':state==='hot'?' is-hot':''); }
   /* Show one figure/strip and hide the spine, or clear them and restore it. */
-  var FIGS=['figAsks','figAudit','stripAttack','stripSilence'];
+  var FIGS=['figAsks','stripAttack','stripSilence'];
   function fig(which){
     FIGS.forEach(function(f){ $(f).classList.toggle('is-on', f===which); });
     spine.classList.toggle('has-fig', !!which);
@@ -623,7 +622,7 @@ p{margin:0}
       gate.className='gate is-idle'; $('gateT').textContent='nothing proposed'; tokenAt('6%',{}); audit(0);
       $('noteTxt').textContent=D.poisoned_notes.denial; $('chatAgent').textContent=D.quotes.sonnet_denial;
       bal.className='balance is-frozen'; $('balV').textContent='₹0'; },
-    s07:function(){ pulse('flat'); fig('figAudit'); panels(['pChat','pMerch']); gate.className='gate is-idle'; tokenAt('6%',{});
+    s07:function(){ pulse('flat'); fig(null); panels(['pChat','pMerch']); gate.className='gate is-idle'; tokenAt('6%',{});
       $('sweep').classList.add('is-on'); audit(2); bal.className='balance is-frozen'; $('timer').textContent=''; },
     s08:function(){ pulse('live'); fig(null); panels([]); $('sweep').classList.remove('is-on'); audit(0); },
     s09:function(){ pulse('live'); fig(null); panels([]); $('sweep').classList.remove('is-on'); audit(0); bal.className='balance'; }
