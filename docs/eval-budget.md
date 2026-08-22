@@ -7,17 +7,29 @@ estimating.
 Hard constraint: **$74 total**, covering everything from here (2026-08-22)
 to submission (2026-09-05). There is no second tranche.
 
-## Cost basis
+## Cost basis — MEASURED 2026-08-22 (Phase A smoke)
 
-Measured per-case-run averages will replace these after the first smoke run.
-Current figures assume ~3,500 input + ~550 output tokens per case-run (a
-multi-turn tool-calling conversation, ~3 model calls).
+Real figures from the smoke run: **3,018 input + 344 output tokens per
+case-run**. My pre-run estimate (3,500/550) overestimated output by ~60%.
 
 | Model | $/1M in | $/1M out | $/case-run | 32-case run | 150 cases x 5 seeds |
 |---|---:|---:|---:|---:|---:|
-| `claude-opus-5` | 5.00 | 25.00 | $0.031 | $1.00 | $23.44 |
-| `claude-sonnet-5` | 2.00\* | 10.00\* | $0.013 | $0.40 | $9.38 |
-| `claude-haiku-4-5` | 1.00 | 5.00 | $0.006 | $0.20 | $4.69 |
+| `claude-opus-5` | 5.00 | 25.00 | $0.024 | $0.76 | $17.78 |
+| `claude-sonnet-5` | 2.00\* | 10.00\* | $0.010 | $0.31 | $7.16 |
+| `claude-sonnet-5` (after Aug 31) | 3.00 | 15.00 | $0.014 | $0.46 | $10.66 |
+| `claude-haiku-4-5` | 1.00 | 5.00 | $0.005 | $0.15 | $3.53 |
+
+**Treat these as a lower bound.** The smoke sample was 3 *single-turn* cases
+on the *tersest* model. Two things will push the real blended average up:
+
+- **Multi-turn cases** (3 in the corpus, more coming) roughly double the
+  conversation length.
+- **Opus and Sonnet are more verbose** than Haiku, so output tokens — the
+  expensive side, at 5x the input rate — will rise.
+
+A prudent working assumption is **1.4–1.8x these figures** for a blended
+corpus on a larger model. Phase B runs the full corpus and will produce a
+true blended average; recalibrate again then, before committing to Phase C.
 
 \* **Sonnet 5 introductory pricing ends 2026-08-31** — mid-project. After
 that it's $3.00/$15.00, a 50% jump. **Front-load Sonnet runs before Aug 31.**
@@ -83,4 +95,4 @@ early.
 
 | Date | Phase | Command | Model | Case-runs | Cost | Remaining |
 |---|---|---|---|---:|---:|---:|
-| — | — | *(nothing spent yet)* | — | 0 | $0.00 | **$74.00** |
+| 2026-08-22 | A | `--smoke` | haiku-4-5 | 3 | $0.014 | **$73.99** |
