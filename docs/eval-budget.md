@@ -95,4 +95,14 @@ early.
 
 | Date | Phase | Command | Model | Case-runs | Cost | Remaining |
 |---|---|---|---|---:|---:|---:|
-| 2026-08-22 | A | `--smoke` | haiku-4-5 | 3 | $0.014 | **$73.99** |
+| 2026-08-22 | A | `--smoke` | haiku-4-5 | 3 | $0.014 | $73.99 |
+| 2026-08-22 | B | full corpus, `--enforcement none` | haiku-4-5 | 32 | $0.144 | $73.84 |
+| 2026-08-22 | B | full corpus, `--enforcement structural` | haiku-4-5 | 32 | $0.162 | **$73.68** |
+
+Blended per-case-run cost is now **measured over the real corpus** (multi-turn
+cases included), which supersedes the smoke-run lower bound: **$0.0045
+baseline / $0.0051 structural** on Haiku. The 1.4–1.8x uplift I warned about
+did **not** materialise for Haiku — multi-turn cases barely moved the average.
+Enforcement itself costs ~13% more (blocked agents write more; see
+`docs/eval-findings.md` Finding 4). The verbosity uplift for Opus/Sonnet
+remains untested and is still the main forecasting risk for Phase C.
