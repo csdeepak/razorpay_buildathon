@@ -168,6 +168,23 @@ class RazorpayAPIClient:
             raise RazorpayError(response.status_code, payload)
         return payload
 
+    def fetch_balance(self) -> int:
+        """Merchant balance in paise.
+
+        A refund is **not** a reversal of the original payment -- it is a
+        fresh disbursement funded from merchant balance. So a refund can fail
+        for reasons that have nothing to do with the payment being refunded,
+        and Razorpay reports that as a bare `invalid request sent` with no
+        field and no reason. Reading the balance first is the only way to
+        give a caller an actionable message.
+        """
+        payload = self._unwrap(
+            self._session.get(
+                f"{self._base_url}/balance", auth=self._auth, timeout=self._timeout
+            )
+        )
+        return int(payload.get("balance", 0))
+
     def fetch_payment(self, payment_id: str) -> dict[str, Any]:
         return self._unwrap(
             self._session.get(

@@ -108,10 +108,23 @@ explaining a nuance.
 - **The rail is a genuine structural backstop.** Over-refunding is rejected by
   the API itself (ADR 0008's amount-binding attack fails at the rail as well
   as the gate), and diverted payees are unrepresentable.
-- **Still outstanding:** an end-to-end run against live test-mode keys. The
-  fake is faithful to the documented contract, but "verified against docs" is
-  not "verified against the API," and the writeup must not claim otherwise
-  until a real key has been used.
-- `submission/narrative.md` §4 carries a `PENDING` marker for the mocked-rail
-  paragraph; it is rewritten when the point above is closed.
+- **CLOSED 2026-08-23 — verified end to end against live test-mode keys.**
+  Real captured payment `pay_TSy9UxOPeF9lXs` (netbanking, Rs.1,250), real
+  refund `rfnd_TSyITyRbE6z72y`, gate allowed, verifier agreed, audit chain
+  intact. The attack scenario on the same live rail is refused at
+  `payee_scope` and never reaches the API.
+- **The live run found what the fake could not:** refunds are funded from
+  *merchant balance*, not from the payment being refunded, and an
+  over-balance refund returns a bare `invalid request sent` with no field or
+  reason. See Finding 19 — it is independent corroboration of ADR 0009, since
+  a correctly-decided, correctly-called refund can still leave a customer
+  unpaid. `fetch_balance()` was added and the live CLI caps at
+  `min(unrefunded, balance)`.
+- **Two things the live run also forced.** `.env` is now loaded by the CLI,
+  which silently switched `default_reasoner()` to a real LLM call; `--reasoner`
+  now defaults to `naive` explicitly so `make demo` stays free and
+  reproducible. And Razorpay test mode rejects the generic
+  `4111 1111 1111 1111` Visa as an *international* card while UPI is not
+  enabled on a fresh account — the fixture uses netbanking, which needs no
+  instrument details at all.
 - Tests: 24 → 47.

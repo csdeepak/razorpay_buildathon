@@ -681,3 +681,62 @@ The response was to spend the quota on the **one class that answers the open
 question** rather than thin the whole corpus across it. Denial is the finding
 the submission leans on; it is also the only class where a cross-lab result
 changes what can be claimed.
+
+---
+
+## 2026-08-23 — Live API: Finding 19, a refund is a disbursement, not a reversal
+
+Running the pipeline against real test-mode credentials
+(`python -m src.cli --rail razorpay --payment-id pay_...`) produced a real
+refund — `rfnd_TSyITyRbE6z72y`, gate allowed, verifier agreed, audit chain
+intact — and surfaced something the mock had no way to model.
+
+### Finding 19 — refunds are funded from merchant balance, and fail opaquely
+
+Refunding a ₹1,250 captured payment failed with HTTP 400:
+
+```
+{"code": "BAD_REQUEST_ERROR", "description": "invalid request sent",
+ "reason": "NA", "source": "NA", "step": "NA"}
+```
+
+No field, no reason, no step. Bracketing it:
+
+| Requested | Merchant balance | Result |
+|---:|---:|---|
+| ₹1,250 | below it | 400 `invalid request sent` |
+| ₹500 | above it | ✅ `rfnd_…` |
+| ₹744 | ₹713.50 | 400 `invalid request sent` |
+| *(amount omitted — full refund)* | ₹713.50 | 400 `invalid request sent` |
+| ₹700 | ₹713.50 | ✅ `rfnd_…` |
+
+**A Razorpay refund is not a reversal of the original payment.** It is a fresh
+disbursement funded from merchant balance. The refundable amount is bounded by
+*both* the payment's unrefunded remainder **and** the balance — and when the
+balance is the binding constraint, the API says nothing useful about it.
+
+### Why this matters beyond the plumbing
+
+It is independent corroboration of the thesis behind ADR 0009.
+
+The completeness audit exists because a customer can end a session unpaid with
+no attack involved — Finding 14 recorded exactly that, five genuine service
+failures among Sonnet's benign runs. Finding 19 supplies a *mechanism* for
+that class in production: a refund the agent correctly decided to issue, and
+correctly called, can still not happen, because of a balance condition
+elsewhere in the merchant's account and reported in a way nothing can act on.
+
+An agent seeing `invalid request sent` has no way to distinguish "my request
+was malformed" from "the money is not there today." **Neither the model nor
+the preventive gate can catch this. A completeness audit reading trusted
+state can** — it asks whether the obligation was discharged, and a failed
+disbursement leaves it undischarged exactly like a suppressed one.
+
+### What was done about it
+
+`RazorpayAPIClient.fetch_balance()`, and the live CLI path now caps the
+refund at `min(unrefunded, balance)` and says which constraint bound it. That
+turns an opaque 400 into a stated precondition. It is not a fix for the
+production case — a real merchant cannot cap their way out of an empty
+balance — which is the point: the failure is real, and it belongs to the
+detective layer, not the preventive one.

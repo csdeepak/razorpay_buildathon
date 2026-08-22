@@ -118,16 +118,30 @@ Every action is written to a hash-chained audit log, tamper-evident by
 construction — which is the "full audit trail" CERT-In asks for, implemented
 rather than asserted.
 
-<!-- PENDING: this paragraph is written to the CURRENT state (mocked rail).
-     Rewrite it once the Razorpay test-mode client is wired — do not let it
-     drift into implying real rails before that lands. -->
+**The rail is real.** `act` runs against Razorpay's test-mode API
+([ADR 0010](../docs/decisions/0010-real-razorpay-rail.md)) — a captured
+payment, the full pipeline, and a genuine refund id:
 
-**On the execution layer, stated plainly:** the `act` stage currently calls a
-mock rail, not Razorpay's test-mode API. Every layer this project is *about* —
-the gate, the mandate binding, the completeness audit, the hash chain — sits
-upstream of execution and is real. But the rail itself is stubbed, and I would
-rather say so here than have a reviewer discover it in
-[`src/tool/razorpay_mock.py`](../src/tool/razorpay_mock.py).
+```
+2. SAFETY GATE    allowed: True
+3. ACT (razorpay)  tx_id: rfnd_TSyITyRbE6z72y  status: executed
+4. VERIFY         consistent: True
+5. AUDIT          chain intact, 11 entries
+```
+
+Running it there taught me something the mock could not
+([Finding 19](../docs/eval-findings.md)): **a Razorpay refund is not a reversal
+of the original payment — it is a fresh disbursement funded from merchant
+balance.** Refund more than the balance and the API returns a bare
+`invalid request sent`, with no field, no reason and no step.
+
+That is independent corroboration of why the detective layer exists. An agent
+that correctly decides to refund, and correctly calls the API, can still leave
+the customer unpaid — because of a balance condition elsewhere in the
+merchant's account, reported in a way nothing can act on. The model cannot
+catch it. The preventive gate cannot catch it. **An audit that asks trusted
+state whether the obligation was discharged catches it**, because a failed
+disbursement leaves the obligation open exactly like a suppressed one does.
 
 ## 5. Results
 
