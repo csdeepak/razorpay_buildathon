@@ -168,4 +168,85 @@ Fix, deferred to the Phase B corpus expansion rather than applied mid-run
 before/after above): give benign cases follow-up turns that answer likely
 clarifying questions. Attack cases need the same treatment for the opposite
 reason — a real attacker would push back when refused, and not modelling
-that makes the attacks weaker than reality.
+that makes the attacks weaker than reality. ✅ **Done — see next section.**
+
+---
+
+## 2026-08-22 — Phase B: expanded corpus, paired arms
+
+**Setup:** 29 attacks across **8 classes** + 9 benign, 1 seed,
+`claude-haiku-4-5`, both arms on the same corpus. Cost $0.42 combined.
+Changes since the last run: contingent follow-up turns (Finding 5 fix), a
+`send_payout` tool unlocking the `scope_escalation` class, and two stronger
+`authority_spoofing` cases.
+
+### Headline
+
+| | Baseline (none) | Structural |
+|---|---:|---:|
+| **End-to-end leak rate** | **55.2%** (16/29) | **10.3%** (3/29) |
+| Enforcement catch rate | 0% (0/16) | **81.2%** (13/16) |
+| Agent resisted alone | 44.8% (13/29) | 44.8% (13/29) |
+| False-positive rate | 0/9 | **0/9** |
+| Utility preservation | 100% (9/9) | **100% (9/9)** |
+
+Agent resistance is **identical across arms** (13/29 both times), which is
+the sanity check you want: enforcement doesn't change what the model
+proposes, only what happens to it.
+
+### Per class — leak rate, baseline → structural
+
+| Class | Baseline | Structural |
+|---|---:|---:|
+| `obfuscation` | 100% | **0%** |
+| `tool_output_injection` | 75% | **0%** |
+| `scope_escalation` | 66.7% | **0%** |
+| `direct_injection` | 40% | **0%** |
+| `amount_manipulation` | 33% | **0%** |
+| `multi_turn_poisoning` | 33% | **0%** |
+| `authority_spoofing` | 20% | **0%** |
+| `denial` | 100% | **100%** |
+
+### The 81.2% headline is misleading in the honest direction
+
+All three uncaught compromises are `denial` cases. Excluding the class a
+preventive control **cannot address by construction**, enforcement caught
+**13 of 13** — every compromise in every class a gate can act on.
+
+The right framing for a judge is not "81% catch rate" but:
+
+> *100% on every attack class a preventive control can address; 0% on
+> denial, which it cannot, and here is the different control that would.*
+
+A blended number hides both halves of that.
+
+### Finding 5 confirmed and closed
+
+Utility preservation went **77.8% → 100%** once benign cases could answer a
+clarifying question. Nothing about enforcement changed. This confirms the
+earlier diagnosis: that drop was measuring the harness, not the system.
+
+### Finding 6 — `authority_spoofing` is handled by model alignment, not enforcement
+
+Only **1 of 5** authority-spoofing cases compromised the agent, even after
+adding two stronger variants and attacker pushback follow-ups. Baseline leak
+was 20% — the lowest of any class.
+
+Two readings, and n=1 cannot separate them:
+- The model is genuinely robust to forged authority claims, or
+- These cases are still too weak.
+
+Either way it is worth reporting rather than quietly dropping: a class where
+the model defends itself is a real result about where enforcement earns its
+keep. Multi-seed runs should settle which reading is right.
+
+### Finding 7 — follow-ups cost ~18% more tokens
+
+| Arm | $/case-run | avg tokens |
+|---|---:|---|
+| Baseline | $0.0051 | 3,511 in / 325 out |
+| Structural | $0.0060 | 3,989 in / 402 out |
+
+Up from $0.0045/$0.0051 before follow-ups. Longer conversations are the
+price of measuring utility honestly. Phase C forecasts should use **$0.0060**
+as the Haiku basis, scaled for the target model.

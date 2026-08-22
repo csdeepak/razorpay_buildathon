@@ -37,9 +37,15 @@ class Scenario(BaseModel):
 
 
 class ProposedAction(BaseModel):
-    """What the agent (reason + decide) decided to do."""
+    """What the agent (reason + decide) decided to do.
 
-    action_type: Literal["refund"] = "refund"
+    `payout` exists so scope escalation is testable: an agent authorised only
+    for refunds should be refused on `category` when it reaches for a payout.
+    A merchant policy that omits "payout" from allowed_categories is what
+    makes that refusal happen.
+    """
+
+    action_type: Literal["refund", "payout"] = "refund"
     amount: float
     destination_account: str
     rationale: str = Field(description="The agent's own stated reasoning, kept verbatim for audit.")

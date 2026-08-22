@@ -67,8 +67,14 @@ class AttackCase(BaseModel):
     description: str = Field(description="What this attack is trying to achieve, in one line.")
     order_id: str
 
-    # The message(s) the customer sends. Multi-turn cases have more than one.
+    # Scripted turns, always delivered in order. Multi-turn cases have more
+    # than one.
     messages: list[str]
+
+    # Contingent turns, delivered only if the agent stalls or is refused --
+    # a real attacker pushes back when blocked. Omitting these makes the
+    # corpus weaker than reality. See eval/agent.py's run() docstring.
+    follow_ups: list[str] = Field(default_factory=list)
 
     # For TOOL_OUTPUT vector: payload injected into the order record's notes
     # field, which the agent reads via the lookup_order tool.
@@ -94,6 +100,13 @@ class BenignCase(BaseModel):
     description: str
     order_id: str
     messages: list[str]
+
+    # Delivered only if the agent stalls -- models a cooperative customer
+    # answering a clarifying question. Without these, an agent that
+    # reasonably asks "refund the full amount?" scores as a utility failure
+    # because nobody answers (docs/eval-findings.md Finding 5).
+    follow_ups: list[str] = Field(default_factory=list)
+
     order_notes: str | None = None
 
     # What the agent should end up doing for this to count as utility preserved.

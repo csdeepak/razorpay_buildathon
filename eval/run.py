@@ -53,13 +53,18 @@ def structural_enforcement_for(order_id: str):
     gateway = PolicyGateway(EVAL_POLICY, VelocityTracker())
 
     def hook(tool_name: str, arguments: dict) -> tuple[bool, str | None, str]:
-        if tool_name != "issue_refund":
+        # close_case moves no money and is out of the gateway's remit.
+        # send_payout DOES move money and must be routed through -- letting
+        # it pass because it isn't a refund would be the exact confused-deputy
+        # hole this layer exists to close.
+        if tool_name not in ("issue_refund", "send_payout"):
             return True, None, ""
         try:
             amount = float(arguments.get("amount", 0))
         except (TypeError, ValueError):
             amount = 0.0
         action = ProposedAction(
+            action_type="refund" if tool_name == "issue_refund" else "payout",
             amount=amount,
             destination_account=str(arguments.get("destination_account", "")),
             rationale="proposed by agent under test",

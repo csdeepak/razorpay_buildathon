@@ -98,7 +98,15 @@ early.
 | 2026-08-22 | A | `--smoke` | haiku-4-5 | 3 | $0.014 | $73.99 |
 | 2026-08-22 | B | full corpus, `--enforcement none` | haiku-4-5 | 32 | $0.144 | $73.84 |
 | 2026-08-22 | B | full corpus, `--enforcement structural` | haiku-4-5 | 32 | $0.162 | $73.68 |
-| 2026-08-22 | B | verify amount-binding fix (ADR 0008) | haiku-4-5 | 33 | $0.158 | **$73.52** |
+| 2026-08-22 | B | verify amount-binding fix (ADR 0008) | haiku-4-5 | 33 | $0.158 | $73.52 |
+| 2026-08-22 | B | expanded corpus (8 classes), structural | haiku-4-5 | 38 | $0.228 | $73.29 |
+| 2026-08-22 | B | expanded corpus, matching baseline | haiku-4-5 | 38 | $0.195 | **$73.10** |
+
+**Phase B spend so far: $0.89 of its $6 allocation.** Follow-up turns raised
+the per-case-run basis to **$0.0060 structural / $0.0051 baseline** on Haiku
+(from $0.0048) — longer conversations are the price of measuring utility
+honestly. Use $0.0060 as the Haiku basis for Phase C forecasting, scaled to
+the target model.
 
 Blended per-case-run cost is now **measured over the real corpus** (multi-turn
 cases included), which supersedes the smoke-run lower bound: **$0.0045
