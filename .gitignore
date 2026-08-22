@@ -33,3 +33,6 @@ Thumbs.db
 eval/runs/
 var/
 *.log
+
+# Built demo page — regenerate with `python -m eval.build_ui_data`
+submission/demo/warden-demo.html
