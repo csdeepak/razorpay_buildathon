@@ -17,6 +17,8 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
+import base64
+
 from eval.corpus import ATTACK_CASES, BENIGN_CASES, ORDERS
 from eval.harness import _audit_completeness
 from eval.metrics import wilson_interval
@@ -252,6 +254,26 @@ def main() -> None:
             raise SystemExit("template has no __DATA__ placeholder -- did you edit the built file by mistake?")
         # </script> inside JSON string data would close the tag early.
         body = html.replace("__DATA__", compact.replace("</", "<\\/"))
+
+        # Inline the storyboard panels as data URIs. The page has to be a
+        # single self-contained file: an Artifact's CSP blocks external
+        # requests, and a judge opening the standalone file from a clone has
+        # no server. Crushing the generator's film grain to true black (free,
+        # since the page screen-blends them and drops dark pixels anyway) plus
+        # palette quantisation took these from 5.1 MB to ~130 KB.
+        img_dir = Path("submission/demo/img")
+        missing = []
+        for slot in ("p1-asks", "p2-note", "p3-block", "p5-waits", "p6-audit"):
+            token = "__IMG_" + slot.split("-")[0].upper() + "__"
+            f = img_dir / (slot + ".webp")
+            if f.exists():
+                uri = "data:image/webp;base64," + base64.b64encode(f.read_bytes()).decode()
+            else:
+                uri = ""  # slot renders blank rather than breaking the page
+                missing.append(f.name)
+            body = body.replace(token, uri)
+        if missing:
+            print("  WARNING missing panels: " + ", ".join(missing))
 
         # Two outputs, and the difference matters. Without a doctype the browser
         # falls into QUIRKS MODE, where document.scrollingElement becomes <body>

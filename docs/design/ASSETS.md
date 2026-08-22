@@ -5,6 +5,48 @@ and Claude implements approved asset IDs rather than inventing image URLs.
 
 ---
 
+## Status: five storyboard panels delivered ✅
+
+Generated 2026-08-22 from the prompts in `IMAGE-PROMPTS.md`, all five accepted
+on the first or second attempt. Stored in `submission/demo/img/` as WebP and
+inlined as data URIs at build time.
+
+| File | Panel | Slot | Size |
+|---|---|---|---:|
+| `p1-asks.webp` | 1 — looking at the screen | Act 0 | 49 KB |
+| `p2-note.webp` | 2 — the forged record | WIDEN 1 + Act IV strip | 22 KB |
+| `p3-block.webp` | 3 — diverted and stopped | WIDEN 1 strip | 4 KB |
+| — | 4 — **empty frame** | Act IV strip | 0 (CSS) |
+| `p5-waits.webp` | 5 — closed laptop, waiting | Act IV strip | 48 KB |
+| `p6-audit.webp` | 6 — the sweep | Act IV audit | 7 KB |
+
+**The bookend worked.** Panels 1 and 5 are the same shot twice — same bench,
+tree, paving, camera and figure — differing only in that her laptop is open
+and she's looking down at it in Panel 1, and closed with her hands resting on
+it in Panel 5. The closed laptop was the stronger of the two options
+considered; it survives being viewed small in a way a turned head does not.
+
+### Two processing decisions worth recording
+
+**Screen blending instead of hex-matching.** The generator returned pure
+black backgrounds rather than the page's warm `#0E0B08`. Rather than burn
+re-rolls chasing the exact ground colour, the page composites every panel
+with `mix-blend-mode: screen`, which discards dark pixels entirely and floats
+only the linework on the page's own ground. Any near-black or transparent
+background now works, for these and any future panel.
+
+**5.08 MB → 130 KB, with no visual cost.** The panels arrived as
+truecolour PNGs carrying film grain across their large black fields — noise
+that compresses terribly and that `screen` throws away anyway. Crushing
+everything below luminance 34 to true black, resizing to 1280px and
+quantising to a 32-colour palette without dithering gives a 97% reduction.
+Dithering was tried first and made things *worse*: it scatters noise across
+exactly the flat areas that should compress to nothing. Verified afterwards
+that peak luminance is still 255 and the per-panel colour signatures survive
+(p6 reads amber, p3 warm, p1/p5 neutral cream).
+
+---
+
 ## Decision: this page uses no photography
 
 The playbook's own test is *"determine whether imagery materially improves
@@ -92,5 +134,7 @@ or the visual mismatch.
 
 ## Outstanding
 
-- [ ] Build script: reduce the three run JSONs → `ui-data.json`
-- [ ] Decide whether the Act 0 line illustration is wanted (default: no)
+- [x] Build script: reduce the three run JSONs → `ui-data.json`
+- [x] Act 0 illustration — resolved by the storyboard panels above, which are
+      line illustration rather than photography and therefore never triggered
+      the licensing pipeline this document exists to avoid.
