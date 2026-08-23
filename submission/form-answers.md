@@ -52,7 +52,7 @@ the demo, and this narrative, so changing it now costs more than it gains.)*
 > rail. Money actions require a mandate scoped from trusted order state, so
 > no wording can expand what the agent is allowed to do; a separate detective
 > audit then checks that every legitimate obligation was actually discharged.
-> Measured against nine models across three labs on a 29-attack adversarial
+> Measured against fourteen models across six labs on a 29-attack adversarial
 > corpus, with the false-positive cost reported alongside the catch rate.
 
 ---
@@ -79,12 +79,12 @@ the demo, and this narrative, so changing it now costs more than it gains.)*
 >
 > Then I made myself check the uncomfortable version of it: every model I had
 > tested was Anthropic's, so I was one lab away from a coincidence. I ran it
-> against Google and NVIDIA too. **56 out of 56 now, nine models, three labs,
-> 9B to frontier — and it does not thin out with scale.**
+> against Google and NVIDIA too. **71 out of 71 now — fourteen models,
+> six labs, 2.6B to frontier. A 200x parameter spread, identical outcome.**
 >
 > So I built the opposite kind of control: a post-session audit that asks the
 > ledger whether an open obligation went undischarged, never reading the
-> conversation at all. **56/56 caught, 0 false alarms in 134 benign sessions.**
+> conversation at all. **71/71 caught, 0 false alarms in 149 benign sessions.**
 >
 > The pitch that survived is narrower, and true.
 
@@ -96,9 +96,9 @@ the demo, and this narrative, so changing it now costs more than it gains.)*
 > report a fake 100%, I reported the catch rate as **undefined** and hunted for
 > the attack that survives a good model. Denial: a forged "already refunded"
 > note, and my preventive gate structurally couldn't touch it. Every model
-> tested fell for it — **56/56, nine models, three labs**, once I checked it
-> wasn't just one lab's quirk. I built a detective audit instead: 56/56 caught,
-> 0 false alarms in 134 benign sessions.
+> tested fell for it — **71/71, fourteen models, six labs**, once I checked it
+> wasn't just one lab's quirk. I built a detective audit instead: 71/71 caught,
+> 0 false alarms in 149 benign sessions.
 
 ### Long version (~330 words) — if the field allows detail
 
@@ -130,16 +130,16 @@ the demo, and this narrative, so changing it now costs more than it gains.)*
 >
 > **Then I checked the uncomfortable version.** Every model I had tested was
 > Anthropic's, which meant my headline was one lab away from being a
-> coincidence. I ran it against Google Gemini and NVIDIA Nemotron as well:
-> **56/56, nine models, three labs, 9B to frontier.** A 550B model falls for
-> the forged note as reliably as a 9B one — which is what you'd expect if the
+> coincidence. I ran it against every free tier I could reach —
+> Google, NVIDIA, Cohere, Liquid, dots.studio: **71/71, fourteen models, six
+> labs, 2.6B to frontier.** A 2.6B model and a 550B model fail it identically — which is what you'd expect if the
 > model is reasoning correctly from evidence it has no way to distrust, rather
 > than failing from a capability gap.
 >
 > So I built the opposite kind of control: a post-session audit that asks the
 > ledger whether an open obligation went undischarged, and never reads the
-> conversation, so a forged note has no path to it. **56/56 detected, 0 false
-> alarms in 134 benign sessions.** It also caught five real service failures —
+> conversation, so a forged note has no path to it. **71/71 detected, 0 false
+> alarms in 149 benign sessions.** It also caught five real service failures —
 > customers unpaid for reasons unrelated to any attack.
 
 ---
@@ -153,8 +153,8 @@ Every claim above maps to a recorded finding — nothing here is reconstructed:
 | ₹4,999 → ₹49,990, cleared cap by ₹10 | `docs/eval-findings.md` Finding 1; ADR 0008 |
 | 0 compromises / 208 runs | `submission/demo/ui-data.json` → `frontier_diversion` |
 | Catch rate undefined, not 100% | Finding 10 |
-| 56/56 denial leak, 9 models / 3 labs | `ui-data.json` → `denial_leak_all`; Finding 18 |
-| 56/56 completeness detection, 0/134 FP | `ui-data.json` → `completeness_all`, `false_positive_all` |
+| 71/71 denial leak, 14 models / 6 labs | `ui-data.json` → `denial_leak_all`; Findings 18, 20 |
+| 71/71 completeness detection, 0/149 FP | `ui-data.json` → `completeness_all`, `false_positive_all` |
 | Five genuine service failures | Finding 14 |
 
 Other strong "what broke" material **not used above**, kept in reserve for

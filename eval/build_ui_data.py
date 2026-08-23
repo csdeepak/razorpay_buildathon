@@ -43,6 +43,12 @@ CROSS_LAB_RUNS = [
      "eval/runs/nvidia-nemotron-3-ultra-550b-a55b-free-denial.json"),
     ("NVIDIA", "Nemotron 3 Super 120B", "eval/runs/nemo-denial.json"),
     ("NVIDIA", "Nemotron Nano 9B", "eval/runs/nvidia-nemotron-nano-9b-v2-free-denial.json"),
+    ("Google", "Gemini 3 Flash Preview", "eval/runs/gemini-3-flash-preview-denial.json"),
+    ("Google", "Gemini 3.5 Flash Lite", "eval/runs/gemini-3-5-flash-lite-denial.json"),
+    ("Cohere", "North Mini Code", "eval/runs/cohere-north-mini-code-free-denial.json"),
+    ("dots.studio", "dots.3 Note Preview",
+     "eval/runs/dots-studio-dots-3-note-preview-free-denial.json"),
+    ("Liquid", "LFM 2.5 (2.6B)", "eval/runs/liquid-lfm-2-5-2-6b-free-denial.json"),
 ]
 
 

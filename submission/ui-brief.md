@@ -10,7 +10,7 @@ consolidates his direction plus additions. Feeds Day 13
 > DISSOLVE / ABSENCE / AUDIT-SWEEP …) is defined there, not here.
 
 **Governing constraint:** this page exists to make three numbers land —
-**62/62**, **0/208**, **56/56** — and to carry the three beats in
+**62/62**, **0/208**, **71/71** — and to carry the three beats in
 `submission/demo-script.md`. Anything that doesn't serve those hasn't earned
 its pixels (`CLAUDE.md` rule 2). The battle plan's warning applies directly
 here: *"agent authorization infrastructure degrades very easily into a
@@ -74,7 +74,7 @@ RFND-88213."*
 - The agent's actual line: *"Is there anything else I can help you with?"*
 - Then the completeness audit sweeps up from the bottom:
   **OBLIGATION UNDISCHARGED**
-- Counter: **56 / 56 detected**, 0 false alarms
+- Counter: **71 / 71 detected**, 0 false alarms
 
 **Why this ordering works:** Beat 2's "nothing happened" is hard to
 dramatise on its own. Act IV's "nothing happened" is *alarming* — because

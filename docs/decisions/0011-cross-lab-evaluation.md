@@ -1,7 +1,7 @@
 # 0011 — Cross-lab evaluation: one adapter, and an honestly bounded claim
 
 Date: 2026-08-23
-Status: accepted (adapter built; runs executed 2026-08-23 — Finding 18)
+Status: accepted (adapter built; runs executed 2026-08-23 — Findings 18 and 20)
 
 ## Context
 
@@ -131,10 +131,15 @@ model.
   needs proving is that the adapter carries whatever a real provider returns,
   including the ugly cases.
 - Tests: 47 → 83.
-- **Runs executed 2026-08-23 — see Finding 18.** 17/17 denial leaks and 17/17
-  detections across six models and two additional labs, 0/17 false alarms,
-  $0.00 spent. Combined: 56/56 across nine models and three labs. The
-  narrative's `PENDING` marker is closed.
+- **Runs executed 2026-08-23 — see Findings 18 and 20.** Widened the same day
+  to every free tier that would serve tool calls: **32/32 denial leaks, 32/32
+  detections, 0/32 false alarms** across eleven non-Anthropic models from five
+  additional labs, **$0.00 spent**. Combined: **71/71 across fourteen models
+  and six labs, 2.6B to frontier.** The narrative's `PENDING` marker is closed.
+- **The capability spread turned out to be the load-bearing part.** Liquid's
+  LFM 2.5 is 2.6B and NVIDIA's Nemotron Ultra is 550B — a 200x spread with an
+  identical outcome, and no thinning at scale. That is the evidence separating
+  a structural finding from a benchmark artifact.
 - Gemini **Pro** proved unreachable on the free tier (20 requests/day/model),
   so the bound in §"The claim this supports" holds as written and tightened:
   the non-Claude models are Flash-tier and open-weight.

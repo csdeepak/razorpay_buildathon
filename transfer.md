@@ -18,11 +18,13 @@ built and where do things stand."
 The problem is locked (Track 01, working name **Warden** — an agent
 trust/safety/audit layer for agentic payments). The system is built, tested
 (**83 passing tests**), runs against **Razorpay's real test-mode API**, and is
-evaluated against **nine models across three labs** (Anthropic, Google,
-NVIDIA) for **$10.27 of a $74 budget** — the six non-Anthropic models cost
-$0.00. The core finding — every model resists diversion but **all nine fail
-100% of denial attacks, 56/56**, which a completeness audit then catches 56/56
-with 0 false alarms in 134 benign sessions — is strong and demo-ready.
+evaluated against **fourteen models across six labs** (Anthropic, Google,
+NVIDIA, Cohere, dots.studio, Liquid) for **$10.27 of a $74 budget** — the
+eleven non-Anthropic models cost $0.00. The core finding — every model resists
+diversion but **all fourteen fail 100% of denial attacks, 71/71**, which a
+completeness audit then catches 71/71 with 0 false alarms in 149 benign
+sessions, across a **2.6B-to-frontier** range with no thinning at scale — is
+strong and demo-ready.
 `submission/narrative.md` and `submission/form-answers.md` are written. A
 scroll-driven demo page exists, is built, and is published as a private Claude
 Artifact.
@@ -139,7 +141,7 @@ model — see Finding 10, the catch rate there is *undefined*, not 100%)
 toward "deterministic guarantee + the gap neither alignment nor prevention
 covers."
 
-Full findings log: `docs/eval-findings.md` (19 numbered findings, several
+Full findings log: `docs/eval-findings.md` (21 numbered findings, several
 of which are "here's what we got wrong and how the eval caught it" —
 exactly the material the Buildathon form's *"what broke"* question wants).
 
@@ -209,14 +211,16 @@ Four things landed, in this order:
      corroboration of ADR 0009.
 3. **Cross-lab evaluation → ADR 0011, Finding 18.** One adapter
    (`eval/backends.py`) covering OpenRouter *and* Google AI Studio. Denial
-   subset run on six more models across two more labs for **$0.00**:
-   **56/56 across nine models, three labs, 9B to frontier.** The single-lab
-   confound under the sharpest claim is gone. Gemini free tier is **20
+   subset run on eleven more models across five more labs for **$0.00**:
+   **71/71 across fourteen models, six labs, 2.6B to frontier** (Findings 18
+   and 20). The single-lab confound under the sharpest claim is gone, and the
+   200x parameter spread with no thinning is what separates a structural
+   finding from a benchmark artifact. Gemini free tier is **20
    requests/day/model**, which is why the arm is denial-only and n=1.
 4. **Consistency pass** across every judge-facing file — narrative, demo
    script, form answers, README, demo page, ui-data.
 
-Tests 24 → 83. ADRs 9 → 11. Findings 16 → 19. Spend unchanged at $10.27.
+Tests 24 → 83. ADRs 9 → 11. Findings 16 → 21. Spend unchanged at $10.27.
 
 ## 2. Repo map — where things actually live
 
@@ -229,7 +233,7 @@ docs/
   gate-0-tracker.md            — resolved, kept for the record
   progress-tracker.md           — daily log against the 16-day plan
   eval-budget.md                 — spend ledger, $10.27 of $74, phase-by-phase
-  eval-findings.md                 — 19 numbered findings, the evidence base for the narrative
+  eval-findings.md                 — 21 numbered findings, the evidence base for the narrative
   design/                            — DESIGN.md, SCREEN_MAP.md, ASSETS.md, TOOLING.md, IMAGE-PROMPTS.md
 outreach/                    — ONE real conversation round (Day 4, pre-build). Thin — see §6.
 submission/
@@ -320,7 +324,9 @@ order:
 4. **Record the 5-minute pitch video.** The demo page and
    `submission/demo-script.md` exist specifically to support this. Not
    something Claude can do; can help tighten the script first.
-5. **One more real outreach round**, showing the *built* Warden system (not
+5. **One more real outreach round** — **brief written 2026-08-23:
+   `outreach/02-round-two-brief.md`** (who to contact, what to show in what
+   order, what to ask, what to capture). Showing the *built* Warden system (not
    just the problem) to a couple of real people — ideally including whoever
    gave Deepak the founder-office contact. Strengthens "problem taste" and
    "AI judgment," two of Razorpay's four stated judging criteria, with

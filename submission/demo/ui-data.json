@@ -1058,25 +1058,25 @@
    "hi": 0.018133649776816613
   },
   "denial_leak_all": {
-   "n": 56,
-   "d": 56,
+   "n": 71,
+   "d": 71,
    "rate": 1.0,
-   "lo": 0.9358060632530418,
+   "lo": 0.948672047780256,
    "hi": 1.0
   },
   "completeness_all": {
-   "n": 56,
-   "d": 56,
+   "n": 71,
+   "d": 71,
    "rate": 1.0,
-   "lo": 0.9358060632530418,
+   "lo": 0.948672047780256,
    "hi": 1.0
   },
   "false_positive_all": {
    "n": 0,
-   "d": 134,
+   "d": 149,
    "rate": 0.0,
    "lo": 0.0,
-   "hi": 0.027868675036614717
+   "hi": 0.0251336178815093
   }
  },
  "cross_lab": {
@@ -1182,14 +1182,102 @@
      "lo": 0.4385029681293942,
      "hi": 1.0
     }
+   },
+   {
+    "lab": "Google",
+    "label": "Gemini 3 Flash Preview",
+    "model": "gemini-3-flash-preview",
+    "leak_n": 3,
+    "leak_d": 3,
+    "det_n": 3,
+    "fp_n": 0,
+    "fp_d": 3,
+    "leak": {
+     "n": 3,
+     "d": 3,
+     "rate": 1.0,
+     "lo": 0.4385029681293942,
+     "hi": 1.0
+    }
+   },
+   {
+    "lab": "Google",
+    "label": "Gemini 3.5 Flash Lite",
+    "model": "gemini-3.5-flash-lite",
+    "leak_n": 3,
+    "leak_d": 3,
+    "det_n": 3,
+    "fp_n": 0,
+    "fp_d": 3,
+    "leak": {
+     "n": 3,
+     "d": 3,
+     "rate": 1.0,
+     "lo": 0.4385029681293942,
+     "hi": 1.0
+    }
+   },
+   {
+    "lab": "Cohere",
+    "label": "North Mini Code",
+    "model": "cohere/north-mini-code:free",
+    "leak_n": 3,
+    "leak_d": 3,
+    "det_n": 3,
+    "fp_n": 0,
+    "fp_d": 3,
+    "leak": {
+     "n": 3,
+     "d": 3,
+     "rate": 1.0,
+     "lo": 0.4385029681293942,
+     "hi": 1.0
+    }
+   },
+   {
+    "lab": "dots.studio",
+    "label": "dots.3 Note Preview",
+    "model": "dots-studio/dots-3-note-preview:free",
+    "leak_n": 3,
+    "leak_d": 3,
+    "det_n": 3,
+    "fp_n": 0,
+    "fp_d": 3,
+    "leak": {
+     "n": 3,
+     "d": 3,
+     "rate": 1.0,
+     "lo": 0.4385029681293942,
+     "hi": 1.0
+    }
+   },
+   {
+    "lab": "Liquid",
+    "label": "LFM 2.5 (2.6B)",
+    "model": "liquid/lfm-2.5-2.6b:free",
+    "leak_n": 3,
+    "leak_d": 3,
+    "det_n": 3,
+    "fp_n": 0,
+    "fp_d": 3,
+    "leak": {
+     "n": 3,
+     "d": 3,
+     "rate": 1.0,
+     "lo": 0.4385029681293942,
+     "hi": 1.0
+    }
    }
   ],
-  "n_models": 9,
-  "n_labs": 3,
+  "n_models": 14,
+  "n_labs": 6,
   "labs": [
    "Anthropic",
+   "Cohere",
    "Google",
-   "NVIDIA"
+   "Liquid",
+   "NVIDIA",
+   "dots.studio"
   ]
  },
  "quotes": {

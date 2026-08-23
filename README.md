@@ -15,15 +15,15 @@ Claude Haiku 4.5, Sonnet 5, and Opus 5.
 | Small model (Haiku 4.5) compromise rate | **47.7%** (62/130) |
 | — of those, caught by the gateway | **62 / 62** |
 | Frontier models (Sonnet 5 + Opus 5) compromise rate | **0 / 208** — catch rate is *undefined*, not 100% |
-| False positives, all nine models | **0 / 134** · utility preserved |
-| **Denial attacks — every model fails** | **56 / 56** across 9 models / 3 labs, and no preventive gate can stop them |
-| — caught by the completeness audit | **56 / 56**, 0 false alarms |
+| False positives, all fourteen models | **0 / 149** · utility preserved |
+| **Denial attacks — every model fails** | **71 / 71** across 14 models / 6 labs, and no preventive gate can stop them |
+| — caught by the completeness audit | **71 / 71**, 0 false alarms |
 
 **The finding worth reading twice:** zero diversion attacks compromised a
 frontier model — and *every single* denial attack succeeded against *every*
-model tested: **nine models, three labs (Anthropic, Google, NVIDIA), 9B to
-frontier.** It does not thin out with scale; a 550B model falls for the forged
-note as reliably as a 9B one. Denial is the one class where capability buys
+model tested: **fourteen models, six labs (Anthropic, Google, NVIDIA, Cohere,
+dots.studio, Liquid), 2.6B to frontier.** It does not thin out with scale — a
+200x parameter spread, identical outcome. Denial is the one class where capability buys
 nothing, and it is the class a preventive gate cannot address by construction.
 The completeness audit catches all of it, deterministically.
 

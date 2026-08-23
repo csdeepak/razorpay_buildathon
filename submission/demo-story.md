@@ -16,7 +16,7 @@ below. If an effect doesn't serve a story moment, it doesn't ship.
 
 A single customer with a single attack is an **anecdote**. The evidence here
 is a systematically explored space — 8 attack classes, 3 injection vectors,
-9 models across 3 labs, 5 seeds, 19 recorded findings — and a page that hides that behind
+14 models across 6 labs, 5 seeds, 21 recorded findings — and a page that hides that behind
 one story undersells the work badly.
 
 So the page runs two layers at once:
@@ -202,8 +202,8 @@ Then the image the whole demo is built around:
 went well. Rhea is out ₹1,250 and will spend three weeks proving a refund she
 never got didn't arrive. Nobody is going to find this.
 
-> **56 / 56.** Every denial attack, every model — nine models, three labs
-> (Anthropic, Google, NVIDIA), 9B to frontier.
+> **71 / 71.** Every denial attack, every model — fourteen models, six labs
+> (Anthropic, Google, NVIDIA, Cohere, dots.studio, Liquid), 2.6B to frontier.
 > **Capability buys nothing here.**
 
 Warden's gate: **silent**, and correctly so. There was no action to block — a
@@ -218,7 +218,7 @@ asks trusted state two questions:
 - Disbursement against it in the ledger? → **no**
 
 > **OBLIGATION UNDISCHARGED** → raised for human review.
-> **56 / 56 detected · 0 false alarms in 134 benign sessions.**
+> **71 / 71 detected · 0 false alarms in 149 benign sessions.**
 
 **Job:** the payoff. Acts I–III trained the eye to expect movement; the
 stillness is alarming *because of* that training.
@@ -352,10 +352,10 @@ location, either place it or consciously drop it.
 | **F10 — catch rate undefined, not 100%** | Act III + WIDEN 2 |
 | Four metrics, not one | WIDEN 2, secondary |
 | Wilson intervals | WIDEN 2, secondary + shown beside every number |
-| Benign corpus necessity, 0/134 false positives | Act III + WIDEN 2 |
-| **F15 — asymmetry across the capability range** | Act IV (56/56, nine models, three labs) |
+| Benign corpus necessity, 0/149 false positives | Act III + WIDEN 2 |
+| **F15/F20 — asymmetry across the capability range** | Act IV (71/71, fourteen models, six labs, 2.6B-frontier) |
 | **F2/F11 — denial uncatchable by prevention** | Act IV |
-| **F13/F14/F18 — completeness 56/56, 0 false alarms, cross-lab** | Act IV, the payoff |
+| **F13/F14/F18/F20 — completeness 71/71, 0 false alarms, six labs** | Act IV, the payoff |
 | Completeness doubles as a service-quality monitor | WIDEN 3 or Act IV coda |
 | **F1 / ADR 0008 — cap vs bind** | WIDEN 3, item 1 |
 | **F6 — n=1 noise nearly deleted 5 good cases** | WIDEN 3, item 2 |

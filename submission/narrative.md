@@ -146,8 +146,9 @@ disbursement leaves the obligation open exactly like a suppressed one does.
 ## 5. Results
 
 Adversarial corpus: **29 attacks across 8 classes × 3 injection vectors, plus
-9 benign controls**, multi-seed, run against **nine models across three labs**
-for **$10.27** of a $74 budget — the six non-Anthropic models cost $0.00.
+9 benign controls**, multi-seed, run against **fourteen models across six
+labs** for **$10.27** of a $74 budget — the eleven non-Anthropic models cost
+$0.00.
 Intervals are Wilson, not normal-approximation.
 
 The methodological core: every run resolves to `AGENT_RESISTED` /
@@ -179,7 +180,7 @@ what makes a *cheap* model safe to put near money.
 
 **Result 3 — the asymmetry, and the sharpest thing in the project.** All three
 Claude models resist essentially all diversion attacks and fail **100% of
-denial attacks — 39/39** [91.0–100%] (Result 5 takes this to nine models). A forged note reading *"REFUND ALREADY
+denial attacks — 39/39** [91.0–100%] (Result 5 takes this to fourteen). A forged note reading *"REFUND ALREADY
 PROCESSED"* convinces the model the customer was paid; it closes the case and
 asks if there's anything else it can help with. The customer is simply never
 paid.
@@ -201,29 +202,38 @@ came from three Claude models, which meant the honest reading was *every
 Anthropic model*. So I ran the denial subset against two more labs
 ([ADR 0011](../docs/decisions/0011-cross-lab-evaluation.md)):
 
-| | Denial leak | Detected | False alarms |
+| Lab | Denial leak | Detected | False alarms |
 |---|---:|---:|---:|
-| Google — Gemini 3.6 / 3.5 / 3.1 Flash | 8/8 | 8/8 | 0/9 |
+| Google — five Gemini Flash variants | 14/14 | 14/14 | 0/15 |
 | NVIDIA — Nemotron 9B / 120B / 550B | 9/9 | 9/9 | 0/8 |
-| **With Claude Haiku / Sonnet / Opus** | **56/56** | **56/56** | **0/134** |
+| Cohere — North Mini Code | 3/3 | 3/3 | 0/3 |
+| dots.studio — dots.3 Note Preview | 3/3 | 3/3 | 0/3 |
+| Liquid — LFM 2.5 (**2.6B**) | 3/3 | 3/3 | 0/3 |
+| **With Claude Haiku / Sonnet / Opus** | **71/71** | **71/71** | **0/149** |
 
-**56/56** [93.6–100.0] across **nine models and three labs, 9B to frontier** —
-detected 56/56, with **0 false alarms in 134 benign sessions** [0.0–2.8]. Total
-additional spend: **$0.00**.
+**71/71** [94.9–100.0] across **fourteen models and six labs, 2.6B to
+frontier** — detected 71/71, with **0 false alarms in 149 benign sessions**
+[0.0–2.5]. Total additional spend: **$0.00**.
 
-Nemotron spanning 9B to 550B matters as much as the lab diversity: **the
-failure does not thin out with scale.** A 550B model falls for the forged note
-exactly as reliably as a 9B one — which is what you would expect if the model
-is reasoning correctly from evidence it has no way to distrust, rather than
-failing from a capability deficit that a bigger model would fix.
+The capability spread matters as much as the lab diversity. Liquid's LFM 2.5
+is **2.6B** parameters; NVIDIA's Nemotron Ultra is **550B**; Claude Opus 5 sits
+above both. All of them fail every denial attack — a **200× parameter spread
+with an identical outcome**, and **the failure does not thin out with scale at
+all.** If this were a capability deficit, bigger models would catch some
+fraction. They catch none. That is what you would expect if the model is
+**reasoning correctly from evidence it has no way to distrust**: told by an
+unauthenticatable source that the refund already happened, closing the case is
+the right inference. Being larger does not fix an inference that was never
+wrong.
 
-*Bounds, stated plainly:* the non-Claude models are Flash-tier and open-weight.
-Gemini **Pro** is rate-limited off the free tier (20 requests/day/model) and
-GPT-5.1 was out of budget, so this is **not** a claim about every frontier
-model. The cross-lab arm is n=1 per case; it carries weight because it is
-unanimous across six independent models, not because any one was measured
-deeply. Only denial was run cross-lab — there are no cross-lab diversion
-numbers.
+*Bounds, stated plainly:* eight of the eleven non-Claude models are small or
+Flash-tier. Gemini **Pro** is rate-limited off the free tier (20 requests per
+day per model) and GPT-5.x was out of budget, so this is **not** a claim about
+every frontier model — the frontier end of this range is Claude. The cross-lab
+arm is n=1 per case; it carries weight because it is unanimous across fourteen
+independent models, not because any one was measured deeply, and per-model
+intervals are [43.9–100.0]. Only denial was run cross-lab — there are no
+cross-lab diversion numbers.
 
 ## 6. Why Razorpay should care
 

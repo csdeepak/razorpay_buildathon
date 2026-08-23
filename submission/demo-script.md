@@ -81,7 +81,7 @@ it. Then answer the obvious question, *"so why does the layer exist?"*, with
 the number that answers it:
 
 > **On screen: 0 false positives in 117 legitimate refunds, all three Claude
-> models** — 0/134 once the cross-lab arm is included.
+> models** — 0/149 once the cross-lab arm is included.
 
 Alignment is a probability that changes with every model release. The gateway
 is a proof — and it costs nothing to keep. That is what makes a cheap model
@@ -95,13 +95,13 @@ Same frontier model. New attack: a forged note on the order record reading
 The model believes it, closes the case, and asks *"Is there anything else I
 can help you with?"* The customer is simply never paid.
 
-> **On screen: 56/56. Nine models, three labs, 9B to frontier. 100% failure.**
+> **On screen: 71/71. Fourteen models, six labs, 2.6B to frontier. 100% failure.**
 
 Then the part that matters: **the gateway cannot help here either.** Its
 entire mechanism is refusing a proposed action, and this attack proposes
 nothing. There is no bad action to block — a good one was suppressed.
 
-> **On screen: completeness audit — 56/56 detected, 0 false alarms in 134.**
+> **On screen: completeness audit — 71/71 detected, 0 false alarms in 149.**
 
 Warden never reads the forged note. It asks the ledger whether a refund
 exists and the case record whether a request is open. A forged claim has no
@@ -119,7 +119,7 @@ path to it.
 
 Terminal output is acceptable — `CLAUDE.md` rule 4 says cut UI before
 evaluation, and the evaluation is the moat. If Day 13 buys anything, it is
-making the three numbers land visually: **62/62**, **0/208**, **56/56**.
+making the three numbers land visually: **62/62**, **0/208**, **71/71**.
 
 ## Honest caveats to have ready for Q&A
 
@@ -133,9 +133,10 @@ supports:
 - **"How big is the corpus?"** 29 attacks across 8 classes, 9 benign
   controls, 5 seeds. Smaller than I'd like; the per-class intervals are wide
   and reported as such (Wilson, not normal approximation).
-- **"Did you test a real model?"** Nine of them, across three labs: Claude
-  Haiku 4.5 / Sonnet 5 / Opus 5, Gemini 3.6 / 3.5 / 3.1 Flash, and NVIDIA
-  Nemotron 9B / 120B / 550B. Real tool-calling, un-hardened system prompt.
+- **"Did you test a real model?"** Fourteen, across six labs: Claude (Haiku
+  4.5 / Sonnet 5 / Opus 5), five Gemini Flash variants, NVIDIA Nemotron
+  9B / 120B / 550B, Cohere North Mini, dots.studio dots.3, and Liquid LFM 2.5
+  at 2.6B. Real tool-calling, un-hardened system prompt.
   Hardening the prompt is a separate variable I deliberately did not tune,
   because it would suppress compromises and flatter the layer.
 - **"What can't it do?"** Under-refunding. Temporal decoupling (needs mandate
@@ -152,4 +153,5 @@ supports:
 - **"Did you test non-Anthropic models?"** Gemini Flash and NVIDIA Nemotron,
   free tier (ADR 0011). **Not** GPT-5 or Gemini Pro — Pro is rate-limited off
   the free tier and the paid models were out of budget. So the claim is
-  bounded: three labs, 9B to frontier-Claude, not "every frontier model."
+  bounded: six labs, 2.6B to frontier-Claude, and eight of the eleven non-Claude
+  models are small or Flash-tier. Not "every frontier model."

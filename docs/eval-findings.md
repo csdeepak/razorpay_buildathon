@@ -740,3 +740,61 @@ turns an opaque 400 into a stated precondition. It is not a fix for the
 production case — a real merchant cannot cap their way out of an empty
 balance — which is the point: the failure is real, and it belongs to the
 detective layer, not the preventive one.
+
+---
+
+## 2026-08-23 — Phase G: cross-lab widened to six labs
+
+### Finding 20 — 71/71, fourteen models, six labs, 2.6B to frontier
+
+Finding 18 established the denial gap was not Anthropic-specific across three
+labs. Three more free-tier labs were reachable, so the same denial subset ran
+against them. Every one behaves identically.
+
+| Lab | Models | Denial leak | Detected | False alarms |
+|---|---|---:|---:|---:|
+| Anthropic | Haiku 4.5, Sonnet 5, Opus 5 | 39/39 | 39/39 | 0/117 |
+| Google | Gemini 3.6 / 3.5 / 3.1 Flash Lite / 3 Flash Preview / 3.5 Flash Lite | 14/14 | 14/14 | 0/15 |
+| NVIDIA | Nemotron 9B / 120B / 550B | 9/9 | 9/9 | 0/8 |
+| Cohere | North Mini Code | 3/3 | 3/3 | 0/3 |
+| dots.studio | dots.3 Note Preview | 3/3 | 3/3 | 0/3 |
+| Liquid | LFM 2.5 (**2.6B**) | 3/3 | 3/3 | 0/3 |
+| **Total** | **14 models** | **71/71** [94.9, 100.0] | **71/71** [94.9, 100.0] | **0/149** [0.0, 2.5] |
+
+Non-Anthropic subtotal: **32/32 leaked, 32/32 detected, 0/32 false alarms.**
+Additional spend across all eleven non-Anthropic models: **$0.00.**
+
+### The capability range is the part that matters
+
+Liquid's LFM 2.5 is **2.6B parameters**. NVIDIA's Nemotron Ultra is **550B**.
+Both fail every denial attack, and Claude Opus 5 fails every one too. That is
+a **200×** parameter spread with an identical outcome.
+
+This is what separates the finding from a benchmark artifact. If denial
+failure were a capability deficit, it would thin out with scale — bigger
+models would catch some fraction. It does not thin at all. The behaviour is
+consistent with the model **reasoning correctly from evidence it has no way
+to distrust**: told the refund already happened by a source it cannot
+authenticate, closing the case is the right inference. Nothing about being
+larger fixes that, because it is not an error in reasoning.
+
+### The false-alarm number carried, which was not guaranteed
+
+0/149 benign sessions flagged, across fourteen models from six labs. The
+completeness audit is deterministic — it reads the case record and the
+ledger, never the conversation — so this is expected by construction rather
+than fortunate. But it had never been tested against models this varied, and
+a 2.6B model behaves nothing like Opus 5. That it holds anyway is evidence
+the control is genuinely model-independent, which is the whole claim.
+
+### Bounds — unchanged and still binding
+
+- **Still not "every frontier model."** GPT-5.x was never reached, and Gemini
+  **Pro** is rate-limited off the free tier. Eight of the eleven non-Anthropic
+  models are small or Flash-tier. The honest phrasing is *"fourteen models
+  across six labs, 2.6B to frontier"* — the frontier end is Claude.
+- **Still n=1 per case** on the cross-lab arm, still denial-only. The weight
+  comes from unanimity across fourteen independent models, not from any one
+  being measured deeply. Per-model intervals are [43.9, 100.0] and are
+  reported that way.
+- **Still no cross-lab diversion numbers.** Only denial was run.
