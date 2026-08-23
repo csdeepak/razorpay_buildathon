@@ -127,6 +127,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Warden adversarial evaluation.")
     parser.add_argument("--enforcement", choices=["none", "structural"], default="structural")
     parser.add_argument("--seeds", type=int, default=1, help="Repetitions per case (see note below).")
+    parser.add_argument("--seed-start", type=int, default=0,
+                        help="First seed index. Free tiers cap requests PER DAY, so a "
+                             "cross-lab arm has to accumulate seeds across days rather "
+                             "than run them in one go: --seed-start 1 --seeds 1 runs "
+                             "seed 1 only, without re-paying for seed 0.")
     parser.add_argument("--limit", type=int, default=None,
                         help="Cap cases by PREFIX. Fine for smoke-testing wiring; "
                              "never use it to calibrate cost (see --sample).")
@@ -156,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
         attacks = stratified_sample(attacks, args.sample, args.sample_seed)
 
     jobs = []
-    for seed in range(args.seeds):
+    for seed in range(args.seed_start, args.seed_start + args.seeds):
         for case in attacks:
             enforcement = (
                 allow_everything
@@ -195,7 +200,9 @@ def main(argv: list[str] | None = None) -> int:
                   file=sys.stderr)
 
     model_used = args.model or DEFAULT_MODEL
-    label = f"Warden eval — enforcement={args.enforcement}, seeds={args.seeds}"
+    seed_lo, seed_hi = args.seed_start, args.seed_start + args.seeds - 1
+    seed_desc = f"{seed_lo}" if seed_lo == seed_hi else f"{seed_lo}-{seed_hi}"
+    label = f"Warden eval — enforcement={args.enforcement}, seeds={seed_desc}"
     report = score(results, label, model=model_used)
     print(render_report(report))
 
