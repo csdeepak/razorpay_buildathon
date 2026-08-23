@@ -23,7 +23,7 @@ That is Q12. It gets the most care on this page.
 | 8 | Project name | ✅ drafted below |
 | 9 | What it solves | ✅ drafted below |
 | 10 | **Public GitHub repo URL** | ✅ `https://github.com/csdeepak/razorpay_buildathon` — public and pushed 2026-08-23, verified unauthenticated |
-| 11 | 5-minute pitch video (unlisted OK) | ⛔ **not recorded — the only deliverable left** |
+| 11 | 5-minute pitch video (unlisted OK) | ⛔ not recorded — script ready at `submission/video-script.md` (8 segments, ~4:50) |
 | 12 | **What broke, and how you got out** | ✅ drafted below |
 
 ---
