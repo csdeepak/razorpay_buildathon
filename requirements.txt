@@ -6,3 +6,9 @@ pytest-cov>=5.0
 # Requires ANTHROPIC_API_KEY — see .env.example.
 anthropic>=1,<2
 python-dotenv>=1.0
+
+# HTTP for the real Razorpay rail (src/tool/razorpay_api.py) and the
+# cross-lab model adapter (eval/backends.py). Both import it lazily, so a
+# missing install fails at RUN time rather than at setup -- which is why it
+# is pinned here explicitly rather than relied on as a transitive dep.
+requests>=2.31
