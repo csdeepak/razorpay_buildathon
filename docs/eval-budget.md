@@ -131,3 +131,47 @@ there was nothing for a baseline to contrast against (eval-findings Finding
 Two cost effects worth carrying forward: enforcement itself adds ~13% tokens
 (blocked agents write more), and contingent follow-up turns added another
 ~18% — that is what measuring utility honestly costs.
+
+---
+
+## Phase H — the affordance ablation (2026-08-24)
+
+| Item | Cost |
+|---|---:|
+| Wiring smoke check (`--smoke`, Haiku) | $0.021 |
+| Ablation, `claude-haiku-4-5` (run twice: first pass lacked `tool_reads`) | $0.034 |
+| Ablation, `claude-sonnet-5` | $0.094 |
+| Ablation, `claude-opus-5` | $0.267 |
+| Ablation, Gemini 3.6 Flash / Nemotron Ultra 550B / Liquid 2.6B | $0.000 |
+| `make demo-denial` live verification (Opus) | ~$0.01 |
+| **Phase H total** | **~$0.43** |
+
+**Running total: $10.70 of $74.** $63.30 remaining.
+
+Three notes worth carrying forward:
+
+- **The instrumentation cost a re-run.** The first Haiku ablation pass had no
+  `tool_reads` counter, so it could show *that* the model still failed and not
+  *whether it had checked* — which was the entire question. Cheap here ($0.017)
+  and it would not have been on Opus. **Decide what the arm has to distinguish
+  before spending on it**, not after reading the first result.
+- **Opus is 8x Haiku and answered the same question.** The 3-of-6 split was
+  visible on Sonnet at a fifth of the price. Opus was worth it once, to close
+  the frontier end of the range; it is not worth it for iteration.
+- **Free tiers carried the interesting half.** Nemotron Ultra (550B) never
+  calling the tool while Liquid (2.6B) called it twice — the observation that
+  retired Finding 20's capability reading — cost **$0.00**.
+
+### What the remaining $63.30 could buy, ranked
+
+1. **Multi-seed the ablation arm** (~$3 on Sonnet, 5 seeds x 6 cases x 6
+   models). The 3-of-6 split is currently n=1 and reported as a direction,
+   not a rate. This is the single highest-value remaining spend.
+2. **Re-run the full corpus against the mandate layer** (~$4 Haiku + Sonnet).
+   Would let ADR 0012's layer carry measured numbers instead of only tests.
+3. **Multi-seed the nine new denial cases** (~$2). They are currently covered
+   deterministically in `tests/test_completeness_holds.py` but have never been
+   run against a live model.
+
+None of these are required for the submission. All three are the honest answer
+to "what would you do next with the budget you didn't spend."

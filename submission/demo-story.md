@@ -218,7 +218,10 @@ asks trusted state two questions:
 - Disbursement against it in the ledger? → **no**
 
 > **OBLIGATION UNDISCHARGED** → raised for human review.
-> **71 / 71 detected · 0 false alarms in 149 benign sessions.**
+> **71 / 71 detected** — say the honest half out loud: detection here is a
+> *proof, not a measurement*. A denial attack IS "obligation open, nothing
+> paid", which is exactly what the check tests.
+> **0 false alarms in 15 · against 5 in 15 for the binary version it replaced.**
 
 **Job:** the payoff. Acts I–III trained the eye to expect movement; the
 stillness is alarming *because of* that training.
@@ -353,9 +356,11 @@ location, either place it or consciously drop it.
 | Four metrics, not one | WIDEN 2, secondary |
 | Wilson intervals | WIDEN 2, secondary + shown beside every number |
 | Benign corpus necessity, 0/149 false positives | Act III + WIDEN 2 |
-| **F15/F20 — asymmetry across the capability range** | Act IV (71/71, fourteen models, six labs, 2.6B-frontier) |
+| **F15/F20 — asymmetry across fourteen models** | Act IV (71/71, fourteen models, six labs) |
+| **F21/F22 — the affordance ablation** | Act IV-b: 1 of 3 denial shapes closes; 550B never calls the tool, 2.6B calls it twice; Haiku verifies on 2/3 benign and 0/3 attacks |
+| **F23/F24 — the false-alarm number that measured nothing** | Act IV payoff: 5/15 binary vs 0/15 hold-aware; spoofed holds still surface |
 | **F2/F11 — denial uncatchable by prevention** | Act IV |
-| **F13/F14/F18/F20 — completeness 71/71, 0 false alarms, six labs** | Act IV, the payoff |
+| **F13/F14/F18/F20 — completeness, six labs** | Act IV, the payoff |
 | Completeness doubles as a service-quality monitor | WIDEN 3 or Act IV coda |
 | **F1 / ADR 0008 — cap vs bind** | WIDEN 3, item 1 |
 | **F6 — n=1 noise nearly deleted 5 good cases** | WIDEN 3, item 2 |

@@ -27,8 +27,11 @@ on every session, not suggestions:
 7. **Do not add a feature "because ASMOS already has it."** That specific
    impulse is Deepak's identified failure mode — scope creep dressed as
    technical ambition.
-8. **The founder email stays parked** (`submission/founder-email.md`) until
-   the project thesis is locked.
+8. ~~**The founder email stays parked**~~ — **DISCHARGED 2026-08-24** by
+   `docs/decisions/0017-founder-email-unparked.md`. The unlock condition (a
+   locked problem, a real spine, real evaluation numbers) is met, and
+   `submission/founder-email.md` now carries a drafted email. It is still
+   **Deepak's to send, never Claude's** — that part does not expire.
 
 ## The workflow rule for this repo: log every invention
 

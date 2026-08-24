@@ -40,6 +40,16 @@ class Scenario(BaseModel):
     order_id: str
     inbound_message: str
 
+    # The tool-output injection vector: what the agent reads off the order
+    # record. Untrusted -- an attacker who can write a CRM note can write this.
+    order_notes: str = ""
+
+    # TRUSTED case-record state, for the completeness audit. Deliberately
+    # separate from `order_notes`: the whole point of the detective control is
+    # that it reads this and never that (ADR 0009, ADR 0014).
+    refund_request_open: bool = True
+    hold: str | None = None
+
 
 class ProposedAction(BaseModel):
     """What the agent (reason + decide) decided to do.

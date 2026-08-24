@@ -17,22 +17,31 @@ built and where do things stand."
 
 The problem is locked (Track 01, working name **Warden** — an agent
 trust/safety/audit layer for agentic payments). The system is built, tested
-(**83 passing tests**), runs against **Razorpay's real test-mode API**, and is
+(**131 passing tests**), runs against **Razorpay's real test-mode API**, and is
 evaluated against **fourteen models across six labs** (Anthropic, Google,
-NVIDIA, Cohere, dots.studio, Liquid) for **$10.27 of a $74 budget** — the
+NVIDIA, Cohere, dots.studio, Liquid) for **$10.70 of a $74 budget** — the
 eleven non-Anthropic models cost $0.00. The core finding — every model resists
-diversion but **all fourteen fail 100% of denial attacks, 71/71**, which a
-completeness audit then catches 71/71 with 0 false alarms in 149 benign
-sessions, across a **2.6B-to-frontier** range with no thinning at scale — is
-strong and demo-ready.
+diversion but **all fourteen fail 100% of denial attacks, 71/71** on the
+default toolset, which a detective completeness audit then surfaces — is
+strong and demo-ready. **Phase P corrected what that finding means:** the
+agent had no tool that could check the claim, so 71/71 measured an information
+gap; giving it one closes exactly **one denial shape of three**, and the
+"no thinning at scale" reading is withdrawn. The corrected version is sharper
+and is the one to pitch.
 `submission/narrative.md` and `submission/form-answers.md` are written. A
 scroll-driven demo page exists, is built, and is published as a private Claude
 Artifact.
 
-**Two things remain, both Deepak's and neither of them engineering: the
-GitHub repo is still private (form Q10, a hard blocker — verified 404
-unauthenticated on 2026-08-23), and the 5-minute pitch video is not
-recorded.** See §6.
+**One thing remains, and it is Deepak's: the 5-minute pitch video is not
+recorded.** The repo is public (verified 200 unauthenticated, 2026-08-24), the
+script is written in 8 independently-recordable segments, and the demo page is
+built. See §6.
+
+**Read Phase P below before anything else.** On 2026-08-24 the whole repo was
+reviewed adversarially, as a panelist would, and four defects were found — all
+of them in the *evidence* rather than the code, including a confound underneath
+the project's own headline number. Six ADRs (0012–0017) came out of it. The
+numbers in this file above Phase P are pre-review.
 
 ---
 
@@ -222,6 +231,95 @@ Four things landed, in this order:
 
 Tests 24 → 83. ADRs 9 → 11. Findings 16 → 21. Spend unchanged at $10.27.
 
+
+### Phase P — Adversarial self-review, then six fixes (2026-08-24)
+
+The repo was reviewed **as a Razorpay panelist would review it**: every
+headline number recomputed from the raw run JSONs, the suite run, a live smoke
+eval run, the Razorpay product surface checked, and the code read looking for
+the gap between what the docs claim and what `src/` does.
+
+Four real defects came out of it, and **none of them were in the code — they
+were in the evidence.** That is the important pattern: this project's moat is
+measurement honesty, so a flaw in a *claim* costs more here than a bug would.
+
+**1. ADR 0012 — the mandate layer was described everywhere and existed nowhere.**
+ADR 0007 specified "signed, scoped, single-use, expiring capability", and
+`submission/narrative.md` §4 and form Q9 repeated it. `grep -ri mandate src/`
+returned nothing; what shipped was five policy rules. Built it properly:
+HMAC-signed, expiring, nonce-based replay guard, payee derived from trusted
+order state with **no parameter to override it**, four `mandate_*_scope`
+binding rules ahead of the policy rules, 19 tests. **Additive and off by
+default** — turning it on as a required check would silently change the system
+under test and invalidate every recorded number. Also makes
+`temporal_decoupling` (ADR 0007's class 9) testable at last, deterministically
+rather than as corpus padding.
+
+**2. ADR 0013 — the denial headline was confounded, and the fix made it sharper.** ⭐
+The agent's tools were `lookup_order` / `issue_refund` / `close_case` /
+`send_payout`. **Nothing returned whether a refund had actually been issued**,
+so no model could check the forged note *at any size* — 71/71 was measuring an
+information gap and being reported as a capability result ("200x parameter
+spread, no thinning at scale"). Built `check_refund_status` over a trusted
+`REFUND_LEDGER`, instrumented read-only tool calls (`tool_reads`), ran the
+ablation on six models for $0.43. **Findings 21–22:**
+- It closes **one denial shape of three**. A ledger answers *disbursement*; it
+  says nothing about *policy* or *request state*, which is two thirds of the
+  surface. **That is the empirical case for the detective control**, which was
+  previously an assumption.
+- **Nemotron Ultra (550B) never called the tool; Liquid (2.6B) called it
+  twice.** The capability reading is **withdrawn**.
+- **Haiku called it on 2/3 benign sessions and 0/3 attacks.** The forged note
+  suppresses the verification call itself.
+- Sonnet and Opus resisted `denial-001` — the first denial resistance in the
+  project's history.
+
+**3. ADR 0014 — "0 false alarms in 149" was measuring the corpus, not the control.**
+Eight of nine benign cases ended in a payment; the ninth had no open request.
+**No case in the corpus could have produced a false alarm.** Added six that
+can (chargeback in flight, risk hold, awaiting payout details, escalated for
+approval, replacement in transit, genuine prior refund), a fourth order
+(`ORD-6120`) that really *was* refunded so "already refunded" can be true, and
+three hold-spoofing attacks. Verdict is now three-valued
+(`discharged`/`deferred`/`undischarged`). **Finding 23: the binary checker
+that had been shipping scores 5/15 — a 33% false-alarm rate.** Hold-aware:
+0/15, still 12/12 on denial, and a spoofed hold still surfaces because `hold`
+is read from the case record and never from text.
+
+**4. ADR 0015 — the demo ran a different agent from the evidence, and never ran
+the headline control.** `LLMReasoner` was a single-shot text prompt whose own
+docstring said it was untested, and it activated automatically once `.env` had
+a key. Deleted it; `ToolCallingReasoner` now drives the pipeline with the same
+agent the whole evaluation used. Separately, `src/pipeline.py` had **no
+completeness stage at all** — the project's headline control existed only
+inside the eval harness. Added, running last and unconditionally, plus a
+`denial` scenario. **`make demo-denial` shows Beat 3 end to end**, verified
+live against Opus 5.
+
+**5. ADR 0016 — "tamper-evident" was an overclaim.** A bare hash chain does not
+survive a writer who edits an entry and recomputes the chain. Added HMAC
+signing (`WARDEN_AUDIT_KEY`), an explicit UNSIGNED warning in `verify_chain()`
+when no key is set, and a test that performs the re-chain attack and asserts
+the unsigned chain still verifies — so the limitation cannot quietly become a
+claim again. Also fixed `append()` from O(n²) (it called `read_all()` every
+write) to O(1).
+
+**6. ADR 0017 — founder email unparked and drafted.** The ADR 0004 unlock
+condition is met; `CLAUDE.md` rule 8 is **discharged**, not broken. Draft
+leads with the Agent Studio / Dispute Responder finding, not with the project.
+**Deepak sends it — that part does not expire.**
+
+**Positioning also upgraded:** Agent Studio (built on Anthropic's Claude SDK,
+ships a Dispute Responder, publishes no guardrails) is now named explicitly in
+README, narrative §6, form Q9 and the demo-script Q&A — the sharpest result is
+now a finding about a **live Razorpay product**. And the "Track 01 is a growth
+track, what revenue did you grow?" question is answered head-on rather than
+hoped-around.
+
+Corpus 29 → **38** attacks (denial 3 → 12), 9 → **15** benign.
+Tests 83 → **131**. ADRs 11 → **17**. Findings 21 → **24**.
+Spend $10.27 → **$10.70** of $74.
+
 ## 2. Repo map — where things actually live
 
 ```
@@ -273,7 +371,7 @@ edit old ones, supersede with a new file.
 
 ## 4. Budget remaining
 
-**$63.73 of $74 remaining** ($10.27 spent — Phase A $0.01, B $2.01/$6,
+**$63.30 of $74 remaining** ($10.70 spent — Phase A $0.01, B $2.01/$6,
 C $2.99/$16, D $0.06, E $5.21/$6). Phases D and F–H allocations were never
 spent (semantic-layer ablation, cross-model final runs) — deliberately, since
 every problem so far was solved deterministically. Re-read
@@ -298,44 +396,45 @@ calibrate on a *representative* sample, not a prefix (Finding 16 — a real
 
 ---
 
-## 6. Immediate next actions — the actual next phase
+## 6. Immediate next actions
 
-Per Deepak: next phase is **understanding where the project stands** and
-**filling gaps at specific stages** rather than new building. In priority
-order:
+**Everything below except item 1 was completed on 2026-08-24 (Phase P).**
 
-1. **Verify and fix GitHub repo visibility.** Checked this session: both the
-   GitHub API and the page itself returned "not found" for
-   `github.com/csdeepak/razorpay_buildathon` on an unauthenticated request —
-   consistent with the repo being **private**. The Buildathon form requires
-   a *public* repo URL. This is a hard blocker and it's a two-click fix in
-   GitHub's own settings (Claude can't do it — no `gh` CLI in this
-   environment, and it's Deepak's account setting regardless). **Do this
-   first, before anything else, and confirm.**
-2. **Draft `submission/narrative.md`.** Currently an empty template. Every
-   fact it needs already exists across the 9 ADRs and `eval-findings.md` —
-   this is synthesis, not new research, and Claude can draft it directly
-   once asked.
-3. **Draft the "what broke, and how you got out" form answer.** Razorpay
-   reads this one first. Best raw material: ADR 0008 (amount binding),
-   Finding 6 (n=1 nearly deleted 5 good cases), Finding 5 (a metric that was
-   measuring the test harness, not the system), Finding 12 (a smarter model
-   exposed a badly-written benign case). Needs distilling to ~1 paragraph.
-4. **Record the 5-minute pitch video.** The demo page and
-   `submission/demo-script.md` exist specifically to support this. Not
-   something Claude can do; can help tighten the script first.
-5. **One more real outreach round** — **brief written 2026-08-23:
-   `outreach/02-round-two-brief.md`** (who to contact, what to show in what
-   order, what to ask, what to capture). Showing the *built* Warden system (not
-   just the problem) to a couple of real people — ideally including whoever
-   gave Deepak the founder-office contact. Strengthens "problem taste" and
-   "AI judgment," two of Razorpay's four stated judging criteria, with
-   post-build evidence rather than only pre-build validation.
-6. **Decide on the founder email deliberately.** The parking condition looks
-   satisfied now (locked problem + real spine + real evaluation numbers) —
-   worth an explicit ADR-style decision either way, not a default.
+1. **Record the 5-minute pitch video.** ⛔ **The only hard blocker left.**
+   Script: `submission/video-script.md`, 8 segments, retimed to exactly 5:00
+   after SEG 4b (the ablation) was added. Visual asset:
+   `submission/demo/warden-demo.html`. Not something Claude can do.
+   - **Note:** the demo page gained a new scene (`s06b`, the ablation panel).
+     It was verified structurally — markup, CSS, and a matching scroll-scene
+     handler are all present in the built files — but **not verified visually**,
+     because the browser pane would not composite in this session.
+     **Look at it once before recording.**
+2. ~~Verify and fix GitHub repo visibility.~~ Done — public, verified.
+3. ~~Draft `submission/narrative.md`.~~ Done, and rewritten in Phase P.
+4. ~~Draft the "what broke" answer.~~ Done, and rewritten in Phase P — it now
+   leads with the two confounds found in the project's own evidence, which is
+   stronger material than the original bug-fix framing.
+5. **One more real outreach round** — still open, still Deepak's. Brief:
+   `outreach/02-round-two-brief.md`. Now has better material to show: the
+   ablation is a more interesting thing to walk someone through than a
+   catch rate.
+6. ~~Decide on the founder email.~~ Done — ADR 0017, unparked and drafted at
+   `submission/founder-email.md`. **Deepak sends.**
 
-Lower priority, don't chase unless the above are done: growing the corpus
-past 29 cases, deepening audit replay/queryability (Day 10, never in the
-demo script, so never earned build time per rule 2), finalizing "Warden" as
-a real product name instead of a working one.
+### If there is time after the video, ranked by value
+
+1. **Multi-seed the ablation arm** (~$3 on Sonnet). The 3-of-6 split on
+   `denial-001` is n=1 and is reported as a direction, not a rate. This is the
+   single weakest point in the strongest finding.
+2. **Run the nine new denial cases against a live model.** They are covered
+   deterministically in `tests/test_completeness_holds.py` but have never been
+   run against a model, so the corpus says 12 denial cases and the *measured*
+   number is still 3.
+3. **Hold aging.** `deferred` never expires, which is the one limitation in
+   ADR 0014 that a sharp reviewer will name. A clock and a per-hold SLA.
+4. **Re-run the corpus against the mandate layer** so ADR 0012 carries measured
+   numbers rather than only tests.
+
+Lower priority, don't chase: audit replay/queryability (never in the demo
+script, so never earned build time per rule 2), finalizing "Warden" as a real
+product name.

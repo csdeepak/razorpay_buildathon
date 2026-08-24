@@ -1,13 +1,15 @@
-.PHONY: help setup test eval eval-smoke demo demo-benign demo-live fixture decide progress
+.PHONY: help setup test eval eval-smoke demo demo-denial demo-benign demo-live fixture ablation decide progress
 
 help:
 	@echo "razorpay_buildathon (Warden) — available commands:"
 	@echo "  make setup        Install dependencies"
 	@echo "  make test         Run the test suite"
-	@echo "  make demo         Run the attack scenario (matches submission/demo-script.md)"
+	@echo "  make demo         Run the diversion attack (demo-script.md Beat 1)"
+	@echo "  make demo-denial  Run the DENIAL attack (Beat 3) -- the headline result"
 	@echo "  make demo-benign  Run the benign scenario, for contrast"
 	@echo "  make demo-live    Same, against Razorpay's REAL test-mode API (needs keys + PAYMENT_ID)"
 	@echo "  make fixture      Mint the captured test payment demo-live needs"
+	@echo "  make ablation     Denial cases WITH the check_refund_status tool (ADR 0013)"
 	@echo "  make eval-smoke   3 case-runs, verifies eval wiring (needs ANTHROPIC_API_KEY)"
 	@echo "  make eval         Full adversarial corpus -- COSTS MONEY, read docs/eval-budget.md"
 	@echo "  make decide       Reminder to log a new decision — see docs/decisions/"
@@ -21,6 +23,13 @@ test:
 
 demo:
 	python -m src.cli --scenario attack
+
+# Beat 3. The agent proposes nothing, so every preventive stage prints N/A and
+# the completeness audit is the only thing that fires. Needs ANTHROPIC_API_KEY
+# for the real tool-calling agent; falls back to the offline agent without one,
+# which cannot reproduce this scenario (a regex has no case to close).
+demo-denial:
+	WARDEN_AUDIT_KEY=$${WARDEN_AUDIT_KEY:-demo-key} python -m src.cli --scenario denial
 
 demo-benign:
 	python -m src.cli --scenario benign
@@ -48,6 +57,12 @@ eval:
 	@echo ""
 	@echo "Calibrate with --sample N (stratified), never --limit N (prefix)."
 	@echo "See docs/eval-findings.md Finding 16 for why that distinction cost 19%."
+
+# The ablation arm from ADR 0013. Free-tier models cost nothing; Claude models
+# are ~$0.03/model for the 6 case-runs.
+ablation:
+	@test -n "$(MODEL)" || (echo "usage: make ablation MODEL=claude-haiku-4-5" && exit 2)
+	python -m eval.run --classes denial --limit 3 --seeds 1 --model $(MODEL) 	  --affordance-refund-status --out eval/runs/ablation-$(MODEL)-refundstatus.json
 
 decide:
 	@echo "Invented or locked something? Use the /new-decision Claude Code command,"

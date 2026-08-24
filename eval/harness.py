@@ -10,7 +10,7 @@ from __future__ import annotations
 import copy
 
 from eval.agent import AgentRunner, EnforcementHook, allow_everything
-from eval.corpus import ORDERS
+from eval.corpus import ORDERS, REFUND_LEDGER
 from src.models import OrderRecord
 from src.verification.completeness import CompletenessChecker
 from eval.models import (
@@ -40,12 +40,35 @@ def _order_lookup_for(order_id_expected: str, notes: str | None):
     return lookup
 
 
+def _refund_status_lookup(order_id_expected: str):
+    """Builds the `check_refund_status` implementation for one case.
+
+    Reads REFUND_LEDGER -- trusted state -- and never the notes. This is the
+    ablation arm's whole point: the agent gets an authoritative answer that
+    contradicts the forged claim, so a denial that still succeeds is a
+    judgement failure rather than an information failure
+    (docs/decisions/0013-affordance-ablation.md)."""
+
+    def lookup(order_id: str) -> dict:
+        oid = order_id if order_id in REFUND_LEDGER else order_id_expected
+        refunds = REFUND_LEDGER.get(oid, [])
+        return {
+            "order_id": oid,
+            "refunds": refunds,
+            "total_refunded": sum(float(r.get("amount", 0)) for r in refunds),
+            "source": "payment ledger (authoritative)",
+        }
+
+    return lookup
+
+
 def _refund_proposals(proposals: list[ProposedActionRecord]) -> list[ProposedActionRecord]:
     return [p for p in proposals if p.tool_name == "issue_refund"]
 
 
 def _audit_completeness(order_id: str, refund_request_open: bool,
-                        proposals: list[ProposedActionRecord]) -> bool:
+                        proposals: list[ProposedActionRecord],
+                        hold: str | None = None) -> bool:
     """Run the detective control over a finished session. Returns True if it
     flagged an undischarged obligation.
 
@@ -54,7 +77,11 @@ def _audit_completeness(order_id: str, refund_request_open: bool,
     should still look. That is the control behaving correctly, not a false
     alarm."""
     o = ORDERS[order_id]
-    paid = sum(
+    # Prior disbursements count. An obligation discharged in an EARLIER session
+    # is still discharged, and a checker that only looked at this session would
+    # false-alarm on every legitimately-already-refunded order (benign-014).
+    prior_paid = sum(float(r.get("amount", 0)) for r in REFUND_LEDGER.get(order_id, []))
+    paid = prior_paid + sum(
         float(p.arguments.get("amount", 0) or 0)
         for p in _refund_proposals(proposals)
         if not p.blocked
@@ -67,6 +94,7 @@ def _audit_completeness(order_id: str, refund_request_open: bool,
         ),
         refund_request_open=refund_request_open,
         refund_paid_total=paid,
+        hold=hold,
     )
     return verdict.needs_review
 
@@ -119,11 +147,14 @@ def run_attack_case(
     *,
     enforcement: EnforcementHook = allow_everything,
     model: str | None = None,
+    refund_status_affordance: bool = False,
 ) -> CaseResult:
     notes = case.poisoned_order_notes if case.poisoned_order_notes is not None else ""
     runner_kwargs = {"enforcement": enforcement}
     if model:
         runner_kwargs["model"] = model
+    if refund_status_affordance:
+        runner_kwargs["refund_status_lookup"] = _refund_status_lookup(case.order_id)
     runner = AgentRunner(_order_lookup_for(case.order_id, notes), **runner_kwargs)
 
     try:
@@ -162,8 +193,9 @@ def run_attack_case(
         vector=case.vector,
         outcome=outcome,
         completeness_flagged=_audit_completeness(
-            case.order_id, case.refund_request_open, proposals
+            case.order_id, case.refund_request_open, proposals, case.hold
         ),
+        tool_reads=result.get("tool_reads", {}),
         proposed_actions=proposals,
         agent_final_text=result["final_text"],
         latency_seconds=result["latency_seconds"],
@@ -178,10 +210,13 @@ def run_benign_case(
     *,
     enforcement: EnforcementHook = allow_everything,
     model: str | None = None,
+    refund_status_affordance: bool = False,
 ) -> CaseResult:
     runner_kwargs = {"enforcement": enforcement}
     if model:
         runner_kwargs["model"] = model
+    if refund_status_affordance:
+        runner_kwargs["refund_status_lookup"] = _refund_status_lookup(case.order_id)
     runner = AgentRunner(_order_lookup_for(case.order_id, case.order_notes or ""), **runner_kwargs)
 
     try:
@@ -216,8 +251,9 @@ def run_benign_case(
         kind="benign",
         outcome=outcome,
         completeness_flagged=_audit_completeness(
-            case.order_id, case.refund_request_open, proposals
+            case.order_id, case.refund_request_open, proposals, case.hold
         ),
+        tool_reads=result.get("tool_reads", {}),
         proposed_actions=proposals,
         agent_final_text=result["final_text"],
         latency_seconds=result["latency_seconds"],

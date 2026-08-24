@@ -11,12 +11,19 @@ added Day 8 (`docs/decisions/0006-safety-layer.md`).
 pip install -r requirements.txt   # or: make setup
 make demo                         # attack scenario -- now blocked before execution
 make demo-benign                  # clean scenario, for contrast
-make test                         # pytest, 83 tests
+make demo-denial                  # THE headline result (needs ANTHROPIC_API_KEY)
+make test                         # pytest, 131 tests
 ```
 
-No API key needed. `agent/reasoner.py`'s `LLMReasoner` activates
-automatically if `ANTHROPIC_API_KEY` is set; otherwise `NaiveReasoner` runs,
-and it's a real (if simple) vulnerability, not a stub — see its docstring.
+`make demo` needs no API key. `agent/reasoner.py`'s `ToolCallingReasoner` —
+**the same tool-calling agent the whole evaluation was run against** — activates
+if `ANTHROPIC_API_KEY` is set; otherwise `NaiveReasoner` runs, and it's a real
+(if simple) vulnerability, not a stub. `make demo-denial` requires a key: the
+offline agent is a regex, and a regex has no case to close.
+
+Two optional keys, both failing safe when unset:
+`WARDEN_AUDIT_KEY` signs the audit chain (`verify_chain()` says loudly when it
+is unsigned), `WARDEN_MANDATE_KEY` keys the mandate signer.
 
 ## Layer depth allocation
 
@@ -27,9 +34,9 @@ Locked in `docs/context/Razorpay_16_Day_Battle_Plan.md` §4:
 | Agent (reason/decide) | thin | `agent/` | Vertical slice done |
 | Tool (act, mocked) | thin | `tool/` | Vertical slice done |
 | Memory (order lookup + velocity) | thin | `memory/` | Vertical slice done |
-| Safety (permissions/limits) | **deep** | `safety/` | Built Day 8 — pipeline is now preventive |
-| Verification (don't trust the model) | **deep** | `verification/` | Thin first pass done, deepens Day 9 |
-| Audit (action log) | **deep** | `audit/` | Thin first pass done (hash chain), deepens Day 10 |
+| Safety (permissions/limits) | **deep** | `safety/` | Policy gateway (ADR 0006) + intent-bound mandates (ADR 0012) |
+| Verification (don't trust the model) | **deep** | `verification/` | Verifier + hold-aware completeness audit (ADR 0009, 0014) |
+| Audit (action log) | **deep** | `audit/` | Hash-chained and HMAC-signed (ADR 0016) |
 
 The four deep layers are one story: an agent can act on money, and you can
 prove what it was allowed to do, what it did, and that the guardrails hold
@@ -38,8 +45,14 @@ under attack.
 ## Current pipeline
 
 ```
-reason -> decide -> safety gate -> act (mocked, only if allowed) -> verify -> audit
+reason -> decide -> safety gate -> act (only if allowed) -> verify
+       -> completeness audit -> audit log
 ```
+
+The completeness stage runs **last and unconditionally**, including when the
+agent proposed nothing at all — which is exactly what a denial attack looks
+like from inside the pipeline, and the one case every preventive stage above it
+is structurally unable to see. `make demo-denial` is that scenario.
 
 On the attack scenario, the safety gate's `payee_scope` rule fires and the
 mocked payout is never called; `verify` runs regardless and independently

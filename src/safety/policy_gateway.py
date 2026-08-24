@@ -7,6 +7,16 @@ Checks run in a fixed order and stop at the first failure, so
 PolicyVerdict.rule_fired always names exactly one rule -- the demo script
 requires showing which specific rule fired, not a generic "blocked" toast.
 
+0. mandate        -- OPTIONAL and off by default. When a mandate is presented
+                     (src/safety/mandate.py, ADR 0012) it is checked BEFORE any
+                     policy rule: authority first, then whether the action fits
+                     inside it. Authenticity, expiry and replay are the
+                     mandate's own concern; the four `mandate_*_scope` rules
+                     here bind the proposed action to what was authorised.
+                     Default off because every result recorded in
+                     docs/eval-findings.md was measured against the policy
+                     rules alone, and silently changing the system under test
+                     would invalidate all of it -- see ADR 0012.
 1. category       -- is this an action type the merchant allows at all
 2. payee_scope    -- for a refund, the only legitimate destination is the
                      order's own original payment instrument. This overlaps
@@ -52,6 +62,7 @@ from __future__ import annotations
 
 from src.memory.state import VelocityTracker
 from src.models import MerchantPolicy, OrderRecord, PolicyVerdict, ProposedAction
+from src.safety.mandate import Mandate, MandateVerifier
 
 # Float tolerance for currency comparison. Amounts are rupees; anything
 # below a paisa is noise, not a policy decision.
@@ -59,11 +70,29 @@ AMOUNT_TOLERANCE = 0.01
 
 
 class PolicyGateway:
-    def __init__(self, policy: MerchantPolicy, velocity: VelocityTracker) -> None:
+    def __init__(
+        self,
+        policy: MerchantPolicy,
+        velocity: VelocityTracker,
+        *,
+        mandate_verifier: MandateVerifier | None = None,
+        require_mandate: bool = False,
+    ) -> None:
         self._policy = policy
         self._velocity = velocity
+        self._mandate_verifier = mandate_verifier
+        self._require_mandate = require_mandate
 
-    def check(self, order: OrderRecord, action: ProposedAction) -> PolicyVerdict:
+    def check(
+        self,
+        order: OrderRecord,
+        action: ProposedAction,
+        mandate: Mandate | None = None,
+    ) -> PolicyVerdict:
+        mandate_verdict = self._check_mandate(order, action, mandate)
+        if mandate_verdict is not None:
+            return mandate_verdict
+
         if action.action_type not in self._policy.allowed_categories:
             return PolicyVerdict(
                 allowed=False,
@@ -133,4 +162,99 @@ class PolicyGateway:
             )
 
         self._velocity.record(action.amount)
+        if mandate is not None and self._mandate_verifier is not None:
+            # Burn the nonce here and nowhere else: this is the only path that
+            # reaches "allowed", so single-use cannot be bypassed by a caller
+            # forgetting to mark it. Same reasoning as recording velocity.
+            self._mandate_verifier.spend(mandate)
         return PolicyVerdict(allowed=True, rule_fired=None, reason="within policy on every rule checked.")
+
+    def _check_mandate(
+        self,
+        order: OrderRecord,
+        action: ProposedAction,
+        mandate: Mandate | None,
+    ) -> PolicyVerdict | None:
+        """Returns a blocking verdict, or None to continue to the policy rules.
+
+        Splitting authenticity (the verifier's job) from binding (these four
+        rules) is deliberate: a forged mandate and a genuine mandate used for
+        the wrong action are different failures and must not collapse into one
+        generic refusal."""
+        if mandate is None:
+            if self._require_mandate:
+                return PolicyVerdict(
+                    allowed=False,
+                    rule_fired="mandate_missing",
+                    reason=(
+                        "no mandate was presented. This gateway is configured to "
+                        "require intent-bound authority for every money action; "
+                        "an action with no mandate has no authorisation to check."
+                    ),
+                )
+            return None
+
+        if self._mandate_verifier is None:
+            return PolicyVerdict(
+                allowed=False,
+                rule_fired="mandate_unverifiable",
+                reason=(
+                    "a mandate was presented but this gateway has no verifier "
+                    "configured, so its signature cannot be checked. Refusing "
+                    "rather than ignoring it -- accepting an unverified mandate "
+                    "would be strictly worse than requiring none."
+                ),
+            )
+
+        verdict = self._mandate_verifier.verify(mandate)
+        if not verdict.valid:
+            return PolicyVerdict(allowed=False, rule_fired=verdict.rule_fired, reason=verdict.reason)
+
+        if mandate.order_id != order.order_id:
+            return PolicyVerdict(
+                allowed=False,
+                rule_fired="mandate_order_scope",
+                reason=(
+                    f"mandate {mandate.mandate_id} authorises order "
+                    f"{mandate.order_id}, but this action is against order "
+                    f"{order.order_id}. Authority is per-order and does not "
+                    f"transfer."
+                ),
+            )
+
+        if mandate.action_type != action.action_type:
+            return PolicyVerdict(
+                allowed=False,
+                rule_fired="mandate_action_scope",
+                reason=(
+                    f"mandate {mandate.mandate_id} authorises "
+                    f"'{mandate.action_type}', but the proposed action is "
+                    f"'{action.action_type}'. Holding authority for one action "
+                    f"type is not authority for another."
+                ),
+            )
+
+        if action.destination_account != mandate.payee:
+            return PolicyVerdict(
+                allowed=False,
+                rule_fired="mandate_payee_scope",
+                reason=(
+                    f"destination {action.destination_account!r} is not the "
+                    f"payee {mandate.payee!r} this mandate was minted for. The "
+                    f"payee was derived from trusted order state at mint time "
+                    f"and no text the agent read can change it."
+                ),
+            )
+
+        if action.amount > mandate.max_amount + AMOUNT_TOLERANCE:
+            return PolicyVerdict(
+                allowed=False,
+                rule_fired="mandate_amount_scope",
+                reason=(
+                    f"amount {action.amount} exceeds the {mandate.max_amount} "
+                    f"this mandate authorises. A mandate is a ceiling on "
+                    f"authority, not a suggestion."
+                ),
+            )
+
+        return None

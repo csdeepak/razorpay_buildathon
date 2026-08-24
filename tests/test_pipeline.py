@@ -93,6 +93,7 @@ def test_audit_chain_is_intact_and_reflects_the_block(order_store, ledger):
         "SAFETY_CHECK",
         "ACTION_BLOCKED",
         "VERIFICATION_RESULT",
+        "COMPLETENESS_AUDIT",
         "SCENARIO_END",
     ]
 

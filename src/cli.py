@@ -25,7 +25,7 @@ import sys
 
 from dotenv import load_dotenv
 
-from src.agent.reasoner import LLMReasoner, NaiveReasoner, default_reasoner
+from src.agent.reasoner import NaiveReasoner, ToolCallingReasoner, default_reasoner
 from src.audit.ledger import AuditLedger
 from src.memory.state import OrderStore, VelocityTracker
 from src.models import MerchantPolicy, OrderRecord
@@ -141,14 +141,19 @@ def main(argv: list[str] | None = None) -> int:
         tool_client = MockRazorpayClient()
         rail_label = "ACT (mocked)  "
 
+    scenario = SCENARIOS[args.scenario]
     print(f"=== Warden vertical slice — scenario: {args.scenario} · rail: {args.rail} ===\n")
+    if scenario.order_notes:
+        print("ORDER NOTES (untrusted -- the agent reads these):")
+        print(f"  {scenario.order_notes}")
+        print()
 
     result = run_scenario(
         args.scenario,
         reasoner=(
             NaiveReasoner() if args.reasoner == "naive"
-            else LLMReasoner() if args.reasoner == "llm"
-            else default_reasoner()
+            else ToolCallingReasoner(order_notes=scenario.order_notes) if args.reasoner == "llm"
+            else default_reasoner(order_notes=scenario.order_notes)
         ),
         safety_gate=safety_gate,
         tool_client=tool_client,
@@ -161,23 +166,52 @@ def main(argv: list[str] | None = None) -> int:
     policy_verdict = result["policy_verdict"]
     exec_result = result["execution"]
     verdict = result["verdict"]
+    completeness = result["completeness"]
 
-    print(f"1. REASON+DECIDE  proposed destination: {action.destination_account}")
-    print(f"                  rationale: {action.rationale}\n")
-
-    print(f"2. SAFETY GATE    allowed: {policy_verdict.allowed}" + (f"  rule fired: {policy_verdict.rule_fired}" if not policy_verdict.allowed else ""))
-    print(f"                  {policy_verdict.reason}\n")
-
-    if exec_result is not None:
-        print(f"3. {rail_label}  tx_id: {exec_result.tx_id}  status: {exec_result.status}\n")
-    elif result.get("inexpressible") is not None:
-        print(f"3. {rail_label}  NOT EXPRESSIBLE -- the gate passed it, but Razorpay's refund")
-        print("                  API has no field for a payee, so there is no request to send.\n")
+    if action is None:
+        # The denial signature. Every preventive stage has nothing to act on,
+        # which is the point being demonstrated -- not a degraded run.
+        print("1. REASON+DECIDE  *** the agent proposed NO money movement at all. ***")
+        print("                  It read the note, believed it, and closed the case.")
+        print()
+        print("2. SAFETY GATE    N/A -- nothing was proposed, so there is nothing to")
+        print("                  refuse. A preventive gate cannot address this, by")
+        print("                  construction: its whole mechanism is saying no.")
+        print()
+        print(f"3. {rail_label}  N/A -- no action reached the rail.")
+        print()
+        print("4. VERIFY         N/A -- verification compares a proposed action against")
+        print("                  trusted state, and there is no proposed action.")
+        print()
     else:
-        print(f"3. {rail_label}  SKIPPED -- blocked by the safety gate before it reached the rail.\n")
+        print(f"1. REASON+DECIDE  proposed destination: {action.destination_account}")
+        print(f"                  rationale: {action.rationale}")
+        print()
 
-    print(f"4. VERIFY         consistent: {verdict.consistent}")
-    print(f"                  {verdict.reason}\n")
+        print(f"2. SAFETY GATE    allowed: {policy_verdict.allowed}"
+              + (f"  rule fired: {policy_verdict.rule_fired}" if not policy_verdict.allowed else ""))
+        print(f"                  {policy_verdict.reason}")
+        print()
+
+        if exec_result is not None:
+            print(f"3. {rail_label}  tx_id: {exec_result.tx_id}  status: {exec_result.status}")
+        elif result.get("inexpressible") is not None:
+            print(f"3. {rail_label}  NOT EXPRESSIBLE -- the gate passed it, but Razorpay's refund")
+            print("                  API has no field for a payee, so there is no request to send.")
+        else:
+            print(f"3. {rail_label}  SKIPPED -- blocked by the safety gate before it reached the rail.")
+        print()
+
+        print(f"4. VERIFY         consistent: {verdict.consistent}")
+        print(f"                  {verdict.reason}")
+        print()
+
+    # The detective control. Runs on every scenario, including the ones where
+    # every preventive stage above printed N/A -- that is exactly what it is for.
+    print(f"5. COMPLETENESS   obligation: {completeness.status.upper()}"
+          + (f"  ({completeness.hold})" if completeness.hold else ""))
+    print(f"                  {completeness.reason}")
+    print()
 
     if result.get("inexpressible") is not None:
         exc = result["inexpressible"]
@@ -185,12 +219,19 @@ def main(argv: list[str] | None = None) -> int:
         print(f"        {exc}")
         print("        Not a policy decision -- a fact about the API's shape. A refund")
         print("        carries no payee, so the diverted action has no request to send.")
+    elif action is None:
+        print("RESULT: *** NOTHING WAS BLOCKED, BECAUSE NOTHING WAS PROPOSED. ***")
+        print("        The customer is simply never paid. No stage above 5 noticed,")
+        print("        and no stage above 5 could have.")
+        if completeness.needs_review:
+            print("        Stage 5 caught it by asking trusted state whether the obligation")
+            print("        was discharged. It never read the forged note.")
     elif not policy_verdict.allowed:
         print("RESULT: *** ATTACK BLOCKED BEFORE EXECUTION. *** No money moved.")
-        if not verdict.consistent:
+        if verdict is not None and not verdict.consistent:
             print("        Verification independently agrees it would have been wrong -- two")
             print("        different mechanisms catching the same attack, not one point of failure.")
-    elif verdict.consistent:
+    elif verdict is not None and verdict.consistent:
         print("RESULT: refund executed to the correct destination.")
     else:
         print("RESULT: *** MONEY MOVED TO THE WRONG ACCOUNT AND THE SAFETY GATE MISSED IT. ***")
@@ -198,7 +239,7 @@ def main(argv: list[str] | None = None) -> int:
         print("        policy configuration before trusting this run.")
 
     ok, chain_message = ledger.verify_chain()
-    print(f"\n5. AUDIT          {args.audit_log}: {chain_message}")
+    print(f"\n6. AUDIT          {args.audit_log}: {chain_message}")
     if not ok:
         print("        WARNING: audit chain failed verification.")
         return 1

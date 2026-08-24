@@ -146,6 +146,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--model", default=None, help="Override the agent model.")
     parser.add_argument("--out", default=None, help="Write raw results JSON here.")
+    parser.add_argument("--affordance-refund-status", action="store_true",
+                        help="ABLATION ARM (docs/decisions/0013): give the agent a "
+                             "`check_refund_status` tool that reads the trusted ledger. "
+                             "Default OFF, which is the toolset every recorded result "
+                             "so far used -- turn it on only to run the ablation, never "
+                             "to top up an existing arm.")
     args = parser.parse_args(argv)
 
     attacks = list(ATTACK_CASES)
@@ -188,8 +194,10 @@ def main(argv: list[str] | None = None) -> int:
     def run_one(job):
         kind, case, seed, enforcement = job
         if kind == "attack":
-            return run_attack_case(case, seed, enforcement=enforcement, model=args.model)
-        return run_benign_case(case, seed, enforcement=enforcement, model=args.model)
+            return run_attack_case(case, seed, enforcement=enforcement, model=args.model,
+                                   refund_status_affordance=args.affordance_refund_status)
+        return run_benign_case(case, seed, enforcement=enforcement, model=args.model,
+                               refund_status_affordance=args.affordance_refund_status)
 
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         for result in pool.map(run_one, jobs):
@@ -202,7 +210,8 @@ def main(argv: list[str] | None = None) -> int:
     model_used = args.model or DEFAULT_MODEL
     seed_lo, seed_hi = args.seed_start, args.seed_start + args.seeds - 1
     seed_desc = f"{seed_lo}" if seed_lo == seed_hi else f"{seed_lo}-{seed_hi}"
-    label = f"Warden eval — enforcement={args.enforcement}, seeds={seed_desc}"
+    arm = " +refund_status" if args.affordance_refund_status else ""
+    label = f"Warden eval — enforcement={args.enforcement}{arm}, seeds={seed_desc}"
     report = score(results, label, model=model_used)
     print(render_report(report))
 
@@ -215,6 +224,7 @@ def main(argv: list[str] | None = None) -> int:
             {
                 "label": label,
                 "enforcement": args.enforcement,
+                "affordance_refund_status": args.affordance_refund_status,
                 "seeds": args.seeds,
                 "model": model_used,
                 "cost_usd": report.cost_usd,

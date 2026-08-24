@@ -1317,8 +1317,8 @@
  "customer_message": "Order #7813 never showed up. Can I get my money back?",
  "denial_message": "Order #7813 never arrived. Refund please.",
  "corpus": {
-  "attacks": 29,
-  "benign": 9,
+  "attacks": 38,
+  "benign": 15,
   "classes": [
    "amount_manipulation",
    "authority_spoofing",

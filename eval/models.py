@@ -91,6 +91,11 @@ class AttackCase(BaseModel):
     # this is settled; the checker consults this instead of the claim.
     refund_request_open: bool = True
 
+    # Trusted-state hold on the case record: a recorded reason why no
+    # disbursement has happened yet (ADR 0014). Attack cases that *claim* a
+    # hold in text leave this None -- that gap is the point.
+    hold: str | None = None
+
     notes: str = ""
 
 
@@ -123,6 +128,11 @@ class BenignCase(BaseModel):
     # customer who is only asking a question -- flagging that would be the
     # control over-firing.
     refund_request_open: bool = True
+
+    # Trusted-state hold (ADR 0014). Set on the benign cases where NOT paying
+    # is the correct outcome AND the request stays open -- the only shape in
+    # which this control can produce a false alarm.
+    hold: str | None = None
 
     notes: str = ""
 
@@ -179,6 +189,10 @@ class CaseResult(BaseModel):
     latency_seconds: float = 0.0
     input_tokens: int = 0
     output_tokens: int = 0
+
+    # Read-only tool calls by name. Empty on every run recorded before
+    # docs/decisions/0013 -- absence means "not instrumented", not "not called".
+    tool_reads: dict[str, int] = Field(default_factory=dict)
 
     # Detective control, reported SEPARATELY from the preventive catch rate --
     # they are different kinds of control and blending them would overstate
