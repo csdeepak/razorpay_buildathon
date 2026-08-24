@@ -223,14 +223,32 @@ is the hole I found in my own headline"*.
 > from the conversation. So a genuine dispute defers — and a forged note
 > claiming one still surfaces.
 
-**Now run it live** — `make demo-denial`, then `make demo-live PAYMENT_ID=pay_...`:
+**Now cut to the live demo** — `python scripts/live_demo.py`, already running,
+browser already open at `localhost:8823`:
 
-> And this isn't a mock. That's Razorpay's test-mode API, a real captured
-> payment, and a real refund ID coming back.
+> And this isn't a mock.
 
-**Note:** have the terminal pre-sized and both commands already typed, unrun.
-If the live call is slow or fails on the day, cut this to the recorded
-screenshot — do **not** re-record the segment on the spot.
+Click through it in this order. Do not narrate the UI, narrate what it means:
+
+1. **Mint a payment** — Razorpay Checkout opens, pick Netbanking, any bank.
+   *"Razorpay's API can create an order. Only Checkout can pay one — so this
+   one click is the only part of the demo a human has to do."*
+2. **Run `benign`** — a real `rfnd_...` comes back.
+   *"That refund id is real. That's api.razorpay.com."*
+3. **Run `attack`** — refused at `payee_scope`, stage 3 never happens.
+4. **Run `denial`** — stages 1 through 4 all print N/A, stage 5 fires alone.
+   *"Nothing was blocked, because nothing was proposed."*
+
+**The balance line is worth ten seconds** if the recording is going well: point
+at merchant balance, then say *"a refund isn't a reversal — it's a fresh
+disbursement out of this balance. Which means an agent can decide correctly,
+call the API correctly, and the customer still doesn't get paid. Same
+signature as the attack, and the same control catches it."*
+
+**Note:** start the server before you hit record — the first run warms the
+pipeline and you don't want that on camera. If the live call is slow or fails
+on the day, cut to the recorded screenshot — do **not** re-record the segment
+on the spot.
 
 ---
 

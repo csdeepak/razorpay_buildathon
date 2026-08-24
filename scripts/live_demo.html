@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warden — live rail</title>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+:root{
+  --ground:#0E0B08; --surface:#17130E; --line:#2E2419;
+  --cream:#F0E7D6; --cream-78:rgba(240,231,214,.78); --cream-55:rgba(240,231,214,.55);
+  --amber:#D9A353; --danger:#EE7A6B; --settled:#7FA37A;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--cream);
+  font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:34px 26px 90px}
+h1{font-size:clamp(26px,3.2vw,38px);line-height:1.15;margin:0 0 6px;letter-spacing:-.01em}
+h1 em{color:var(--amber);font-style:normal}
+.sub{color:var(--cream-78);margin:0 0 26px;max-width:66ch}
+.micro{font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--cream-55);margin:0 0 8px}
+.mono{font-family:var(--mono);font-size:13.5px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px 22px;margin:0 0 18px}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.grow{flex:1 1 260px;min-width:0}
+button{font:inherit;font-weight:600;background:var(--amber);color:var(--ground);
+  border:0;padding:.62rem 1.15rem;border-radius:5px;cursor:pointer}
+button.ghost{background:transparent;color:var(--cream);border:1px solid var(--line)}
+button.ghost.on{border-color:var(--amber);color:var(--amber)}
+button:disabled{opacity:.42;cursor:not-allowed}
+select,input{font:inherit;background:var(--ground);color:var(--cream);
+  border:1px solid var(--line);border-radius:5px;padding:.55rem .7rem;max-width:100%}
+.kv{display:flex;gap:26px;flex-wrap:wrap;margin-top:12px}
+.kv div{min-width:110px}
+.kv .k{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-55)}
+.kv .v{font-family:var(--mono);font-size:16px;margin-top:3px}
+.amber{color:var(--amber)} .danger{color:var(--danger)} .settled{color:var(--settled)}
+.dim{color:var(--cream-55)}
+.stage{border-left:2px solid var(--line);padding:0 0 0 18px;margin:0 0 20px;position:relative}
+.stage::before{content:"";position:absolute;left:-5px;top:7px;width:8px;height:8px;
+  border-radius:50%;background:var(--line)}
+.stage.is-hit{border-left-color:var(--danger)} .stage.is-hit::before{background:var(--danger)}
+.stage.is-ok{border-left-color:var(--settled)} .stage.is-ok::before{background:var(--settled)}
+.stage.is-amber{border-left-color:var(--amber)} .stage.is-amber::before{background:var(--amber)}
+.stage.is-na{opacity:.5}
+.stage h3{margin:0 0 4px;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--cream-55)}
+.stage p{margin:0 0 4px}
+.stage .big{font-family:var(--mono);font-size:17px}
+pre{background:var(--ground);border:1px solid var(--line);border-radius:6px;
+  padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;
+  color:var(--cream-78);margin:10px 0 0;max-height:340px}
+.note{border-left:2px solid var(--danger);padding-left:14px;color:var(--danger);
+  font-family:var(--mono);font-size:13px;margin:12px 0}
+.tag{display:inline-block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  border:1px solid var(--line);border-radius:99px;padding:2px 10px;color:var(--cream-55)}
+.hr{height:1px;background:var(--line);margin:26px 0}
+.warn{color:var(--amber);font-size:14px}
+@media (max-width:640px){ .wrap{padding:22px 16px 70px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="micro">Warden · live rail · Razorpay test mode</p>
+  <h1>The same pipeline, against a <em>real</em> API.</h1>
+  <p class="sub">Every id on this page comes back from <span class="mono">api.razorpay.com</span>.
+  The secret key never reaches this browser — it stays in the Python process serving the page.
+  Nothing here is a fixture, and nothing here is real money.</p>
+
+  <!-- ACCOUNT ------------------------------------------------------------ -->
+  <div class="card">
+    <p class="micro">Account</p>
+    <div class="kv" id="acct"><div class="dim">loading…</div></div>
+    <p class="warn" id="balwarn" style="display:none;margin-top:14px"></p>
+  </div>
+
+  <!-- STEP 1 -------------------------------------------------------------- -->
+  <div class="card">
+    <p class="micro">Step 1 · mint a captured payment</p>
+    <p class="sub" style="margin-bottom:14px">Razorpay's API can create an <em>order</em>; only Checkout can pay one.
+    So this takes one click. Choose <b>Netbanking</b> — any bank, all simulated. It also tops up the
+    merchant balance, which is what a refund is actually paid from.</p>
+    <div class="row">
+      <input id="amt" type="number" value="1250" step="0.5" style="width:130px">
+      <button id="pay">Create &amp; pay ₹<span id="amtl">1250</span></button>
+      <span class="mono dim" id="payout"></span>
+    </div>
+  </div>
+
+  <!-- STEP 2 -------------------------------------------------------------- -->
+  <div class="card">
+    <p class="micro">Step 2 · run a scenario through the pipeline</p>
+    <div class="row" style="margin-bottom:14px">
+      <button class="ghost on" data-sc="benign">benign refund</button>
+      <button class="ghost" data-sc="attack">diversion attack</button>
+      <button class="ghost" data-sc="denial">denial attack</button>
+    </div>
+    <div class="row">
+      <select id="pid" class="grow"><option value="">— mock rail (no payment) —</option></select>
+      <button class="ghost" id="llm">agent: naive</button>
+      <button id="run">Run</button>
+    </div>
+    <p class="sub mono" id="scdesc" style="margin:14px 0 0;font-size:13px"></p>
+  </div>
+
+  <div id="out"></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let SC = 'benign', USE_LLM = false, STATE = null;
+
+const DESC = {
+  benign: 'A legitimate refund. The gate allows it and it goes to the rail.',
+  attack: 'The customer message carries a redirect to an attacker account. The gate must refuse it before the rail.',
+  denial: 'A forged note on the order claims the refund already happened. Nothing bad is proposed — a good action is suppressed. Only stage 5 can see it.'
+};
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function money(n){ return '₹' + Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+async function refresh(){
+  const r = await fetch('/api/status'); STATE = await r.json();
+  if (STATE.error){ $('#acct').innerHTML = '<div class="danger">'+esc(STATE.error)+'</div>'; return; }
+  $('#acct').innerHTML =
+    '<div><div class="k">merchant balance</div><div class="v '+(STATE.balance>0?'settled':'danger')+'">'+money(STATE.balance)+'</div></div>'+
+    '<div><div class="k">captured payments</div><div class="v">'+STATE.payments.length+'</div></div>'+
+    '<div><div class="k">key</div><div class="v dim">'+esc(STATE.key_id)+'</div></div>';
+  const w = $('#balwarn');
+  if (STATE.balance <= 0){
+    w.style.display='block';
+    w.textContent = 'Merchant balance is zero, so no refund can execute — a Razorpay refund is a fresh disbursement funded from balance, not a reversal of the payment. Mint a payment in step 1 first. (This is eval-findings Finding 19, and it is why the detective control exists.)';
+  } else w.style.display='none';
+
+  const sel = $('#pid');
+  sel.innerHTML = '<option value="">— mock rail (no payment) —</option>' +
+    STATE.payments.map(p => '<option value="'+p.id+'">'+p.id+' · '+money(p.remaining)+' refundable · '+p.method+'</option>').join('');
+  if (STATE.payments.length && STATE.payments[0].remaining > 0) sel.value = STATE.payments[0].id;
+}
+
+function setAgent(on){
+  USE_LLM = on;
+  $('#llm').textContent = 'agent: ' + (on ? 'tool-calling (evaluated)' : 'naive');
+  $('#llm').classList.toggle('on', on);
+}
+document.querySelectorAll('[data-sc]').forEach(b => b.onclick = () => {
+  SC = b.dataset.sc;
+  document.querySelectorAll('[data-sc]').forEach(x => x.classList.toggle('on', x===b));
+  $('#scdesc').textContent = DESC[SC];
+  // The naive agent never reads order notes, so it cannot be fooled by one.
+  // Denial is only meaningful against the agent the evaluation actually used.
+  if (SC === 'denial' && !USE_LLM) setAgent(true);
+});
+$('#scdesc').textContent = DESC.benign;
+
+$('#llm').onclick = () => setAgent(!USE_LLM);
+
+$('#amt').oninput = e => $('#amtl').textContent = e.target.value;
+
+$('#pay').onclick = async () => {
+  $('#payout').textContent = 'creating order…';
+  const r = await fetch('/api/fixture', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({amount: parseFloat($('#amt').value||'1250')})});
+  const d = await r.json();
+  if (d.error){ $('#payout').innerHTML = '<span class="danger">'+esc(d.error)+'</span>'; return; }
+  $('#payout').textContent = d.order_id;
+  new Razorpay({
+    key: d.key_id, order_id: d.order_id, amount: Math.round(d.amount*100), currency:'INR',
+    name: 'Kirana Fresh', description: 'Warden live demo — test mode',
+    theme: { color: '#D9A353' },
+    handler: async resp => {
+      $('#payout').innerHTML = '<span class="settled">captured '+esc(resp.razorpay_payment_id)+'</span>';
+      await refresh();
+    },
+    modal: { ondismiss: () => { $('#payout').textContent = 'checkout dismissed'; } }
+  }).open();
+};
+
+function stage(n, title, cls, body){
+  return '<div class="stage '+cls+'"><h3>'+n+' · '+title+'</h3>'+body+'</div>';
+}
+
+$('#run').onclick = async () => {
+  $('#run').disabled = true; $('#run').textContent = 'running…';
+  $('#out').innerHTML = '<div class="card dim">calling the rail…</div>';
+  try {
+    const r = await fetch('/api/run', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({scenario: SC, payment_id: $('#pid').value, use_llm: USE_LLM})});
+    render(await r.json());
+  } finally {
+    $('#run').disabled = false; $('#run').textContent = 'Run';
+    refresh();
+  }
+};
+
+function render(d){
+  if (d.error){ $('#out').innerHTML = '<div class="card"><p class="danger mono">'+esc(d.error)+'</p></div>'; return; }
+  let h = '<div class="card">';
+  h += '<p class="micro">Result · rail: '+esc(d.rail)+' · '+esc(d.agent)+'</p>';
+
+  if (d.live){
+    const L = d.live;
+    h += '<div class="kv" style="margin-bottom:6px">'+
+      '<div><div class="k">payment</div><div class="v">'+esc(L.payment_id)+'</div></div>'+
+      '<div><div class="k">paid</div><div class="v">'+money(L.paid)+'</div></div>'+
+      '<div><div class="k">balance</div><div class="v">'+money(L.balance)+'</div></div>'+
+      '<div><div class="k">refundable now</div><div class="v '+(L.refundable>0?'settled':'danger')+'">'+money(L.refundable)+'</div></div>'+
+      '</div>';
+    if (L.balance_capped) h += '<p class="note">Capped by BALANCE, not by the payment. A refund is a fresh disbursement — it can fail for reasons that have nothing to do with the payment it refers to. (Finding 19)</p>';
+  }
+
+  if (d.notes) h += '<p class="micro" style="margin-top:16px">Order notes — untrusted, the agent reads these</p><p class="note">'+esc(d.notes)+'</p>';
+  h += '<div class="hr"></div>';
+
+  // 1 · reason
+  if (!d.action){
+    h += stage(1,'reason + decide','is-hit',
+      '<p class="big danger">the agent proposed NO money movement.</p>'+
+      '<p class="dim">It read the note, believed it, and closed the case.</p>');
+    h += stage(2,'safety gate','is-na','<p class="dim">N/A — nothing was proposed, so there is nothing to refuse. A preventive gate cannot address this by construction.</p>');
+    h += stage(3,'act','is-na','<p class="dim">N/A — no action reached the rail.</p>');
+    h += stage(4,'verify','is-na','<p class="dim">N/A — verification compares a proposed action against trusted state, and there is none.</p>');
+  } else {
+    h += stage(1,'reason + decide','',
+      '<p class="big">'+esc(d.action.action_type)+' '+money(d.action.amount)+' → <span class="'+(d.gate&&d.gate.allowed?'':'danger')+'">'+esc(d.action.destination)+'</span></p>'+
+      '<p class="dim mono" style="font-size:12.5px">'+esc(d.action.rationale).slice(0,400)+'</p>');
+    const blocked = d.gate && !d.gate.allowed;
+    h += stage(2,'safety gate', blocked?'is-hit':'is-ok',
+      '<p class="big">'+(blocked ? '<span class="danger">REFUSED · '+esc(d.gate.rule_fired)+'</span>' : '<span class="settled">allowed</span>')+'</p>'+
+      '<p class="dim">'+esc(d.gate?d.gate.reason:'')+'</p>');
+    h += stage(3,'act · '+esc(d.rail), d.execution?'is-ok':'is-na',
+      d.execution
+        ? '<p class="big settled">'+esc(d.execution.tx_id)+'</p><p class="dim">'+esc(d.execution.status)+' · '+money(d.execution.amount)+'</p>'
+        : '<p class="dim">skipped — blocked before it reached the rail.</p>');
+    h += stage(4,'verify', d.verify&&d.verify.consistent?'is-ok':'is-hit',
+      '<p class="big">'+(d.verify&&d.verify.consistent?'<span class="settled">consistent</span>':'<span class="danger">inconsistent</span>')+'</p>'+
+      '<p class="dim">'+esc(d.verify?d.verify.reason:'')+'</p>');
+  }
+
+  // 5 · completeness
+  const c = d.completeness, cls = c.status==='undischarged' ? 'is-amber' : 'is-ok';
+  h += stage(5,'completeness audit', cls,
+    '<p class="big '+(c.status==='undischarged'?'amber':'settled')+'">'+esc(c.status.toUpperCase())+(c.hold?' · '+esc(c.hold):'')+'</p>'+
+    '<p class="dim">'+esc(c.reason)+'</p>');
+
+  // 6 · audit
+  h += stage(6,'audit chain', d.audit.ok?'is-ok':'is-hit',
+    '<p class="big '+(d.audit.ok?'settled':'danger')+'">'+esc(d.audit.message)+'</p>'+
+    '<p class="dim mono" style="font-size:12.5px">'+d.audit.events.map(e=>esc(e.event)).join(' → ')+'</p>');
+
+  h += '</div><div class="card"><p class="micro">Raw trace</p><pre>'+esc(JSON.stringify(d,null,2))+'</pre></div>';
+  $('#out').innerHTML = h;
+}
+
+refresh();
+</script>
+</body>
+</html>

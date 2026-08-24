@@ -56,6 +56,7 @@ pip install -r requirements.txt   # or: make setup
 make test                         # 131 passing tests
 make demo                         # diversion attack, blocked before the rail
 make demo-denial                  # THE headline result, live (needs a key)
+make live                         # browser demo on the REAL Razorpay rail
 python -m eval.run --smoke        # 3 case-runs, verifies wiring
 ```
 

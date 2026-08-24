@@ -500,6 +500,28 @@ p{margin:0}
   </div>
 </section>
 
+<section class="beat" data-scene="s07b" data-act="7b" data-time="—">
+  <div class="beat__in">
+    <p class="micro eyebrow">Act V · the rail</p>
+    <h2>None of this is a mock</h2>
+    <p class="lede">The pipeline runs against Razorpay's real test-mode API. Every id below came back from <span class="mono">api.razorpay.com</span> — a captured payment, a real refund, a real balance.</p>
+    <div class="abl">
+      <div class="abl__row abl__row--head"><span>what</span><span>value</span><span>where it came from</span></div>
+      <div class="abl__row"><span>captured payment</span><span class="mono settled">pay_TSy9UxOPeF9lXs</span><span class="dim">netbanking, ₹1,250.00</span></div>
+      <div class="abl__row"><span>refund issued</span><span class="mono settled">rfnd_TSyITyRbE6z72y</span><span class="dim">gate allowed → rail → verifier agreed</span></div>
+      <div class="abl__row"><span>merchant balance</span><span class="mono danger">₹0.00</span><span class="dim">and that is the interesting one</span></div>
+    </div>
+    <p class="lede" style="margin-top:26px"><strong>A Razorpay refund is not a reversal of the payment. It is a fresh disbursement funded from merchant balance.</strong> Refund more than the balance and the API returns a bare <span class="mono">invalid request sent</span> — no field, no reason, no step.</p>
+    <p class="lede">The mock could not have taught us that, and it is the sharpest independent argument for the detective control on this page: <strong>an agent that decides correctly, and calls the API correctly, can still leave the customer unpaid</strong> — for a balance condition somewhere else in the merchant's account, reported in a way nothing can act on. The model cannot catch it. The gateway cannot catch it. A failed disbursement leaves the obligation open in exactly the way a suppressed one does, so the completeness audit catches both without knowing the difference.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat__v settled">6 / 6</div><div class="stat__l">pipeline stages run live against the real rail — reason, gate, act, verify, completeness, signed audit chain</div></div>
+      <div class="stat"><div class="stat__v amber">1</div><div class="stat__l">manual click required. Razorpay's API can create an <em>order</em>; only Checkout can pay one, so minting a captured payment needs a human.</div></div>
+    </div>
+    <p class="small" style="max-width:66ch">This page is a record, not a terminal — it is published under a policy that blocks every external host, and a shareable page holding a Razorpay secret would hand that key to everyone it reaches. The live half runs where the credentials already live:
+    <span class="mono amber">python scripts/live_demo.py</span> serves the same three scenarios against the real API on localhost, with the secret never leaving the process.</p>
+  </div>
+</section>
+
 <section class="beat beat--wide" data-scene="s08" data-act="8" data-time="—">
   <div class="beat__in">
     <p class="micro eyebrow">⊕ Widen · what broke</p>
@@ -689,6 +711,11 @@ p{margin:0}
       bal.className='balance is-frozen'; },
     s07:function(){ pulse('flat'); fig(null); panels(['pChat','pMerch']); gate.className='gate is-idle'; tokenAt('6%',{});
       $('sweep').classList.add('is-on'); audit(2); bal.className='balance is-frozen'; $('timer').textContent=''; },
+    /* Act V is the live rail: the system is working again, so the pulse comes
+       back and the audit sweep from s07 is cleared. */
+    s07b:function(){ pulse('live'); fig(null); panels(['pChat','pMerch']);
+      $('sweep').classList.remove('is-on'); gate.className='gate is-idle'; audit(2);
+      bal.className='balance'; },
     s08:function(){ pulse('live'); fig(null); panels([]); $('sweep').classList.remove('is-on'); audit(0); },
     s09:function(){ pulse('live'); fig(null); panels([]); $('sweep').classList.remove('is-on'); audit(0); bal.className='balance'; }
   };

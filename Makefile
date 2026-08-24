@@ -1,4 +1,4 @@
-.PHONY: help setup test eval eval-smoke demo demo-denial demo-benign demo-live fixture ablation decide progress
+.PHONY: help setup test eval eval-smoke demo demo-denial demo-benign demo-live live fixture ablation decide progress
 
 help:
 	@echo "razorpay_buildathon (Warden) — available commands:"
@@ -8,6 +8,7 @@ help:
 	@echo "  make demo-denial  Run the DENIAL attack (Beat 3) -- the headline result"
 	@echo "  make demo-benign  Run the benign scenario, for contrast"
 	@echo "  make demo-live    Same, against Razorpay's REAL test-mode API (needs keys + PAYMENT_ID)"
+	@echo "  make live         Browser demo on the REAL rail -- this is the one to record"
 	@echo "  make fixture      Mint the captured test payment demo-live needs"
 	@echo "  make ablation     Denial cases WITH the check_refund_status tool (ADR 0013)"
 	@echo "  make eval-smoke   3 case-runs, verifies eval wiring (needs ANTHROPIC_API_KEY)"
@@ -39,6 +40,12 @@ fixture:
 
 # Requires RAZORPAY_KEY_ID/SECRET in .env and a captured payment id:
 #   make fixture   -> pay it in the browser -> make demo-live PAYMENT_ID=pay_...
+# The recordable one. Serves a local page that runs all three scenarios against
+# Razorpay test-mode, including minting a captured payment via embedded Checkout.
+# The secret stays in this process -- the browser only ever sees the key id.
+live:
+	python scripts/live_demo.py
+
 demo-live:
 	@test -n "$(PAYMENT_ID)" || (echo "usage: make demo-live PAYMENT_ID=pay_..." && exit 2)
 	python -m src.cli --scenario benign --rail razorpay --payment-id $(PAYMENT_ID)
