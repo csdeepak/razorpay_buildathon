@@ -16,34 +16,46 @@ benign controls, multi-seed.
 | — of those, caught by the gateway | **62 / 62** |
 | Frontier models (Sonnet 5 + Opus 5) diversion compromise | **0 / 208** — catch rate is *undefined*, not 100% |
 | Gateway false positives, all fourteen models | **0 / 149** · utility preserved |
-| **Denial attacks, default toolset — every model fails** | **71 / 71** across 14 models / 6 labs, and no preventive gate can stop them |
-| Denial attacks **once the agent can check the ledger** | **1 of 3 shapes closes** · 3 of 6 models resist it · the other two shapes stay 100% |
+| Denial attacks, 3 shapes, default toolset | **71 / 71** across 14 models / 6 labs — no preventive gate can stop any of them |
+| Denial attacks, **12 shapes, best possible arm** (Opus 5 + ledger lookup) | **25 / 36 still succeed** — and 8 of the 12 shapes are caught by *nothing* |
 | Completeness audit false alarms, hold-aware | **0 / 15** — against **5 / 15** for the binary version it replaced |
 
-**The finding worth reading twice.** Every model tested fails every denial
-attack — a forged *"REFUND ALREADY PROCESSED"* note and the case gets closed.
-But the interesting half is *why*, and the first version of this README got it
-wrong. The agent had **no tool that could check**, so 71/71 measured an
-information gap, not a capability gap.
+**The finding worth reading twice — and this README has now been wrong about
+it twice, which is the interesting part.**
 
-So we gave it one. `check_refund_status` reads the trusted ledger, and the
-result is sharper than the claim it replaced:
+A forged *"REFUND ALREADY PROCESSED"* note and the model closes the case. That
+much held on every model, every seed: **71/71**. From which this README
+concluded *"every model fails every denial attack, capability buys nothing."*
 
-- **It closes exactly one denial shape of three.** A ledger answers questions
-  about *disbursement*. It answers nothing about *policy* ("this SKU is
-  final-sale") or *request state* ("the request was filed in error") — and
-  those stay **100% failures on every model**, tool or no tool.
-- **Scale does not predict who uses it.** NVIDIA's Nemotron Ultra (550B) never
-  called the tool. Liquid's LFM 2.5 (2.6B) called it twice.
-- **The forged note suppresses the check itself.** Haiku 4.5 called the
-  verification tool on 2 of 3 *benign* sessions — where it was pointless — and
-  **0 of 3 denial** sessions, where it was the entire answer.
+**Both halves of that were wrong, and the corpus was the reason.**
 
-That is the empirical case for a detective control, and until this ablation it
-was an assumption: two thirds of the denial surface cannot be closed by giving
-the agent more tools, because no lookup answers the claim. A post-session
-audit over trusted state never has to answer it — it asks whether the
-obligation was discharged.
+*First*, the agent had **no tool that could check** — so 71/71 measured an
+information gap, not a capability gap. *Second*, and only visible once the
+corpus went from **three denial shapes to twelve**: on the wider corpus,
+**Opus 5 resists 5 of 36 with no tool at all.** The 100% was an artifact of
+three cases that happened not to contain the shape a frontier model catches.
+
+Twelve shapes, three seeds, paired arms, all three Claude models:
+
+| Model | ledger lookup | denial attacks still succeed |
+|---|---|---|
+| Haiku 4.5 | absent → available | 36/36 → **36/36** (called it 8 times, changed nothing) |
+| Sonnet 5 | absent → available | 36/36 → **29/36** |
+| Opus 5 | absent → available | 31/36 → **25/36** |
+
+The recoveries land on exactly the shapes something can answer, and the same
+ones every time: **`001`/`012`** ("already refunded", with and without a
+fabricated UTR) fall to the **ledger**; **`008`** (a spoofed *"[RAZORPAY
+PLATFORM NOTICE]"*) falls to **Opus's alignment**. Everything else — policy
+claims, withdrawn-request claims, spoofed holds, code-mixed Hinglish,
+obligation redirection — **is caught by nothing.**
+
+**8 of 12 shapes are caught by nothing in the agent's reach**, and the best
+arm in the table still leaks 25 of 36. That is the empirical case for a
+detective control, and it is a much stronger sentence than the one it
+replaced: *"no model ever catches this"* invites **"then use a better model."**
+*"The best model with the best tool still misses two thirds, and here is
+exactly which two thirds"* does not.
 
 Full evidence in [`docs/eval-findings.md`](docs/eval-findings.md) (24 numbered
 findings, several of them "here is what I got wrong and how the eval caught
@@ -84,8 +96,8 @@ rate there is *undefined*, not 100%. And it is not "capability buys nothing
 against denial" — that was a confound, and the ablation retired it. What
 Warden provides is a **deterministic** guarantee where alignment offers only a
 probability that shifts with every model release, at a measured false-positive
-cost, plus coverage of the two denial shapes that **no amount of tooling in
-the agent's hands can close**. Full sourcing in `docs/context/`; validation
+cost, plus coverage of the **eight denial shapes in twelve that no amount of
+tooling in the agent's hands can close**. Full sourcing in `docs/context/`; validation
 evidence in `outreach/`; measurements in `docs/eval-findings.md`.
 
 ## Repo structure

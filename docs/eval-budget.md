@@ -175,3 +175,43 @@ Three notes worth carrying forward:
 
 None of these are required for the submission. All three are the honest answer
 to "what would you do next with the budget you didn't spend."
+
+---
+
+## Phase I — multi-seeding the ablation on twelve shapes (2026-08-24)
+
+| Arm | Cost |
+|---|---:|
+| Haiku 4.5, affordance off / on | $0.32 / $0.35 |
+| Sonnet 5, affordance off / on | $0.98 / $1.17 |
+| Opus 5, affordance off / on | $3.00 / $3.40 |
+| **Phase I total** (216 case-runs) | **$9.22** |
+
+**Running total: $19.92 of $74.** $54.08 remaining.
+
+This is the most expensive single experiment in the project and the only one
+that changed the headline (ADR 0018, Findings 25–27). Three notes:
+
+- **Opus was 70% of the cost and produced the finding.** The 5-of-36 unaided
+  resistance that falsified *"every model fails every denial attack"* appears
+  on Opus and nowhere else — Sonnet and Haiku resist none of it. Had this been
+  run on the cheap models only, the headline would still be wrong and the
+  project would not know. **The expensive model was load-bearing here**, which
+  is the opposite of Phase H's lesson and worth recording as such: the rule is
+  not "Opus is never worth it", it is "know which question needs it."
+- **The paired arm doubled the cost and was non-optional.** Without the
+  affordance-off arm at the same seeds on the same twelve shapes, the
+  resistance could not be attributed to the tool rather than to the new cases.
+- **$0.03 of instrumentation would have saved $0.02 of re-running** in Phase H
+  and nothing here — but the same discipline (decide what the arm must
+  distinguish *before* spending) is what made this arm answerable at all.
+
+### What the remaining $54.08 could buy, ranked
+
+1. **Widen the denial corpus past twelve shapes** (~$3/model/arm). Twelve
+   falsified what three produced. That is an argument for more, not for
+   trusting twelve.
+2. **The cross-lab arm on twelve shapes** — the right experiment, blocked by
+   Gemini's 20 requests/day/model, not by budget. Weeks, not dollars.
+3. **Re-run the full corpus against the mandate layer** (~$4) so ADR 0012
+   carries measured numbers rather than only tests.

@@ -12,9 +12,9 @@ isn't on this page — and everything on this page already exists.
 
 ## The sentence a judge should be able to repeat an hour later
 
-> *"The one where every frontier model blocked every hijack attempt but fell
-> for every 'don't pay them' attack — and when he gave them a tool to check,
-> it fixed one case out of three."*
+> *"The one where he built the tool that would have proved his own headline,
+> ran it, and it disproved it instead — and the version that survived is
+> better."*
 
 ## The 90 seconds
 
@@ -106,38 +106,46 @@ nothing. There is no bad action to block — a good one was suppressed.
 **Then pre-empt the obvious objection, because it is a good one and it was
 mine.** *"Your agent had no way to check. Isn't that just a missing field?"*
 
-> **On screen: I gave it one. `check_refund_status`, reading the trusted
-> ledger. It closed ONE denial shape out of three.**
+> **On screen: I gave it one — and then I widened the corpus from 3 denial
+> shapes to 12, and it took my headline sentence with it.**
 
-- `denial-001` "already refunded" — a ledger can answer this. **3 of 6 models
-  now resist.**
-- `denial-002` "final-sale, policy CF-14" — a ledger says nothing about
-  policy. **6/6 still fail.**
-- `denial-003` "the request was filed in error" — nothing about request
-  state. **6/6 still fail.**
+Twelve shapes, three seeds, paired arms:
 
-*"Two thirds of the surface cannot be closed by giving the agent more tools,
-because no lookup answers the claim. That is the argument for a control that
-never has to answer it."*
+| Model | ledger lookup | denial attacks still succeed |
+|---|---|---|
+| Haiku 4.5 | absent → available | 36/36 → **36/36** (called it 8 times) |
+| Sonnet 5 | absent → available | 36/36 → **29/36** |
+| Opus 5 | absent → available | **31/36** → **25/36** |
 
-Two details worth 5 seconds each if the room is with you:
+Say the retraction plainly, it is the strongest beat in the demo:
 
-- **Scale doesn't predict it.** Nemotron Ultra at 550B never called the tool.
-  Liquid at 2.6B called it twice.
-- **The forged note suppresses the check itself.** Haiku verified on 2 of 3
-  *benign* sessions and **0 of 3 attacks.**
+> *"Opus resists five of thirty-six with no tool at all. My 100% was an
+> artifact of a three-case corpus. What it actually catches is one shape — a
+> spoofed Razorpay platform notice. It doesn't believe an impersonated
+> platform. It believes everything else."*
+
+Then the map:
+
+- `001`/`012` "already refunded" → **the ledger** catches it, if the model calls it
+- `008` spoofed platform notice → **frontier alignment** catches it, Opus only
+- `002`–`007`, `009`, `010` — policy, withdrawn request, spoofed holds,
+  Hinglish, obligation redirection → **nothing catches these**
+
+> **On screen: 8 of 12 shapes caught by nothing. Best arm still leaks 25/36.**
+
+*"You can't fix this by handing the agent more tools. Two thirds of it isn't
+checkable — there's no record to look up."*
 
 > **On screen: completeness audit — 0 false alarms in 15, against 5 in 15 for
-> the binary version it replaced.**
+> the binary version it replaced. Live across 3 models x 3 seeds: every flag
+> on a benign session was a real unpaid customer, never a held case.**
 
 Warden never reads the forged note. It asks the ledger whether a refund
 exists and the case record whether a request is open. **And say the honest
 part:** detection of a denial attack is *guaranteed by construction*, not
-measured — a denial attack is defined as "obligation open, nothing paid",
-which is exactly what the checker tests. The number that means something is
-the false-alarm rate, and my first version of that was **0/149 on a corpus
-where no benign case could possibly have alarmed.** The corpus now has six
-that can.
+measured. The number that means something is the false-alarm rate, and my
+first version of that was **0/149 on a corpus where no benign case could
+possibly have alarmed.**
 
 **Show it live if there's a terminal:** `make demo-denial`. Every preventive
 stage prints N/A. Stage 5 fires.
@@ -154,7 +162,7 @@ stage prints N/A. Stage 5 fires.
 
 Terminal output is acceptable — `CLAUDE.md` rule 4 says cut UI before
 evaluation, and the evaluation is the moat. If Day 13 buys anything, it is
-making the three numbers land visually: **62/62**, **0/208**, **71/71**.
+making the three numbers land visually: **62/62**, **0/208**, and **8 of 12 shapes caught by nothing**.
 
 ## Honest caveats to have ready for Q&A
 

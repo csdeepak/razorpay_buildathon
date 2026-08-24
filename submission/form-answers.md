@@ -94,18 +94,24 @@ the demo, and this narrative, so changing it now costs more than it gains.)*
 > issued.** No model could disbelieve that note, at any size. I was measuring
 > an information gap and calling it a capability result.
 >
-> So I built the tool and ran the ablation. It closed **one denial shape out of
-> three** — a ledger answers "was it paid", not "is this SKU refundable" or
-> "was the request withdrawn". A 550B model never called the tool; a 2.6B model
-> called it twice. And the forged note suppressed the *check itself*: Haiku
-> verified on 2 of 3 benign sessions and 0 of 3 attacks.
+> So I built the tool, went from 3 denial shapes to 12, and ran paired arms
+> three seeds deep on every model. **It disproved the headline instead of
+> proving it.** Opus resists 5 of 36 with no tool at all — my 100% was an
+> artifact of three cases. What it actually catches is one shape: a spoofed
+> "[RAZORPAY PLATFORM NOTICE]". It doesn't believe an impersonated platform.
+> It believes everything else.
 >
-> That's a better argument for my detective control than the claim it
-> replaced — two thirds of the surface can't be fixed by handing the agent more
-> tools. I also found my "0 false alarms in 149 sessions" was meaningless
-> (no benign case in my corpus *could* have alarmed), rebuilt the corpus with
-> six cases that could, and discovered my control had a **33% false-alarm rate**.
-> Fixed it, and now report 0/15 against 5/15 for the version I'd been shipping.
+> **8 of 12 shapes are caught by nothing** — not alignment, not a gate, not any
+> lookup, because there is no record to look up. The best arm in the table,
+> Opus with the ledger, still fails 25 of 36. And Haiku had the tool, called it
+> 8 times, and failed all 36 anyway.
+>
+> That's a stronger argument for my detective control than the claim it
+> replaced: "no model ever catches this" invites *"then use a better model."*
+> "The best model with the best tool still misses two thirds" doesn't. I also
+> found my "0 false alarms in 149 sessions" was meaningless — no benign case in
+> my corpus *could* have alarmed — rebuilt it with six that could, and
+> discovered a **33% false-alarm rate**. Now 0/15 against 5/15.
 
 ### Short version (~110 words) — if the field is tight
 
