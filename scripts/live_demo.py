@@ -162,6 +162,24 @@ def run_live(scenario: str, payment_id: str | None, use_llm: bool) -> dict:
             refund_amount=refundable if refundable > 0 else base.refund_amount,
             razorpay_payment_id=payment_id,
         ))
+        # Pre-empt the two ways a live refund is impossible before proposing
+        # one. Both are real and both are worth saying out loud, but letting
+        # the rail 400 mid-run aborts the pipeline and the page shows nothing
+        # -- on a recording that reads as a broken demo rather than as the
+        # finding it actually is.
+        if refundable <= 0:
+            why = (
+                f"merchant balance is {balance:.2f} — a Razorpay refund is a fresh "
+                f"disbursement funded from balance, not a reversal of the payment "
+                f"(eval-findings Finding 19)"
+                if balance <= 0 else
+                f"only {remaining:.2f} is unrefunded on this payment"
+            )
+            return {"error": (
+                f"Nothing refundable on {payment_id}: {why}. "
+                f"Mint a fresh captured payment in step 1 — that also tops up the "
+                f"balance the refund is paid from.")}
+
         tool_client = RazorpayRefundRail(client)
         rail_label = "razorpay"
         live_note = {
