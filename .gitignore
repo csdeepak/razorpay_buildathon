@@ -37,3 +37,8 @@ var/
 # Built demo page — regenerate with `python -m eval.build_ui_data`
 submission/demo/warden-demo.html
 submission/demo/warden-artifact.html
+
+# Pitch video — kept local. GitHub hard-rejects files over 100MB, and the
+# submission links the video from Drive rather than shipping it in the repo.
+demo/*.mp4
+demo/*.mov

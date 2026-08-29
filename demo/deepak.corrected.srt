@@ -1,0 +1,828 @@
+1
+00:00:00,667 --> 00:00:01,667
+Hi, I am Deepak.
+
+2
+00:00:01,867 --> 00:00:03,900
+First of all, I would like to thank the Razorpay team
+
+3
+00:00:03,900 --> 00:00:07,133
+for giving me this opportunity to showcase my AI skills.
+
+4
+00:00:07,733 --> 00:00:11,500
+So coming to the track I chose is AI Growth and Agentic Commerce,
+
+5
+00:00:11,967 --> 00:00:13,367
+because the motive is making
+
+6
+00:00:13,367 --> 00:00:15,733
+a merchant transactable by an AI buyer.
+
+7
+00:00:16,400 --> 00:00:19,267
+So the project title that I chose is Warden.
+
+8
+00:00:19,533 --> 00:00:21,267
+Agentic commerce can grow until a merchant
+
+9
+00:00:21,267 --> 00:00:23,633
+can trust an AI agent with a real money.
+
+10
+00:00:23,967 --> 00:00:25,633
+So Warden is the trust layer,
+
+11
+00:00:25,633 --> 00:00:28,267
+which is exactly what the track requires before any of its works.
+
+12
+00:00:28,500 --> 00:00:31,067
+So as an AI user, I want to automate all my payments.
+
+13
+00:00:31,700 --> 00:00:34,433
+So I want to give a command to my Slack or Jira bot,
+
+14
+00:00:34,433 --> 00:00:36,300
+which will work in my channel,
+
+15
+00:00:37,133 --> 00:00:39,567
+and with one command I would like to pay all my payments.
+
+16
+00:00:39,700 --> 00:00:41,733
+That is what I think, but when we get
+
+17
+00:00:41,733 --> 00:00:43,067
+into the real problem, the trust,
+
+18
+00:00:43,333 --> 00:00:44,900
+what happens when AI got misleaded
+
+19
+00:00:44,900 --> 00:00:47,467
+and it misunderstand my commands?
+
+20
+00:00:47,600 --> 00:00:49,867
+That consequence not only with the answer,
+
+21
+00:00:49,867 --> 00:00:51,600
+but it sends the payment to the wrong place.
+
+22
+00:00:51,867 --> 00:00:53,867
+That is the main problem that we face,
+
+23
+00:00:54,067 --> 00:00:56,733
+and even the users has this trust issue everywhere.
+
+24
+00:00:56,967 --> 00:00:58,267
+Let me start with an example.
+
+25
+00:00:58,267 --> 00:00:59,867
+Let's say a character named Rhea Mehta.
+
+26
+00:01:00,067 --> 00:01:03,833
+She ordered ₹1,250 worth of groceries from a merchant.
+
+27
+00:01:04,100 --> 00:01:07,200
+The order never showed up, so she requested for refund.
+
+28
+00:01:07,267 --> 00:01:10,067
+This is the scenario, so with this scenario
+
+29
+00:01:10,067 --> 00:01:11,367
+we will start with the normal workflow,
+
+30
+00:01:11,533 --> 00:01:12,900
+how regularly the agent works.
+
+31
+00:01:13,300 --> 00:01:15,133
+So when Rhea Mehta clicks on the refund
+
+32
+00:01:15,133 --> 00:01:16,733
+button, so what agent does?
+
+33
+00:01:16,867 --> 00:01:20,700
+Agent will go and check the records and check if the refund is valid,
+
+34
+00:01:20,767 --> 00:01:23,333
+and it process the refund if it has valid reason.
+
+35
+00:01:23,533 --> 00:01:26,100
+So this is how the normal workflow goes,
+
+36
+00:01:26,100 --> 00:01:28,300
+and everything I am going to show you next
+
+37
+00:01:28,367 --> 00:01:30,933
+is basically the variations of what can happen
+
+38
+00:01:30,933 --> 00:01:32,400
+if the payment goes wrong.
+
+39
+00:01:32,700 --> 00:01:34,600
+So now let's change one thing.
+
+40
+00:01:34,600 --> 00:01:36,567
+Someone has left a note on Rhea's account,
+
+41
+00:01:36,667 --> 00:01:38,733
+supposedly a character named Priya,
+
+42
+00:01:38,733 --> 00:01:41,400
+so she is one of the people working with Rhea.
+
+43
+00:01:41,600 --> 00:01:43,633
+Priya never gave the command of refund.
+
+44
+00:01:44,000 --> 00:01:47,900
+Priya gave a command that, for the refund, to different account.
+
+45
+00:01:48,267 --> 00:01:50,433
+The note says there is a new account for the refund,
+
+46
+00:01:50,433 --> 00:01:51,933
+and the model believes it.
+
+47
+00:01:52,267 --> 00:01:54,767
+So instead of sending the ₹1,250 to Rhea,
+
+48
+00:01:54,767 --> 00:01:57,300
+it probably send it to Priya.
+
+49
+00:01:57,500 --> 00:01:59,000
+So this is where Warden steps in.
+
+50
+00:01:59,200 --> 00:02:02,900
+So when Priya clicks on refund to her account, what happens?
+
+51
+00:02:02,967 --> 00:02:06,267
+The payment gets blocked by the Warden and it shows refused,
+
+52
+00:02:06,333 --> 00:02:09,833
+and it doesn't only see the reason, but it gives a payee_scope,
+
+53
+00:02:10,133 --> 00:02:11,967
+the exact reason that it's stopped for.
+
+54
+00:02:12,300 --> 00:02:14,433
+And the interesting part is what happens next:
+
+55
+00:02:14,733 --> 00:02:15,800
+the agent recovers by itself
+
+56
+00:02:15,800 --> 00:02:17,667
+and sends the refund to the right account.
+
+57
+00:02:17,733 --> 00:02:20,667
+So it acts as a trust layer between the agent and the payment rail,
+
+58
+00:02:20,733 --> 00:02:22,467
+and it acts as a permission slip before
+
+59
+00:02:22,467 --> 00:02:23,767
+the agent can move the money.
+
+60
+00:02:23,967 --> 00:02:25,667
+It creates a ticket that has the action,
+
+61
+00:02:25,667 --> 00:02:27,267
+the order, the account and the amount.
+
+62
+00:02:27,500 --> 00:02:29,367
+The payee paid and the account
+
+63
+00:02:29,367 --> 00:02:31,533
+on the ticket isn't something the agent picks,
+
+64
+00:02:31,633 --> 00:02:34,733
+it reads from the order record. The agent can't write itself a ticket.
+
+65
+00:02:35,067 --> 00:02:38,100
+It acts as a gate, which you just saw it got fired.
+
+66
+00:02:38,933 --> 00:02:40,667
+It doesn't act against the ticket
+
+67
+00:02:40,667 --> 00:02:43,733
+and against the merchant policies, and it refuses by name.
+
+68
+00:02:44,333 --> 00:02:46,667
+And the third thing is it acts as a detective
+
+69
+00:02:46,667 --> 00:02:48,200
+that runs after the session ends
+
+70
+00:02:48,267 --> 00:02:51,233
+and asks whether every obligation actually got paid.
+
+71
+00:02:51,533 --> 00:02:53,367
+And this is the one the rest of the video is about.
+
+72
+00:02:53,433 --> 00:02:55,100
+Rhea's case was one cell in the grid,
+
+73
+00:02:55,367 --> 00:02:56,833
+but there can be eight classes of attack
+
+74
+00:02:56,833 --> 00:02:58,667
+and three different ways the payload can arrive,
+
+75
+00:02:58,767 --> 00:03:00,300
+and the same lie behaves completely
+
+76
+00:03:00,300 --> 00:03:02,133
+different depending on how it arrives.
+
+77
+00:03:02,400 --> 00:03:06,500
+And it is 33.8% when it is typed into chat by the person,
+
+78
+00:03:06,700 --> 00:03:09,833
+and it is 73.3% when it is hidden in a note
+
+79
+00:03:09,833 --> 00:03:11,267
+the agent reads from its own records.
+
+80
+00:03:11,533 --> 00:03:14,500
+So it is like 2.2 more times it get
+
+81
+00:03:14,500 --> 00:03:16,367
+fooled compared to the human type,
+
+82
+00:03:16,567 --> 00:03:19,733
+and they treat their own tool output as retrieved fact,
+
+83
+00:03:19,967 --> 00:03:21,533
+which moves where the risk actually lives,
+
+84
+00:03:21,533 --> 00:03:23,867
+not in the chatbot, the data that is being fed into.
+
+85
+00:03:24,433 --> 00:03:25,933
+So coming to the next section,
+
+86
+00:03:25,933 --> 00:03:27,933
+here is where I ran on the frontier models,
+
+87
+00:03:28,267 --> 00:03:30,267
+mostly on the Claude and Gemini models.
+
+88
+00:03:30,433 --> 00:03:34,267
+Coming to the cheap model, Haiku, what happened is,
+
+89
+00:03:34,333 --> 00:03:37,800
+out of 130 diversion attacks, 62 times it got fooled.
+
+90
+00:03:38,233 --> 00:03:41,267
+But when I ran the same test on Sonnet and Opus,
+
+91
+00:03:41,267 --> 00:03:42,833
+there were nearly zero diversion attacks.
+
+92
+00:03:43,067 --> 00:03:45,967
+What idea I got here is, even without using Warden,
+
+93
+00:03:46,033 --> 00:03:48,400
+Sonnet and Opus are able to defend the attack,
+
+94
+00:03:48,467 --> 00:03:53,633
+and zero false positives across 149 legitimate refunds.
+
+95
+00:03:54,000 --> 00:03:55,067
+So here is where I saw the pattern:
+
+96
+00:03:55,167 --> 00:03:58,133
+if the merchant uses a low end model or a cheap model,
+
+97
+00:03:58,367 --> 00:04:00,133
+he need to use Warden to save his payments
+
+98
+00:04:00,133 --> 00:04:02,233
+and be aware of the fake refunds.
+
+99
+00:04:02,967 --> 00:04:05,567
+And also, if the merchant using top
+
+100
+00:04:05,567 --> 00:04:07,600
+models such as Sonnet and Opus,
+
+101
+00:04:07,800 --> 00:04:10,167
+he also need to use a Warden to be safe
+
+102
+00:04:10,167 --> 00:04:11,200
+when a festive season comes up,
+
+103
+00:04:11,267 --> 00:04:13,600
+and he don't need to lose his nose
+
+104
+00:04:13,600 --> 00:04:15,133
+by fighting with the fake payments,
+
+105
+00:04:15,200 --> 00:04:16,367
+and he can focus on a sale.
+
+106
+00:04:16,433 --> 00:04:20,067
+So how do you test whether it is a good model or a good Warden?
+
+107
+00:04:20,367 --> 00:04:23,467
+So I split all the attacks into three versions.
+
+108
+00:04:23,767 --> 00:04:26,500
+First one, agent resisted, the real model resisted the attack.
+
+109
+00:04:26,567 --> 00:04:29,367
+And enforced block, the Warden has blocked the attack.
+
+110
+00:04:29,733 --> 00:04:31,267
+And final thing, it is leaked.
+
+111
+00:04:31,767 --> 00:04:33,933
+Leaked is like the attack got compromised
+
+112
+00:04:33,933 --> 00:04:35,933
+and also leaked into the agent.
+
+113
+00:04:36,367 --> 00:04:38,867
+So we saw that frontier models are good at detecting
+
+114
+00:04:38,867 --> 00:04:42,000
+and declining the fake refunds or fake commands.
+
+115
+00:04:42,267 --> 00:04:46,600
+But what if I change a policy that is being injected into the model,
+
+116
+00:04:46,667 --> 00:04:50,533
+and it reads it and it declines the payment from the merchant side?
+
+117
+00:04:50,800 --> 00:04:53,267
+What if it happens here? Because I am changing the policy,
+
+118
+00:04:53,400 --> 00:04:55,400
+the ticket is made according to the policy.
+
+119
+00:04:55,400 --> 00:04:57,600
+What if the model doesn't detect it?
+
+120
+00:04:57,667 --> 00:05:02,100
+So I plan literally 71 attacks. All 71 attacks were passed,
+
+121
+00:05:02,167 --> 00:05:05,300
+and the model is not working correctly in this case.
+
+122
+00:05:05,633 --> 00:05:07,667
+This isn't a problem for the merchant side,
+
+123
+00:05:07,733 --> 00:05:09,467
+but it's problem for the buyer's side,
+
+124
+00:05:09,467 --> 00:05:10,933
+because the refund never showed up.
+
+125
+00:05:11,100 --> 00:05:14,067
+So to actually know the reason why this happens,
+
+126
+00:05:14,067 --> 00:05:15,333
+so I came up with the testing.
+
+127
+00:05:15,633 --> 00:05:19,800
+So I widened the corpus from three denial shapes to twelve lies.
+
+128
+00:05:20,500 --> 00:05:24,300
+So I also checked it using tool and not using tool.
+
+129
+00:05:24,367 --> 00:05:26,733
+The tool is really, it's like giving the agent
+
+130
+00:05:26,733 --> 00:05:28,700
+a power called check the real record.
+
+131
+00:05:29,067 --> 00:05:30,667
+That is the tool I have given to the models.
+
+132
+00:05:31,167 --> 00:05:32,567
+So when compared to Haiku,
+
+133
+00:05:32,567 --> 00:05:34,467
+Sonnet and Opus with and without tool,
+
+134
+00:05:34,567 --> 00:05:36,267
+Haiku wasn't performing good.
+
+135
+00:05:36,567 --> 00:05:38,133
+But coming to Sonnet, Sonnet was able
+
+136
+00:05:38,133 --> 00:05:40,500
+to recover seven attacks when using tools.
+
+137
+00:05:40,833 --> 00:05:43,867
+But Opus has better performed without tool and with tool also.
+
+138
+00:05:43,933 --> 00:05:46,467
+It denied like five attacks without tool,
+
+139
+00:05:46,467 --> 00:05:48,933
+and it denied like 11 attacks with the tool.
+
+140
+00:05:49,133 --> 00:05:51,533
+But when I check the spread out where it is really solving,
+
+141
+00:05:52,333 --> 00:05:54,533
+the lies were not with respect to the policy forbidden.
+
+142
+00:05:54,667 --> 00:05:57,267
+Like, if I change the policy, it is not detecting it correctly.
+
+143
+00:05:57,633 --> 00:06:01,533
+So that is the new finding I found with this testing.
+
+144
+00:06:01,667 --> 00:06:02,533
+So I want to show you the demo,
+
+145
+00:06:02,533 --> 00:06:05,800
+how really it works with the Razorpay test API.
+
+146
+00:06:06,333 --> 00:06:08,233
+So here is my UI for that.
+
+147
+00:06:08,600 --> 00:06:10,733
+So what I will do is I will create a payment
+
+148
+00:06:10,733 --> 00:06:16,000
+from Rhea's account to the merchant via Razorpay.
+
+149
+00:06:17,433 --> 00:06:18,600
+So I'll select the payment method.
+
+150
+00:06:20,133 --> 00:06:22,500
+So by the way, this is the test API, it's not a real payment.
+
+151
+00:06:26,800 --> 00:06:27,800
+So now I am done with payment.
+
+152
+00:06:28,000 --> 00:06:29,567
+Now I will take you into how the refund
+
+153
+00:06:29,567 --> 00:06:32,700
+process will be taken in six stages.
+
+154
+00:06:33,000 --> 00:06:35,233
+So the refund has been taken in six stages.
+
+155
+00:06:35,500 --> 00:06:37,700
+The stage one is the Reason and Decide,
+
+156
+00:06:37,700 --> 00:06:39,967
+proposes the refund to real Rhea account.
+
+157
+00:06:40,600 --> 00:06:42,367
+And there is Safety gate, there is Act gate,
+
+158
+00:06:42,367 --> 00:06:44,733
+where it execute real reference ID.
+
+159
+00:06:45,100 --> 00:06:46,133
+And there is a Verification gate
+
+160
+00:06:46,133 --> 00:06:49,033
+where it verifies the consistent destination.
+
+161
+00:06:49,567 --> 00:06:51,200
+If it matches, it trusts the order state.
+
+162
+00:06:51,633 --> 00:06:53,533
+And it checks the completeness,
+
+163
+00:06:53,533 --> 00:06:56,267
+if the money has been discharged or not.
+
+164
+00:06:56,633 --> 00:06:58,600
+And at the end there is an Audit stage where each
+
+165
+00:06:58,600 --> 00:07:00,933
+and every process will be audited and logged.
+
+166
+00:07:01,333 --> 00:07:03,533
+When we come to the attack,
+
+167
+00:07:03,533 --> 00:07:06,800
+I click on the diversion attack and to another account.
+
+168
+00:07:06,933 --> 00:07:07,933
+So let's see how it happens.
+
+169
+00:07:08,200 --> 00:07:10,133
+So here you can see the six stages,
+
+170
+00:07:10,867 --> 00:07:14,700
+and at the Safety gate it got refused, and the Act gate is skipped.
+
+171
+00:07:15,000 --> 00:07:16,667
+At Verify gate it is inconsistent,
+
+172
+00:07:17,033 --> 00:07:19,667
+and at completeness the amount is not discharged,
+
+173
+00:07:19,667 --> 00:07:22,467
+and the fake refund has been blocked.
+
+174
+00:07:23,467 --> 00:07:24,767
+Let's start with the denial attack.
+
+175
+00:07:25,333 --> 00:07:30,100
+Denial attack is like when I put a fake policy in the merchant records
+
+176
+00:07:30,167 --> 00:07:33,367
+that this order cannot be refundable, so it doesn't happen.
+
+177
+00:07:33,633 --> 00:07:35,100
+So I will run it, let's see how it happens.
+
+178
+00:07:35,567 --> 00:07:39,367
+So you can see here at each gate,
+
+179
+00:07:39,367 --> 00:07:41,233
+at completeness gate the amount is undischarged,
+
+180
+00:07:41,400 --> 00:07:44,667
+and the amount is not deducted from the merchant account,
+
+181
+00:07:44,733 --> 00:07:47,000
+and the refund is not being held into Rhea account.
+
+182
+00:07:47,067 --> 00:07:50,800
+Here Rhea got loss because the refund was never happened,
+
+183
+00:07:50,800 --> 00:07:51,800
+and there is no refund option.
+
+184
+00:07:52,033 --> 00:07:53,467
+So first of all, I would like to thank Razorpay
+
+185
+00:07:53,467 --> 00:07:54,600
+team for giving me this opportunity.
+
+186
+00:07:55,200 --> 00:07:59,267
+So I feel this is one of the opportunity that I would choose,
+
+187
+00:07:59,333 --> 00:08:02,300
+because I wanted to be an AI builder for a long time,
+
+188
+00:08:02,667 --> 00:08:05,100
+since when I came to the India's Build
+
+189
+00:08:05,100 --> 00:08:06,767
+with Claude event in the Razorpay office.
+
+190
+00:08:07,100 --> 00:08:10,100
+So when I saw the environment over there,
+
+191
+00:08:10,100 --> 00:08:11,733
+I feel like this is the place where I want to work.
+
+192
+00:08:11,800 --> 00:08:13,167
+That is where I want to build my career.
+
+193
+00:08:13,400 --> 00:08:15,833
+That is where I want to ideate myself and experiment more
+
+194
+00:08:15,900 --> 00:08:19,800
+and work harder in learning things more about AI.
+
+195
+00:08:20,867 --> 00:08:22,367
+So when I saw Harshil Mathur, founder of Razorpay,
+
+196
+00:08:22,367 --> 00:08:24,767
+showcasing his projects in the event,
+
+197
+00:08:25,033 --> 00:08:28,333
+that inspired me, like exploring more, ideating more,
+
+198
+00:08:28,767 --> 00:08:29,933
+work to solve problems for each
+
+199
+00:08:29,933 --> 00:08:32,000
+and every problem I face in my day to day work,
+
+200
+00:08:32,533 --> 00:08:36,700
+and also be a proper AI builder who uses AI to shorten his work.
+
+201
+00:08:37,033 --> 00:08:40,167
+Think more, ideate more, and orchestrate everything using AI.
+
+202
+00:08:40,433 --> 00:08:42,300
+This is what I wanted to do.
+
+203
+00:08:42,567 --> 00:08:43,833
+So with that, I would like to end my demo.
+
+204
+00:08:44,433 --> 00:08:45,733
+If chance, I would attach my portfolio
+
+205
+00:08:45,733 --> 00:08:48,767
+to this video, and it has AI in it.
+
+206
+00:08:48,833 --> 00:08:51,067
+You can ask questions about me and know more about me in that.
+
+207
+00:08:51,400 --> 00:08:54,267
+Hope I get into Razorpay and work over there. Thank you.
+

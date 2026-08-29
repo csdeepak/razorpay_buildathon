@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="1200" height="440" role="img" aria-label="Measured results across fourteen models: gateway catch rate, frontier resistance, denial failure, false alarms">
+  <title>What was measured — 14 models, 6 labs, $19.92 of real API calls</title>
+
+  <defs>
+    <style>
+      .sans { font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; }
+      .b1 { animation: grow 7s ease-out infinite; }
+      .b2 { animation: grow 7s ease-out infinite; animation-delay:.35s }
+      .b3 { animation: grow 7s ease-out infinite; animation-delay:.7s }
+      .b4 { animation: grow 7s ease-out infinite; animation-delay:1.05s }
+      @keyframes grow { 0% {transform:scaleX(0)} 14%,90% {transform:scaleX(1)} 100% {transform:scaleX(1)} }
+      .n1 { animation: num 7s ease-out infinite; }
+      .n2 { animation: num 7s ease-out infinite; animation-delay:.35s }
+      .n3 { animation: num 7s ease-out infinite; animation-delay:.7s }
+      .n4 { animation: num 7s ease-out infinite; animation-delay:1.05s }
+      @keyframes num { 0% {opacity:0} 16%,100% {opacity:1} }
+    </style>
+  </defs>
+
+  <rect width="1200" height="440" fill="#0E0B08"/>
+
+  <text class="mono" x="56" y="44" font-size="11" letter-spacing="3.5" fill="#F0E7D6" fill-opacity=".5">MEASURED &#183; 14 MODELS &#183; 6 LABS &#183; MULTI-SEED &#183; &#36;19.92 OF REAL API CALLS</text>
+
+  <!-- ── row 1 : gateway catch ── -->
+  <text class="mono" x="56" y="104" font-size="13" fill="#F0E7D6" fill-opacity=".8">Gateway caught every compromise it could act on</text>
+  <rect x="56" y="118" width="700" height="22" rx="3" fill="#17130E"/>
+  <rect class="b1" x="56" y="118" width="700" height="22" rx="3" fill="#7FA37A" style="transform-origin:56px 118px"/>
+  <text class="mono n1" x="776" y="135" font-size="19" font-weight="700" fill="#7FA37A">62 / 62</text>
+  <text class="mono n1" x="880" y="135" font-size="12" fill="#F0E7D6" fill-opacity=".45">on a cheap model, 5 seeds</text>
+
+  <!-- ── row 2 : frontier diversion ── -->
+  <text class="mono" x="56" y="184" font-size="13" fill="#F0E7D6" fill-opacity=".8">Frontier models resisted diversion on their own</text>
+  <rect x="56" y="198" width="700" height="22" rx="3" fill="#17130E"/>
+  <rect class="b2" x="56" y="198" width="700" height="22" rx="3" fill="#F0E7D6" fill-opacity=".55" style="transform-origin:56px 198px"/>
+  <text class="mono n2" x="776" y="215" font-size="19" font-weight="700" fill="#F0E7D6">0 / 208</text>
+  <text class="mono n2" x="880" y="215" font-size="12" fill="#F0E7D6" fill-opacity=".45">so our catch rate here is <tspan fill="#D9A353">undefined</tspan>, not 100%</text>
+
+  <!-- ── row 3 : denial ── -->
+  <text class="mono" x="56" y="264" font-size="13" fill="#F0E7D6" fill-opacity=".8">Denial attacks that no model and no lookup can catch</text>
+  <rect x="56" y="278" width="700" height="22" rx="3" fill="#17130E"/>
+  <rect class="b3" x="56" y="278" width="467" height="22" rx="3" fill="#EE7A6B" style="transform-origin:56px 278px"/>
+  <text class="mono n3" x="776" y="295" font-size="19" font-weight="700" fill="#EE7A6B">8 / 12</text>
+  <text class="mono n3" x="880" y="295" font-size="12" fill="#F0E7D6" fill-opacity=".45">shapes &#8212; best arm still leaks 25/36</text>
+
+  <!-- ── row 4 : false alarms ── -->
+  <text class="mono" x="56" y="344" font-size="13" fill="#F0E7D6" fill-opacity=".8">False alarms from the audit, on a corpus built to break it</text>
+  <rect x="56" y="358" width="700" height="22" rx="3" fill="#17130E"/>
+  <rect class="b4" x="56" y="358" width="8" height="22" rx="3" fill="#7FA37A" style="transform-origin:56px 358px"/>
+  <text class="mono n4" x="776" y="375" font-size="19" font-weight="700" fill="#7FA37A">0 / 15</text>
+  <text class="mono n4" x="880" y="375" font-size="12" fill="#F0E7D6" fill-opacity=".45">the version it replaced scored <tspan fill="#EE7A6B">5 / 15</tspan></text>
+
+  <line x1="56" y1="404" x2="1144" y2="404" stroke="#2E2419"/>
+  <text class="mono" x="56" y="428" font-size="11.5" fill="#F0E7D6" fill-opacity=".38">Every number is reproducible from this repo. 38 recorded run files in eval/runs/, 27 numbered findings in docs/eval-findings.md.</text>
+</svg>

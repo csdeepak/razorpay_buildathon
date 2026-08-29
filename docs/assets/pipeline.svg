@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" role="img" aria-label="The six-stage Warden pipeline: reason, gate, act, verify, completeness audit, signed ledger">
+  <title>Warden's six stages — and which of them can see a denial attack</title>
+
+  <defs>
+    <linearGradient id="railGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#D9A353" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#D9A353" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#D9A353" stop-opacity="0"/>
+    </linearGradient>
+    <style>
+      .sans { font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; }
+      .lbl  { font-size: 11px; letter-spacing: 1.6px; }
+
+      .s1 { animation: lit 7s linear infinite;              }
+      .s2 { animation: lit 7s linear infinite; animation-delay: .55s; }
+      .s3 { animation: lit 7s linear infinite; animation-delay: 1.1s; }
+      .s4 { animation: lit 7s linear infinite; animation-delay: 1.65s; }
+      .s5 { animation: lit 7s linear infinite; animation-delay: 2.2s; }
+      .s6 { animation: lit 7s linear infinite; animation-delay: 2.75s; }
+      @keyframes lit { 0% {opacity:.28} 4% {opacity:1} 14% {opacity:1} 26% {opacity:.28} 100% {opacity:.28} }
+    </style>
+  </defs>
+
+  <rect width="1200" height="470" fill="#0E0B08"/>
+
+  <text class="mono" x="60" y="48" font-size="11" letter-spacing="3.5" fill="#F0E7D6" fill-opacity=".5">THE PIPELINE &#183; EVERY MONEY ACTION PASSES THROUGH ALL SIX</text>
+
+  <!-- the rail -->
+  <line x1="90" y1="150" x2="1110" y2="150" stroke="#2E2419" stroke-width="2"/>
+  <rect x="0" y="147" width="180" height="6" fill="url(#railGlow)">
+    <animate attributeName="x" from="-180" to="1200" dur="7s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- ─────────── stage nodes ─────────── -->
+  <!-- 1 REASON -->
+  <g class="s1">
+    <circle cx="90" cy="150" r="11" fill="#0E0B08" stroke="#F0E7D6" stroke-width="2.5"/>
+    <text class="mono lbl" x="90" y="122" fill="#F0E7D6" text-anchor="middle">1 &#183; REASON</text>
+  </g>
+  <!-- 2 GATE -->
+  <g class="s2">
+    <rect x="240" y="130" width="96" height="40" rx="3" fill="#17130E" stroke="#D9A353" stroke-width="2"/>
+    <text class="mono" x="288" y="155" font-size="10" letter-spacing="1.4" fill="#D9A353" text-anchor="middle">GATE</text>
+    <text class="mono lbl" x="288" y="112" fill="#F0E7D6" text-anchor="middle">2 &#183; SAFETY GATE</text>
+  </g>
+  <!-- 3 ACT -->
+  <g class="s3">
+    <circle cx="492" cy="150" r="11" fill="#0E0B08" stroke="#7FA37A" stroke-width="2.5"/>
+    <text class="mono lbl" x="492" y="122" fill="#F0E7D6" text-anchor="middle">3 &#183; ACT</text>
+  </g>
+  <!-- 4 VERIFY -->
+  <g class="s4">
+    <circle cx="696" cy="150" r="11" fill="#0E0B08" stroke="#F0E7D6" stroke-width="2.5"/>
+    <text class="mono lbl" x="696" y="122" fill="#F0E7D6" text-anchor="middle">4 &#183; VERIFY</text>
+  </g>
+  <!-- 5 COMPLETENESS -->
+  <g class="s5">
+    <rect x="852" y="130" width="120" height="40" rx="3" fill="#17130E" stroke="#D9A353" stroke-width="2"/>
+    <text class="mono" x="912" y="155" font-size="10" letter-spacing="1.4" fill="#D9A353" text-anchor="middle">AUDIT</text>
+    <text class="mono lbl" x="912" y="112" fill="#F0E7D6" text-anchor="middle">5 &#183; COMPLETENESS</text>
+  </g>
+  <!-- 6 LEDGER -->
+  <g class="s6">
+    <circle cx="1110" cy="150" r="11" fill="#0E0B08" stroke="#F0E7D6" stroke-width="2.5"/>
+    <text class="mono lbl" x="1110" y="122" fill="#F0E7D6" text-anchor="middle">6 &#183; LEDGER</text>
+  </g>
+
+  <!-- descriptions -->
+  <g class="mono" font-size="11.5" fill="#F0E7D6" fill-opacity=".6" text-anchor="middle">
+    <text x="90"   y="196">what should</text><text x="90"   y="212">happen?</text>
+    <text x="288"  y="196">may this</text><text x="288"  y="212">proceed?</text>
+    <text x="492"  y="196">send it to</text><text x="492"  y="212">Razorpay</text>
+    <text x="696"  y="196">does it match</text><text x="696"  y="212">the record?</text>
+    <text x="912"  y="196">was everything</text><text x="912"  y="212">owed actually paid?</text>
+    <text x="1110" y="196">write it down,</text><text x="1110" y="212">signed</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="60" y1="258" x2="1140" y2="258" stroke="#2E2419"/>
+
+  <!-- ─────────── the load-bearing rule ─────────── -->
+  <text class="sans" x="60" y="300" font-size="19" font-weight="700" fill="#F0E7D6">The one rule that makes all of it work</text>
+  <text class="mono" x="60" y="330" font-size="13.5" fill="#D9A353">None of these stages ever read the conversation.</text>
+  <text class="mono" x="60" y="354" font-size="12.5" fill="#F0E7D6" fill-opacity=".7">They read the order record and the payment ledger &#8212; trusted state only.</text>
+  <text class="mono" x="60" y="376" font-size="12.5" fill="#F0E7D6" fill-opacity=".7">That is why a forged note has no path to them, however convincing it is.</text>
+
+  <!-- preventive vs detective -->
+  <g transform="translate(680,286)">
+    <rect x="0" y="0" width="220" height="112" rx="5" fill="#17130E" stroke="#2E2419"/>
+    <text class="mono" x="18" y="28" font-size="10.5" letter-spacing="2" fill="#D9A353">PREVENTIVE</text>
+    <text class="mono" x="18" y="50" font-size="12" fill="#F0E7D6" fill-opacity=".72">stages 1&#8211;4</text>
+    <text class="mono" x="18" y="72" font-size="11.5" fill="#F0E7D6" fill-opacity=".5">stops a bad action</text>
+    <text class="mono" x="18" y="94" font-size="11.5" fill="#EE7A6B">blind to denial</text>
+  </g>
+  <g transform="translate(920,286)">
+    <rect x="0" y="0" width="220" height="112" rx="5" fill="#17130E" stroke="#D9A353" stroke-opacity=".45"/>
+    <text class="mono" x="18" y="28" font-size="10.5" letter-spacing="2" fill="#D9A353">DETECTIVE</text>
+    <text class="mono" x="18" y="50" font-size="12" fill="#F0E7D6" fill-opacity=".72">stages 5&#8211;6</text>
+    <text class="mono" x="18" y="72" font-size="11.5" fill="#F0E7D6" fill-opacity=".5">catches a missing one</text>
+    <text class="mono" x="18" y="94" font-size="11.5" fill="#7FA37A">the only thing that can</text>
+  </g>
+
+  <text class="mono" x="60" y="436" font-size="11.5" fill="#F0E7D6" fill-opacity=".38">A preventive gate can only refuse something that was proposed. Denial proposes nothing &#8212; so stage 5 exists.</text>
+</svg>

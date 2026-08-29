@@ -1,0 +1,221 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.709
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Segoe UI Semibold,36,&H00FFFFFF,&H00FFFFFF,&H14000000,&H14000000,0,0,0,0,100,100,0.4,0,3,10,0,2,350,350,64,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.67,0:00:01.67,Cap,,0,0,0,,Hi, I am Deepak.
+Dialogue: 0,0:00:01.87,0:00:03.90,Cap,,0,0,0,,First of all, I would like to thank the Razorpay team
+Dialogue: 0,0:00:03.90,0:00:07.13,Cap,,0,0,0,,for giving me this opportunity to showcase my AI skills.
+Dialogue: 0,0:00:07.73,0:00:11.50,Cap,,0,0,0,,So coming to the track I chose is AI Growth and Agentic Commerce,
+Dialogue: 0,0:00:11.97,0:00:13.37,Cap,,0,0,0,,because the motive is making
+Dialogue: 0,0:00:13.37,0:00:15.73,Cap,,0,0,0,,a merchant transactable by an AI buyer.
+Dialogue: 0,0:00:16.40,0:00:19.27,Cap,,0,0,0,,So the project title that I chose is Warden.
+Dialogue: 0,0:00:19.53,0:00:21.27,Cap,,0,0,0,,Agentic commerce can grow until a merchant
+Dialogue: 0,0:00:21.27,0:00:23.63,Cap,,0,0,0,,can trust an AI agent with a real money.
+Dialogue: 0,0:00:23.97,0:00:25.63,Cap,,0,0,0,,So Warden is the trust layer,
+Dialogue: 0,0:00:25.63,0:00:28.27,Cap,,0,0,0,,which is exactly what the track requires before any of its works.
+Dialogue: 0,0:00:28.50,0:00:31.07,Cap,,0,0,0,,So as an AI user, I want to automate all my payments.
+Dialogue: 0,0:00:31.70,0:00:34.43,Cap,,0,0,0,,So I want to give a command to my Slack or Jira bot,
+Dialogue: 0,0:00:34.43,0:00:36.30,Cap,,0,0,0,,which will work in my channel,
+Dialogue: 0,0:00:37.13,0:00:39.57,Cap,,0,0,0,,and with one command I would like to pay all my payments.
+Dialogue: 0,0:00:39.70,0:00:41.73,Cap,,0,0,0,,That is what I think, but when we get
+Dialogue: 0,0:00:41.73,0:00:43.07,Cap,,0,0,0,,into the real problem, the trust,
+Dialogue: 0,0:00:43.33,0:00:44.90,Cap,,0,0,0,,what happens when AI got misleaded
+Dialogue: 0,0:00:44.90,0:00:47.47,Cap,,0,0,0,,and it misunderstand my commands?
+Dialogue: 0,0:00:47.60,0:00:49.87,Cap,,0,0,0,,That consequence not only with the answer,
+Dialogue: 0,0:00:49.87,0:00:51.60,Cap,,0,0,0,,but it sends the payment to the wrong place.
+Dialogue: 0,0:00:51.87,0:00:53.87,Cap,,0,0,0,,That is the main problem that we face,
+Dialogue: 0,0:00:54.07,0:00:56.73,Cap,,0,0,0,,and even the users has this trust issue everywhere.
+Dialogue: 0,0:00:56.97,0:00:58.27,Cap,,0,0,0,,Let me start with an example.
+Dialogue: 0,0:00:58.27,0:00:59.87,Cap,,0,0,0,,Let's say a character named Rhea Mehta.
+Dialogue: 0,0:01:00.07,0:01:03.83,Cap,,0,0,0,,She ordered ₹1,250 worth of groceries from a merchant.
+Dialogue: 0,0:01:04.10,0:01:07.20,Cap,,0,0,0,,The order never showed up, so she requested for refund.
+Dialogue: 0,0:01:07.27,0:01:10.07,Cap,,0,0,0,,This is the scenario, so with this scenario
+Dialogue: 0,0:01:10.07,0:01:11.37,Cap,,0,0,0,,we will start with the normal workflow,
+Dialogue: 0,0:01:11.53,0:01:12.90,Cap,,0,0,0,,how regularly the agent works.
+Dialogue: 0,0:01:13.30,0:01:15.13,Cap,,0,0,0,,So when Rhea Mehta clicks on the refund
+Dialogue: 0,0:01:15.13,0:01:16.73,Cap,,0,0,0,,button, so what agent does?
+Dialogue: 0,0:01:16.87,0:01:20.70,Cap,,0,0,0,,Agent will go and check the records and check if the refund is valid,
+Dialogue: 0,0:01:20.77,0:01:23.33,Cap,,0,0,0,,and it process the refund if it has valid reason.
+Dialogue: 0,0:01:23.53,0:01:26.10,Cap,,0,0,0,,So this is how the normal workflow goes,
+Dialogue: 0,0:01:26.10,0:01:28.30,Cap,,0,0,0,,and everything I am going to show you next
+Dialogue: 0,0:01:28.37,0:01:30.93,Cap,,0,0,0,,is basically the variations of what can happen
+Dialogue: 0,0:01:30.93,0:01:32.40,Cap,,0,0,0,,if the payment goes wrong.
+Dialogue: 0,0:01:32.70,0:01:34.60,Cap,,0,0,0,,So now let's change one thing.
+Dialogue: 0,0:01:34.60,0:01:36.57,Cap,,0,0,0,,Someone has left a note on Rhea's account,
+Dialogue: 0,0:01:36.67,0:01:38.73,Cap,,0,0,0,,supposedly a character named Priya,
+Dialogue: 0,0:01:38.73,0:01:41.40,Cap,,0,0,0,,so she is one of the people working with Rhea.
+Dialogue: 0,0:01:41.60,0:01:43.63,Cap,,0,0,0,,Priya never gave the command of refund.
+Dialogue: 0,0:01:44.00,0:01:47.90,Cap,,0,0,0,,Priya gave a command that, for the refund, to different account.
+Dialogue: 0,0:01:48.27,0:01:50.43,Cap,,0,0,0,,The note says there is a new account for the refund,
+Dialogue: 0,0:01:50.43,0:01:51.93,Cap,,0,0,0,,and the model believes it.
+Dialogue: 0,0:01:52.27,0:01:54.77,Cap,,0,0,0,,So instead of sending the ₹1,250 to Rhea,
+Dialogue: 0,0:01:54.77,0:01:57.30,Cap,,0,0,0,,it probably send it to Priya.
+Dialogue: 0,0:01:57.50,0:01:59.00,Cap,,0,0,0,,So this is where Warden steps in.
+Dialogue: 0,0:01:59.20,0:02:02.90,Cap,,0,0,0,,So when Priya clicks on refund to her account, what happens?
+Dialogue: 0,0:02:02.97,0:02:06.27,Cap,,0,0,0,,The payment gets blocked by the Warden and it shows refused,
+Dialogue: 0,0:02:06.33,0:02:09.83,Cap,,0,0,0,,and it doesn't only see the reason, but it gives a payee_scope,
+Dialogue: 0,0:02:10.13,0:02:11.97,Cap,,0,0,0,,the exact reason that it's stopped for.
+Dialogue: 0,0:02:12.30,0:02:14.43,Cap,,0,0,0,,And the interesting part is what happens next:
+Dialogue: 0,0:02:14.73,0:02:15.80,Cap,,0,0,0,,the agent recovers by itself
+Dialogue: 0,0:02:15.80,0:02:17.67,Cap,,0,0,0,,and sends the refund to the right account.
+Dialogue: 0,0:02:17.73,0:02:20.67,Cap,,0,0,0,,So it acts as a trust layer between the agent and the payment rail,
+Dialogue: 0,0:02:20.73,0:02:22.47,Cap,,0,0,0,,and it acts as a permission slip before
+Dialogue: 0,0:02:22.47,0:02:23.77,Cap,,0,0,0,,the agent can move the money.
+Dialogue: 0,0:02:23.97,0:02:25.67,Cap,,0,0,0,,It creates a ticket that has the action,
+Dialogue: 0,0:02:25.67,0:02:27.27,Cap,,0,0,0,,the order, the account and the amount.
+Dialogue: 0,0:02:27.50,0:02:29.37,Cap,,0,0,0,,The payee paid and the account
+Dialogue: 0,0:02:29.37,0:02:31.53,Cap,,0,0,0,,on the ticket isn't something the agent picks,
+Dialogue: 0,0:02:31.63,0:02:34.73,Cap,,0,0,0,,it reads from the order record. The agent can't write itself a ticket.
+Dialogue: 0,0:02:35.07,0:02:38.10,Cap,,0,0,0,,It acts as a gate, which you just saw it got fired.
+Dialogue: 0,0:02:38.93,0:02:40.67,Cap,,0,0,0,,It doesn't act against the ticket
+Dialogue: 0,0:02:40.67,0:02:43.73,Cap,,0,0,0,,and against the merchant policies, and it refuses by name.
+Dialogue: 0,0:02:44.33,0:02:46.67,Cap,,0,0,0,,And the third thing is it acts as a detective
+Dialogue: 0,0:02:46.67,0:02:48.20,Cap,,0,0,0,,that runs after the session ends
+Dialogue: 0,0:02:48.27,0:02:51.23,Cap,,0,0,0,,and asks whether every obligation actually got paid.
+Dialogue: 0,0:02:51.53,0:02:53.37,Cap,,0,0,0,,And this is the one the rest of the video is about.
+Dialogue: 0,0:02:53.43,0:02:55.10,Cap,,0,0,0,,Rhea's case was one cell in the grid,
+Dialogue: 0,0:02:55.37,0:02:56.83,Cap,,0,0,0,,but there can be eight classes of attack
+Dialogue: 0,0:02:56.83,0:02:58.67,Cap,,0,0,0,,and three different ways the payload can arrive,
+Dialogue: 0,0:02:58.77,0:03:00.30,Cap,,0,0,0,,and the same lie behaves completely
+Dialogue: 0,0:03:00.30,0:03:02.13,Cap,,0,0,0,,different depending on how it arrives.
+Dialogue: 0,0:03:02.40,0:03:06.50,Cap,,0,0,0,,And it is 33.8% when it is typed into chat by the person,
+Dialogue: 0,0:03:06.70,0:03:09.83,Cap,,0,0,0,,and it is 73.3% when it is hidden in a note
+Dialogue: 0,0:03:09.83,0:03:11.27,Cap,,0,0,0,,the agent reads from its own records.
+Dialogue: 0,0:03:11.53,0:03:14.50,Cap,,0,0,0,,So it is like 2.2 more times it get
+Dialogue: 0,0:03:14.50,0:03:16.37,Cap,,0,0,0,,fooled compared to the human type,
+Dialogue: 0,0:03:16.57,0:03:19.73,Cap,,0,0,0,,and they treat their own tool output as retrieved fact,
+Dialogue: 0,0:03:19.97,0:03:21.53,Cap,,0,0,0,,which moves where the risk actually lives,
+Dialogue: 0,0:03:21.53,0:03:23.87,Cap,,0,0,0,,not in the chatbot, the data that is being fed into.
+Dialogue: 0,0:03:24.43,0:03:25.93,Cap,,0,0,0,,So coming to the next section,
+Dialogue: 0,0:03:25.93,0:03:27.93,Cap,,0,0,0,,here is where I ran on the frontier models,
+Dialogue: 0,0:03:28.27,0:03:30.27,Cap,,0,0,0,,mostly on the Claude and Gemini models.
+Dialogue: 0,0:03:30.43,0:03:34.27,Cap,,0,0,0,,Coming to the cheap model, Haiku, what happened is,
+Dialogue: 0,0:03:34.33,0:03:37.80,Cap,,0,0,0,,out of 130 diversion attacks, 62 times it got fooled.
+Dialogue: 0,0:03:38.23,0:03:41.27,Cap,,0,0,0,,But when I ran the same test on Sonnet and Opus,
+Dialogue: 0,0:03:41.27,0:03:42.83,Cap,,0,0,0,,there were nearly zero diversion attacks.
+Dialogue: 0,0:03:43.07,0:03:45.97,Cap,,0,0,0,,What idea I got here is, even without using Warden,
+Dialogue: 0,0:03:46.03,0:03:48.40,Cap,,0,0,0,,Sonnet and Opus are able to defend the attack,
+Dialogue: 0,0:03:48.47,0:03:53.63,Cap,,0,0,0,,and zero false positives across 149 legitimate refunds.
+Dialogue: 0,0:03:54.00,0:03:55.07,Cap,,0,0,0,,So here is where I saw the pattern:
+Dialogue: 0,0:03:55.17,0:03:58.13,Cap,,0,0,0,,if the merchant uses a low end model or a cheap model,
+Dialogue: 0,0:03:58.37,0:04:00.13,Cap,,0,0,0,,he need to use Warden to save his payments
+Dialogue: 0,0:04:00.13,0:04:02.23,Cap,,0,0,0,,and be aware of the fake refunds.
+Dialogue: 0,0:04:02.97,0:04:05.57,Cap,,0,0,0,,And also, if the merchant using top
+Dialogue: 0,0:04:05.57,0:04:07.60,Cap,,0,0,0,,models such as Sonnet and Opus,
+Dialogue: 0,0:04:07.80,0:04:10.17,Cap,,0,0,0,,he also need to use a Warden to be safe
+Dialogue: 0,0:04:10.17,0:04:11.20,Cap,,0,0,0,,when a festive season comes up,
+Dialogue: 0,0:04:11.27,0:04:13.60,Cap,,0,0,0,,and he don't need to lose his nose
+Dialogue: 0,0:04:13.60,0:04:15.13,Cap,,0,0,0,,by fighting with the fake payments,
+Dialogue: 0,0:04:15.20,0:04:16.37,Cap,,0,0,0,,and he can focus on a sale.
+Dialogue: 0,0:04:16.43,0:04:20.07,Cap,,0,0,0,,So how do you test whether it is a good model or a good Warden?
+Dialogue: 0,0:04:20.37,0:04:23.47,Cap,,0,0,0,,So I split all the attacks into three versions.
+Dialogue: 0,0:04:23.77,0:04:26.50,Cap,,0,0,0,,First one, agent resisted, the real model resisted the attack.
+Dialogue: 0,0:04:26.57,0:04:29.37,Cap,,0,0,0,,And enforced block, the Warden has blocked the attack.
+Dialogue: 0,0:04:29.73,0:04:31.27,Cap,,0,0,0,,And final thing, it is leaked.
+Dialogue: 0,0:04:31.77,0:04:33.93,Cap,,0,0,0,,Leaked is like the attack got compromised
+Dialogue: 0,0:04:33.93,0:04:35.93,Cap,,0,0,0,,and also leaked into the agent.
+Dialogue: 0,0:04:36.37,0:04:38.87,Cap,,0,0,0,,So we saw that frontier models are good at detecting
+Dialogue: 0,0:04:38.87,0:04:42.00,Cap,,0,0,0,,and declining the fake refunds or fake commands.
+Dialogue: 0,0:04:42.27,0:04:46.60,Cap,,0,0,0,,But what if I change a policy that is being injected into the model,
+Dialogue: 0,0:04:46.67,0:04:50.53,Cap,,0,0,0,,and it reads it and it declines the payment from the merchant side?
+Dialogue: 0,0:04:50.80,0:04:53.27,Cap,,0,0,0,,What if it happens here? Because I am changing the policy,
+Dialogue: 0,0:04:53.40,0:04:55.40,Cap,,0,0,0,,the ticket is made according to the policy.
+Dialogue: 0,0:04:55.40,0:04:57.60,Cap,,0,0,0,,What if the model doesn't detect it?
+Dialogue: 0,0:04:57.67,0:05:02.10,Cap,,0,0,0,,So I plan literally 71 attacks. All 71 attacks were passed,
+Dialogue: 0,0:05:02.17,0:05:05.30,Cap,,0,0,0,,and the model is not working correctly in this case.
+Dialogue: 0,0:05:05.63,0:05:07.67,Cap,,0,0,0,,This isn't a problem for the merchant side,
+Dialogue: 0,0:05:07.73,0:05:09.47,Cap,,0,0,0,,but it's problem for the buyer's side,
+Dialogue: 0,0:05:09.47,0:05:10.93,Cap,,0,0,0,,because the refund never showed up.
+Dialogue: 0,0:05:11.10,0:05:14.07,Cap,,0,0,0,,So to actually know the reason why this happens,
+Dialogue: 0,0:05:14.07,0:05:15.33,Cap,,0,0,0,,so I came up with the testing.
+Dialogue: 0,0:05:15.63,0:05:19.80,Cap,,0,0,0,,So I widened the corpus from three denial shapes to twelve lies.
+Dialogue: 0,0:05:20.50,0:05:24.30,Cap,,0,0,0,,So I also checked it using tool and not using tool.
+Dialogue: 0,0:05:24.37,0:05:26.73,Cap,,0,0,0,,The tool is really, it's like giving the agent
+Dialogue: 0,0:05:26.73,0:05:28.70,Cap,,0,0,0,,a power called check the real record.
+Dialogue: 0,0:05:29.07,0:05:30.67,Cap,,0,0,0,,That is the tool I have given to the models.
+Dialogue: 0,0:05:31.17,0:05:32.57,Cap,,0,0,0,,So when compared to Haiku,
+Dialogue: 0,0:05:32.57,0:05:34.47,Cap,,0,0,0,,Sonnet and Opus with and without tool,
+Dialogue: 0,0:05:34.57,0:05:36.27,Cap,,0,0,0,,Haiku wasn't performing good.
+Dialogue: 0,0:05:36.57,0:05:38.13,Cap,,0,0,0,,But coming to Sonnet, Sonnet was able
+Dialogue: 0,0:05:38.13,0:05:40.50,Cap,,0,0,0,,to recover seven attacks when using tools.
+Dialogue: 0,0:05:40.83,0:05:43.87,Cap,,0,0,0,,But Opus has better performed without tool and with tool also.
+Dialogue: 0,0:05:43.93,0:05:46.47,Cap,,0,0,0,,It denied like five attacks without tool,
+Dialogue: 0,0:05:46.47,0:05:48.93,Cap,,0,0,0,,and it denied like 11 attacks with the tool.
+Dialogue: 0,0:05:49.13,0:05:51.53,Cap,,0,0,0,,But when I check the spread out where it is really solving,
+Dialogue: 0,0:05:52.33,0:05:54.53,Cap,,0,0,0,,the lies were not with respect to the policy forbidden.
+Dialogue: 0,0:05:54.67,0:05:57.27,Cap,,0,0,0,,Like, if I change the policy, it is not detecting it correctly.
+Dialogue: 0,0:05:57.63,0:06:01.53,Cap,,0,0,0,,So that is the new finding I found with this testing.
+Dialogue: 0,0:06:01.67,0:06:02.53,Cap,,0,0,0,,So I want to show you the demo,
+Dialogue: 0,0:06:02.53,0:06:05.80,Cap,,0,0,0,,how really it works with the Razorpay test API.
+Dialogue: 0,0:06:06.33,0:06:08.23,Cap,,0,0,0,,So here is my UI for that.
+Dialogue: 0,0:06:08.60,0:06:10.73,Cap,,0,0,0,,So what I will do is I will create a payment
+Dialogue: 0,0:06:10.73,0:06:16.00,Cap,,0,0,0,,from Rhea's account to the merchant via Razorpay.
+Dialogue: 0,0:06:17.43,0:06:18.60,Cap,,0,0,0,,So I'll select the payment method.
+Dialogue: 0,0:06:20.13,0:06:22.50,Cap,,0,0,0,,So by the way, this is the test API, it's not a real payment.
+Dialogue: 0,0:06:26.80,0:06:27.80,Cap,,0,0,0,,So now I am done with payment.
+Dialogue: 0,0:06:28.00,0:06:29.57,Cap,,0,0,0,,Now I will take you into how the refund
+Dialogue: 0,0:06:29.57,0:06:32.70,Cap,,0,0,0,,process will be taken in six stages.
+Dialogue: 0,0:06:33.00,0:06:35.23,Cap,,0,0,0,,So the refund has been taken in six stages.
+Dialogue: 0,0:06:35.50,0:06:37.70,Cap,,0,0,0,,The stage one is the Reason and Decide,
+Dialogue: 0,0:06:37.70,0:06:39.97,Cap,,0,0,0,,proposes the refund to real Rhea account.
+Dialogue: 0,0:06:40.60,0:06:42.37,Cap,,0,0,0,,And there is Safety gate, there is Act gate,
+Dialogue: 0,0:06:42.37,0:06:44.73,Cap,,0,0,0,,where it execute real reference ID.
+Dialogue: 0,0:06:45.10,0:06:46.13,Cap,,0,0,0,,And there is a Verification gate
+Dialogue: 0,0:06:46.13,0:06:49.03,Cap,,0,0,0,,where it verifies the consistent destination.
+Dialogue: 0,0:06:49.57,0:06:51.20,Cap,,0,0,0,,If it matches, it trusts the order state.
+Dialogue: 0,0:06:51.63,0:06:53.53,Cap,,0,0,0,,And it checks the completeness,
+Dialogue: 0,0:06:53.53,0:06:56.27,Cap,,0,0,0,,if the money has been discharged or not.
+Dialogue: 0,0:06:56.63,0:06:58.60,Cap,,0,0,0,,And at the end there is an Audit stage where each
+Dialogue: 0,0:06:58.60,0:07:00.93,Cap,,0,0,0,,and every process will be audited and logged.
+Dialogue: 0,0:07:01.33,0:07:03.53,Cap,,0,0,0,,When we come to the attack,
+Dialogue: 0,0:07:03.53,0:07:06.80,Cap,,0,0,0,,I click on the diversion attack and to another account.
+Dialogue: 0,0:07:06.93,0:07:07.93,Cap,,0,0,0,,So let's see how it happens.
+Dialogue: 0,0:07:08.20,0:07:10.13,Cap,,0,0,0,,So here you can see the six stages,
+Dialogue: 0,0:07:10.87,0:07:14.70,Cap,,0,0,0,,and at the Safety gate it got refused, and the Act gate is skipped.
+Dialogue: 0,0:07:15.00,0:07:16.67,Cap,,0,0,0,,At Verify gate it is inconsistent,
+Dialogue: 0,0:07:17.03,0:07:19.67,Cap,,0,0,0,,and at completeness the amount is not discharged,
+Dialogue: 0,0:07:19.67,0:07:22.47,Cap,,0,0,0,,and the fake refund has been blocked.
+Dialogue: 0,0:07:23.47,0:07:24.77,Cap,,0,0,0,,Let's start with the denial attack.
+Dialogue: 0,0:07:25.33,0:07:30.10,Cap,,0,0,0,,Denial attack is like when I put a fake policy in the merchant records
+Dialogue: 0,0:07:30.17,0:07:33.37,Cap,,0,0,0,,that this order cannot be refundable, so it doesn't happen.
+Dialogue: 0,0:07:33.63,0:07:35.10,Cap,,0,0,0,,So I will run it, let's see how it happens.
+Dialogue: 0,0:07:35.57,0:07:39.37,Cap,,0,0,0,,So you can see here at each gate,
+Dialogue: 0,0:07:39.37,0:07:41.23,Cap,,0,0,0,,at completeness gate the amount is undischarged,
+Dialogue: 0,0:07:41.40,0:07:44.67,Cap,,0,0,0,,and the amount is not deducted from the merchant account,
+Dialogue: 0,0:07:44.73,0:07:47.00,Cap,,0,0,0,,and the refund is not being held into Rhea account.
+Dialogue: 0,0:07:47.07,0:07:50.80,Cap,,0,0,0,,Here Rhea got loss because the refund was never happened,
+Dialogue: 0,0:07:50.80,0:07:51.80,Cap,,0,0,0,,and there is no refund option.
+Dialogue: 0,0:07:52.03,0:07:53.47,Cap,,0,0,0,,So first of all, I would like to thank Razorpay
+Dialogue: 0,0:07:53.47,0:07:54.60,Cap,,0,0,0,,team for giving me this opportunity.
+Dialogue: 0,0:07:55.20,0:07:59.27,Cap,,0,0,0,,So I feel this is one of the opportunity that I would choose,
+Dialogue: 0,0:07:59.33,0:08:02.30,Cap,,0,0,0,,because I wanted to be an AI builder for a long time,
+Dialogue: 0,0:08:02.67,0:08:05.10,Cap,,0,0,0,,since when I came to the India's Build
+Dialogue: 0,0:08:05.10,0:08:06.77,Cap,,0,0,0,,with Claude event in the Razorpay office.
+Dialogue: 0,0:08:07.10,0:08:10.10,Cap,,0,0,0,,So when I saw the environment over there,
+Dialogue: 0,0:08:10.10,0:08:11.73,Cap,,0,0,0,,I feel like this is the place where I want to work.
+Dialogue: 0,0:08:11.80,0:08:13.17,Cap,,0,0,0,,That is where I want to build my career.
+Dialogue: 0,0:08:13.40,0:08:15.83,Cap,,0,0,0,,That is where I want to ideate myself and experiment more
+Dialogue: 0,0:08:15.90,0:08:19.80,Cap,,0,0,0,,and work harder in learning things more about AI.
+Dialogue: 0,0:08:20.87,0:08:22.37,Cap,,0,0,0,,So when I saw Harshil Mathur, founder of Razorpay,
+Dialogue: 0,0:08:22.37,0:08:24.77,Cap,,0,0,0,,showcasing his projects in the event,
+Dialogue: 0,0:08:25.03,0:08:28.33,Cap,,0,0,0,,that inspired me, like exploring more, ideating more,
+Dialogue: 0,0:08:28.77,0:08:29.93,Cap,,0,0,0,,work to solve problems for each
+Dialogue: 0,0:08:29.93,0:08:32.00,Cap,,0,0,0,,and every problem I face in my day to day work,
+Dialogue: 0,0:08:32.53,0:08:36.70,Cap,,0,0,0,,and also be a proper AI builder who uses AI to shorten his work.
+Dialogue: 0,0:08:37.03,0:08:40.17,Cap,,0,0,0,,Think more, ideate more, and orchestrate everything using AI.
+Dialogue: 0,0:08:40.43,0:08:42.30,Cap,,0,0,0,,This is what I wanted to do.
+Dialogue: 0,0:08:42.57,0:08:43.83,Cap,,0,0,0,,So with that, I would like to end my demo.
+Dialogue: 0,0:08:44.43,0:08:45.73,Cap,,0,0,0,,If chance, I would attach my portfolio
+Dialogue: 0,0:08:45.73,0:08:48.77,Cap,,0,0,0,,to this video, and it has AI in it.
+Dialogue: 0,0:08:48.83,0:08:51.07,Cap,,0,0,0,,You can ask questions about me and know more about me in that.
+Dialogue: 0,0:08:51.40,0:08:54.27,Cap,,0,0,0,,Hope I get into Razorpay and work over there. Thank you.

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340" role="img" aria-label="Warden — the trust layer between an AI agent and real money">
+  <title>Warden — the trust layer between an AI agent and real money</title>
+
+  <defs>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#D9A353" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#D9A353" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#D9A353" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="topfade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D9A353" stop-opacity=".07"/>
+      <stop offset="100%" stop-color="#D9A353" stop-opacity="0"/>
+    </linearGradient>
+    <style>
+      .sans { font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; }
+      .fade-a { animation: fa 9s ease-in-out infinite; }
+      .fade-b { animation: fb 9s ease-in-out infinite; }
+      .fade-c { animation: fc 9s ease-in-out infinite; }
+      @keyframes fa { 0%,26% {opacity:1} 33%,100% {opacity:0} }
+      @keyframes fb { 0%,30% {opacity:0} 37%,59% {opacity:1} 66%,100% {opacity:0} }
+      @keyframes fc { 0%,63% {opacity:0} 70%,93% {opacity:1} 100% {opacity:0} }
+    </style>
+  </defs>
+
+  <!-- ground -->
+  <rect width="1200" height="340" fill="#0E0B08"/>
+  <rect width="1200" height="160" fill="url(#topfade)"/>
+
+  <!-- ledger rules: this is a payments audit trail, so the ground is ruled paper -->
+  <g stroke="#F0E7D6" stroke-opacity=".035">
+    <line x1="0" y1="34"  x2="1200" y2="34"/>
+    <line x1="0" y1="68"  x2="1200" y2="68"/>
+    <line x1="0" y1="102" x2="1200" y2="102"/>
+    <line x1="0" y1="136" x2="1200" y2="136"/>
+    <line x1="0" y1="170" x2="1200" y2="170"/>
+    <line x1="0" y1="204" x2="1200" y2="204"/>
+    <line x1="0" y1="238" x2="1200" y2="238"/>
+    <line x1="0" y1="272" x2="1200" y2="272"/>
+    <line x1="0" y1="306" x2="1200" y2="306"/>
+  </g>
+
+  <!-- wordmark -->
+  <text class="sans" x="72" y="118" font-size="76" font-weight="800" letter-spacing="-2.5" fill="#F0E7D6">WARDEN</text>
+  <text class="mono" x="78" y="150" font-size="13" letter-spacing="5.5" fill="#D9A353">TRUST LAYER FOR AGENTIC PAYMENTS</text>
+
+  <!-- the rail: one continuous line, money travels along it -->
+  <line x1="72" y1="222" x2="1128" y2="222" stroke="#2E2419" stroke-width="2"/>
+
+  <!-- travelling pulse -->
+  <rect x="0" y="219" width="150" height="6" fill="url(#glow)" opacity=".85">
+    <animate attributeName="x" from="-150" to="1200" dur="3.4s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- the gate, sitting on the rail at centre -->
+  <g>
+    <rect x="545" y="200" width="110" height="44" rx="3" fill="#17130E" stroke="#D9A353" stroke-width="1.5"/>
+    <text class="mono" x="600" y="227" font-size="11" letter-spacing="2" fill="#D9A353" text-anchor="middle">WARDEN</text>
+    <animate attributeName="opacity" values="1;.55;1" dur="3.4s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- endpoints -->
+  <circle cx="72"   cy="222" r="6" fill="#0E0B08" stroke="#F0E7D6" stroke-opacity=".45" stroke-width="2"/>
+  <circle cx="1128" cy="222" r="6" fill="#0E0B08" stroke="#F0E7D6" stroke-opacity=".45" stroke-width="2"/>
+  <text class="mono" x="72"   y="252" font-size="11" letter-spacing="1.5" fill="#F0E7D6" fill-opacity=".5">AI AGENT</text>
+  <text class="mono" x="1128" y="252" font-size="11" letter-spacing="1.5" fill="#F0E7D6" fill-opacity=".5" text-anchor="end">REAL MONEY</text>
+
+  <!-- rotating one-liners, telling the story in three beats -->
+  <g class="mono" font-size="15" text-anchor="middle">
+    <text class="fade-a" x="600" y="298" fill="#7FA37A">the agent asks &#8594; Warden checks the real record &#8594; she gets paid</text>
+    <text class="fade-b" x="600" y="298" fill="#EE7A6B">a forged note says &#8220;send it elsewhere&#8221; &#8594; refused at payee_scope</text>
+    <text class="fade-c" x="600" y="298" fill="#D9A353">a forged note says &#8220;don&#8217;t pay at all&#8221; &#8594; only the audit ever sees it</text>
+  </g>
+
+  <!-- stat badges -->
+  <g class="mono" font-size="12" letter-spacing="1">
+    <g transform="translate(830,74)">
+      <rect x="0" y="-20" width="128" height="30" rx="15" fill="#17130E" stroke="#2E2419"/>
+      <text x="64" y="0" fill="#F0E7D6" fill-opacity=".78" text-anchor="middle">131 tests</text>
+    </g>
+    <g transform="translate(970,74)">
+      <rect x="0" y="-20" width="128" height="30" rx="15" fill="#17130E" stroke="#2E2419"/>
+      <text x="64" y="0" fill="#F0E7D6" fill-opacity=".78" text-anchor="middle">14 models</text>
+    </g>
+    <g transform="translate(830,116)">
+      <rect x="0" y="-20" width="128" height="30" rx="15" fill="#17130E" stroke="#2E2419"/>
+      <text x="64" y="0" fill="#F0E7D6" fill-opacity=".78" text-anchor="middle">27 findings</text>
+    </g>
+    <g transform="translate(970,116)">
+      <rect x="0" y="-20" width="128" height="30" rx="15" fill="#17130E" stroke="#2E2419"/>
+      <text x="64" y="0" fill="#F0E7D6" fill-opacity=".78" text-anchor="middle">live rail</text>
+    </g>
+  </g>
+</svg>

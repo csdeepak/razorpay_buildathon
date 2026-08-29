@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Warden README assets — render check</title>
+<style>
+  body { background:#fff; color:#111; font:14px system-ui, sans-serif; margin:0; padding:24px; }
+  h2 { font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#666;
+       margin:28px 0 8px; font-weight:600; }
+  img { width:100%; max-width:1100px; display:block; border:1px solid #ddd; border-radius:6px; }
+  .dark { background:#0d1117; padding:24px; margin-top:32px; border-radius:8px; }
+  .dark h2 { color:#8b949e; }
+  .dark img { border-color:#30363d; }
+  p.n { color:#666; max-width:70ch; }
+</style>
+<h1>README asset render check</h1>
+<p class="n">Each SVG is loaded through <code>&lt;img src&gt;</code> — exactly how GitHub serves it.
+If animations play here, they play on GitHub. Scripts are absent by design (GitHub strips them);
+all motion is SMIL <code>&lt;animate&gt;</code> plus CSS <code>@keyframes</code>.</p>
+
+<h2>hero.svg</h2>       <img src="hero.svg" alt="">
+<h2>story.svg</h2>      <img src="story.svg" alt="">
+<h2>pipeline.svg</h2>   <img src="pipeline.svg" alt="">
+<h2>scenarios.svg</h2>  <img src="scenarios.svg" alt="">
+<h2>results.svg</h2>    <img src="results.svg" alt="">
+<h2>taxonomy.svg</h2>   <img src="taxonomy.svg" alt="">
+
+<div class="dark">
+  <h2>Same assets on GitHub's dark canvas (#0d1117)</h2>
+  <img src="hero.svg" alt="">
+  <img src="taxonomy.svg" alt="" style="margin-top:16px">
+</div>
